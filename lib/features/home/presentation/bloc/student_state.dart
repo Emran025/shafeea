@@ -8,6 +8,7 @@ enum StudentSubmissionStatus { initial, submitting, success, failure }
 
 enum StudentUpsertStatus { initial, submitting, success, failure }
 
+enum PlanForTheDayStatus { initial, loading, success, failure }
 
 final class StudentState extends Equatable {
 
@@ -23,10 +24,11 @@ final class StudentState extends Equatable {
   final StudentUpsertStatus upsertStatus;
   final Failure? upsertFailure;
 
-
+  final PlanForTheDayStatus planForTheDayStatus;
+  final PlanForTheDayEntity? planForTheDay;
+  final Failure? planForTheDayFailure;
 
   const StudentState({
-
     // New
     this.detailsStatus = StudentInfoStatus.initial,
     this.selectedStudent,
@@ -38,13 +40,12 @@ final class StudentState extends Equatable {
     // New
     this.upsertStatus = StudentUpsertStatus.initial,
     this.upsertFailure,
-
-
-
+    this.planForTheDayStatus = PlanForTheDayStatus.initial,
+    this.planForTheDay,
+    this.planForTheDayFailure,
   });
 
   StudentState copyWith({
-
     // New
     StudentInfoStatus? detailsStatus,
     StudentInfoEntity? selectedStudent,
@@ -61,17 +62,17 @@ final class StudentState extends Equatable {
     StudentUpsertStatus? upsertStatus,
     Failure? upsertFailure,
     bool clearUpsertFailure = false,
-
-
+    PlanForTheDayStatus? planForTheDayStatus,
+    PlanForTheDayEntity? planForTheDay,
+    Failure? planForTheDayFailure,
+    bool clearPlanForTheDayFailure = false,
   }) {
     return StudentState(
-
       // New
       detailsStatus: detailsStatus ?? this.detailsStatus,
       selectedStudent: selectedStudent ?? this.selectedStudent,
-      detailsFailure: clearDetailsFailure
-          ? null
-          : detailsFailure ?? this.detailsFailure,
+      detailsFailure:
+          clearDetailsFailure ? null : detailsFailure ?? this.detailsFailure,
 
       // New
       submissionStatus: submissionStatus ?? this.submissionStatus,
@@ -80,25 +81,28 @@ final class StudentState extends Equatable {
           : submissionFailure ?? this.submissionFailure,
       // New
       upsertStatus: upsertStatus ?? this.upsertStatus,
-      upsertFailure: clearUpsertFailure
+      upsertFailure:
+          clearUpsertFailure ? null : upsertFailure ?? this.upsertFailure,
+      planForTheDayStatus: planForTheDayStatus ?? this.planForTheDayStatus,
+      planForTheDay: planForTheDay ?? this.planForTheDay,
+      planForTheDayFailure: clearPlanForTheDayFailure
           ? null
-          : upsertFailure ?? this.upsertFailure,
-
-
+          : planForTheDayFailure ?? this.planForTheDayFailure,
     );
   }
 
   @override
   List<Object?> get props => [
-    detailsStatus,
-    selectedStudent,
-    detailsFailure,
-    submissionStatus,
-    submissionFailure,
-    upsertStatus,
-    upsertFailure,
-
-
-  ];
+        detailsStatus,
+        selectedStudent,
+        detailsFailure,
+        submissionStatus,
+        submissionFailure,
+        upsertStatus,
+        upsertFailure,
+        planForTheDayStatus,
+        planForTheDay,
+        planForTheDayFailure,
+      ];
 }
 

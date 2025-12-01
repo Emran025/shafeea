@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shafeea/features/home/domain/entities/plan_detail_entity.dart';
+import 'package.shafeea/features/daily_tracking/data/datasources/quran_local_data_source.dart';
+import 'package:shafeea/features/home/domain/entities/plan_for_the_day_entity.dart';
 import 'package:shafeea/features/home/domain/entities/student_info_entity.dart';
 
 import '../../../../core/error/failures.dart';
@@ -17,16 +20,17 @@ import '../services/student_sync_service.dart';
 final class StudentRepositoryImpl implements StudentRepository {
   final StudentLocalDataSource _localDataSource;
   final StudentSyncService _syncService;
+  final QuranLocalDataSource _quranLocalDataSource;
 
   // NetworkInfo is not needed here anymore as SyncService handles it.
 
   StudentRepositoryImpl({
     required StudentLocalDataSource localDataSource,
     required StudentRemoteDataSource remoteDataSource,
-
+    required this._quranLocalDataSource,
     required StudentSyncService syncService,
-  }) : _localDataSource = localDataSource,
-       _syncService = syncService;
+  })  : _localDataSource = localDataSource,
+        _syncService = syncService;
 
   @override
   Future<Either<Failure, StudentDetailEntity>> upsertStudent(
@@ -90,5 +94,88 @@ final class StudentRepositoryImpl implements StudentRepository {
     required ActiveStatus newStatus,
   }) async {
     return const Right(unit);
+  }
+
+  @override
+  Future<Either<Failure, PlanForTheDayEntity>> getPlanForTheDay() async {
+    try {
+      final followUpPlan = await _localDataSource.getFollowUpPlan();
+      final trackings = await _localDataSource.getFollowUpTrackings();
+
+      if (followUpPlan.planDetails.isEmpty) {
+        return Left(CacheFailure(message: 'You have no plan details.'));
+      }
+
+      if (trackings.isEmpty) {
+        return Right(_getFirstPlan(followUpPlan.planDetails.first));
+      }
+
+      final lastTracking = trackings.last;
+      final lastTrackingDate = DateTime.parse(lastTracking.trackDate);
+      final frequency = followUpPlan.frequency;
+      final daysCount = frequency.daysCount;
+      final nextTrackingDate = lastTrackingDate.add(Duration(days: daysCount));
+      final now = DateTime.now();
+
+      if (now.isBefore(nextTrackingDate)) {
+        return Left(CacheFailure(
+            message:
+                'You have already completed your plan for today. Please come back tomorrow.'));
+      }
+
+      final planDetails = followUpPlan.planDetails;
+
+      if (lastTracking.trackingDetails.isEmpty) {
+        return Right(_getFirstPlan(planDetails.first));
+      }
+
+      final lastTrackingDetail = lastTracking.trackingDetails.first;
+      final toTrackingUnitId = lastTrackingDetail.toTrackingUnitId;
+
+      if (toTrackingUnitId == null) {
+        return Right(_getFirstPlan(planDetails.first));
+      }
+
+      final fromAyah = await _quranLocalDataSource
+          .getAyahById(toTrackingUnitId as int + 1);
+
+      final lastCompletedPlanDetailIndex = trackings.length - 1;
+
+      if (lastCompletedPlanDetailIndex + 1 >= planDetails.length) {
+        return Left(
+            CacheFailure(message: 'You have completed all your plan details.'));
+      }
+
+      final nextPlanDetail = planDetails[lastCompletedPlanDetailIndex + 1];
+
+      final toAyah = await _quranLocalDataSource
+          .getAyahById(toTrackingUnitId as int + nextPlanDetail.amount);
+
+      return Right(
+        PlanForTheDayEntity(
+          planDetail: nextPlanDetail,
+          fromSurah: fromAyah.surahName,
+          fromPage: fromAyah.page,
+          fromAyah: fromAyah.ayahNumber,
+          toSurah: toAyah.surahName,
+          toPage: toAyah.page,
+          toAyah: toAyah.ayahNumber,
+        ),
+      );
+    } on CacheException catch (e) {
+      return Left(CacheFailure(message: e.message));
+    }
+  }
+
+  PlanForTheDayEntity _getFirstPlan(PlanDetailEntity planDetail) {
+    return PlanForTheDayEntity(
+      planDetail: planDetail,
+      fromSurah: 'Al-Fatihah',
+      fromPage: 1,
+      fromAyah: 1,
+      toSurah: 'Al-Fatihah',
+      toPage: 1,
+      toAyah: planDetail.amount,
+    );
   }
 }

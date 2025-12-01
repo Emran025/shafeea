@@ -57,3 +57,7 @@ final class StudentStatusChanged extends StudentEvent {
   @override
   List<Object> get props => [studentId, newStatus];
 }
+
+final class PlanForTheDayRequested extends StudentEvent {
+  const PlanForTheDayRequested();
+}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shafeea/shared/themes/app_theme.dart';
 
 import 'package:shafeea/shared/widgets/avatar.dart';
@@ -13,6 +14,8 @@ import '../../../../daily_tracking/presentation/bloc/quran_reader_bloc.dart';
 import '../../../../daily_tracking/presentation/bloc/tracking_session_bloc.dart';
 import '../../../../daily_tracking/presentation/pages/quran_reader_screen.dart';
 import '../../../../settings/presentation/screens/settings_screen.dart';
+import '../../../domain/entities/plan_for_the_day_entity.dart';
+import '../../bloc/student_bloc.dart';
 
 // import '../../../../../core/constants/app_colors.dart';
 
@@ -24,6 +27,12 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<StudentBloc>().add(const PlanForTheDayRequested());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -102,7 +111,69 @@ class _DashboardState extends State<Dashboard> {
 
         body: Directionality(
           textDirection: TextDirection.rtl,
-          child: SafeArea(child: Center()),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Card(
+                    color: AppColors.primary,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Latest Alerts',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            'This is a static alert message. No new alerts at the moment.',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  BlocBuilder<StudentBloc, StudentState>(
+                    builder: (context, state) {
+                      if (state.planForTheDayStatus ==
+                          PlanForTheDayStatus.loading) {
+                        return const CircularProgressIndicator();
+                      } else if (state.planForTheDayStatus ==
+                          PlanForTheDayStatus.failure) {
+                        return Text(
+                            state.planForTheDayFailure?.message ?? 'Error');
+                      } else if (state.planForTheDayStatus ==
+                          PlanForTheDayStatus.success) {
+                        return Card(
+                          color: AppColors.primary,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Plan for the Day',
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                                const SizedBox(height: 8.0),
+                                _buildDetailItem(state.planForTheDay!),
+                              ],
+                            ),
+                          ),
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -114,6 +185,67 @@ class _DashboardState extends State<Dashboard> {
       builder: (context) => BlocProvider.value(
         value: context.read<AuthBloc>(),
         child: const LogoutConfirmationDialog(),
+      ),
+    );
+  }
+
+  Widget _buildDetailItem(PlanForTheDayEntity planForTheDay) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          planForTheDay.planDetail.type.toString().split('.').last,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 8),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _buildDetailColumn(
+                "From",
+                planForTheDay.fromSurah,
+                planForTheDay.fromPage.toString(),
+                planForTheDay.fromAyah.toString(),
+              ),
+            ),
+            const VerticalDivider(color: AppColors.accent70),
+            Expanded(
+              child: _buildDetailColumn(
+                "To",
+                planForTheDay.toSurah,
+                planForTheDay.toPage.toString(),
+                planForTheDay.toAyah.toString(),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailColumn(
+      String header, String surah, String page, String ayah) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          header,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        _buildDetailRow("Surah:", surah),
+        _buildDetailRow("Page:", page),
+        _buildDetailRow("Ayah:", ayah),
+      ],
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4.0, right: 8),
+      child: Text(
+        "$label $value",
+        style: Theme.of(context).textTheme.bodyMedium,
       ),
     );
   }
