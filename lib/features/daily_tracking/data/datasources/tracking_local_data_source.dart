@@ -1,4 +1,3 @@
-import 'package:shafeea/core/models/sync_queue_model.dart';
 import 'package:shafeea/core/models/tracking_type.dart';
 import 'package:shafeea/features/home/data/models/tracking_detail_model.dart';
 import 'package:shafeea/core/models/bar_chart_datas.dart';
@@ -34,17 +33,6 @@ abstract class TrackingLocalDataSource {
   /// operation for future synchronization.
   Future<void> saveDraftTrackingDetails(List<TrackingDetailModel> details);
 
-  /// Finalizes the current draft tracking record.
-  ///
-  /// This operation updates the parent `daily_tracking` record's status from 'draft'
-  /// to 'completed', saves the final teacher notes, and queues the operation for
-  /// future synchronization.
-  Future<void> finalizeDailyTracking({
-    required int trackingId,
-    required String finalNotes,
-    required int behaviorScore,
-  });
-
   // =========================================================================
   //                      All Mistake Methods
   // =========================================================================
@@ -60,28 +48,4 @@ abstract class TrackingLocalDataSource {
   Future<List<BarChartDatas>> getErrorAnalysisChartData({
     required ChartFilter filter,
   });
-
-  // =========================================================================
-  //                       Synchronization Methods
-  // =========================================================================
-
-  /// Fetches all pending sync operations for tracking entities from the local queue.
-  ///
-  /// Returns a list of [SyncQueueModel] objects, ordered by creation time.
-  Future<List<SyncQueueModel>> getPendingSyncOperations();
-
-  /// Deletes a sync operation from the queue once it has been successfully
-  /// processed by the server.
-  Future<void> deleteCompletedOperation(int operationId);
-
-  /// Retrieves the last successful server sync timestamp for the tracking entity type.
-  ///
-  /// Returns a Unix timestamp in milliseconds, or 0 if no sync has occurred.
-  Future<int> getLastSyncTimestamp();
-
-  /// Updates the last successful server sync timestamp for the tracking entity type.
-  ///
-  /// This should be called after a successful sync operation with the server,
-  /// using the timestamp provided by the server.
-  Future<void> updateLastSyncTimestamp(int timestamp);
 }

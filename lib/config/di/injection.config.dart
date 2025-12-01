@@ -66,23 +66,14 @@ import 'package:shafeea/features/daily_tracking/data/datasources/tracking_local_
     as _i1022;
 import 'package:shafeea/features/daily_tracking/data/datasources/tracking_local_data_source_impl.dart'
     as _i348;
-import 'package:shafeea/features/daily_tracking/data/datasources/tracking_remote_data_source.dart'
-    as _i239;
-import 'package:shafeea/features/daily_tracking/data/datasources/tracking_remote_data_source_impl.dart'
-    as _i46;
 import 'package:shafeea/features/daily_tracking/data/repositories/quran_repository_impl.dart'
     as _i210;
 import 'package:shafeea/features/daily_tracking/data/repositories/tracking_repository_impl.dart'
     as _i431;
-import 'package:shafeea/features/daily_tracking/data/services/halaqa_sync_service_impl.dart'
-    as _i567;
-import 'package:shafeea/features/daily_tracking/data/services/tracking_sync_service.dart'
-    as _i1014;
 import 'package:shafeea/features/daily_tracking/domain/repositories/quran_repository.dart'
     as _i611;
 import 'package:shafeea/features/daily_tracking/domain/repositories/tracking_repository.dart'
     as _i341;
-
 import 'package:shafeea/features/daily_tracking/domain/usecases/generate_follow_up_report_use_case.dart'
     as _i268;
 import 'package:shafeea/features/daily_tracking/domain/usecases/get_all_mistakes.dart'
@@ -97,7 +88,8 @@ import 'package:shafeea/features/daily_tracking/domain/usecases/get_page_data.da
     as _i331;
 import 'package:shafeea/features/daily_tracking/domain/usecases/get_surahs_list.dart'
     as _i359;
-
+import 'package:shafeea/features/daily_tracking/domain/usecases/save_task_progress.dart'
+    as _i587;
 import 'package:shafeea/features/daily_tracking/presentation/bloc/error_analysis_chart_bloc.dart'
     as _i2;
 import 'package:shafeea/features/daily_tracking/presentation/bloc/quran_reader_bloc.dart'
@@ -270,11 +262,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i672.AuthRemoteDataSource>(
       () => _i287.AuthRemoteDataSourceImpl(gh<_i733.ApiConsumer>()),
     );
-    gh.lazySingleton<_i239.TrackingRemoteDataSource>(
-      () => _i46.TrackingRemoteDataSourceImpl(
-        apiConsumer: gh<_i733.ApiConsumer>(),
-      ),
-    );
     gh.lazySingleton<_i155.StudentLocalDataSource>(
       () => _i1007.StudentLocalDataSourceImpl(
         database: gh<_i779.Database>(),
@@ -289,14 +276,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i359.GetSurahsList>(
       () => _i359.GetSurahsList(repository: gh<_i611.QuranRepository>()),
-    );
-    gh.lazySingleton<_i1014.TrackingSyncService>(
-      () => _i567.TrackingSyncServiceImpl(
-        remoteDataSource: gh<_i239.TrackingRemoteDataSource>(),
-        localDataSource: gh<_i1022.TrackingLocalDataSource>(),
-        studentLocalDataSource: gh<_i155.StudentLocalDataSource>(),
-        networkInfo: gh<_i672.NetworkInfo>(),
-      ),
     );
     gh.lazySingleton<_i391.CoreDataLocalDataSource>(
       () => _i120.CoreDataLocalDataSourceImpl(
@@ -398,7 +377,6 @@ extension GetItInjectableX on _i174.GetIt {
         syncService: gh<_i331.StudentSyncService>(),
       ),
     );
-
     gh.lazySingleton<_i500.GetAllMistakes>(
       () => _i500.GetAllMistakes(gh<_i341.TrackingRepository>()),
     );
@@ -409,7 +387,9 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i949.GetOrCreateTodayTrackingDetails(gh<_i341.TrackingRepository>()),
     );
-
+    gh.lazySingleton<_i587.SaveTaskProgress>(
+      () => _i587.SaveTaskProgress(gh<_i341.TrackingRepository>()),
+    );
     gh.lazySingleton<_i268.GenerateFollowUpReportUseCase>(
       () => _i268.GenerateFollowUpReportUseCase(
         gh<_i341.TrackingRepository>(),
@@ -456,13 +436,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i741.SwitchUserUseCase>(),
       ),
     );
-    gh.factory<_i820.TrackingSessionBloc>(
-      () => blocModule.trackingSession(
-        gh<_i949.GetOrCreateTodayTrackingDetails>(),
-        gh<_i500.GetAllMistakes>(),
-        gh<_i268.GenerateFollowUpReportUseCase>(),
-      ),
-    );
     gh.lazySingleton<_i546.SetStudentStatusUseCase>(
       () => _i546.SetStudentStatusUseCase(gh<_i634.StudentRepository>()),
     );
@@ -488,6 +461,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i564.DeleteStudentUseCase>(),
         gh<_i1070.GetStudentById>(),
         gh<_i546.SetStudentStatusUseCase>(),
+      ),
+    );
+    gh.factory<_i820.TrackingSessionBloc>(
+      () => blocModule.trackingSession(
+        gh<_i949.GetOrCreateTodayTrackingDetails>(),
+        gh<_i500.GetAllMistakes>(),
+        gh<_i268.GenerateFollowUpReportUseCase>(),
+        gh<_i587.SaveTaskProgress>(),
       ),
     );
     return this;

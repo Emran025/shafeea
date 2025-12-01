@@ -38,21 +38,6 @@ abstract class TrackingRepository {
     TrackingDetailEntity detail,
   );
 
-  /// Finalizes the daily tracking session.
-  ///
-  /// This operation updates the status of the tracking record from 'draft' to 'completed'
-  /// in the local database and queues this final update for synchronization.
-  ///
-  /// Returns a [Right] with `unit` on success, or a [Left] with a `Failure` on error.
-  Future<Either<Failure, Unit>> finalizeSession({
-    required int trackingId, // The local ID of the parent daily_tracking record
-    required String finalNotes,
-    required int behaviorScore,
-  });
-
-  ///
-  ///
-
   Future<Either<Failure, List<Mistake>>> getAllMistakes({
     TrackingType? type, // <-- NOW OPTIONAL
     int? fromPage,

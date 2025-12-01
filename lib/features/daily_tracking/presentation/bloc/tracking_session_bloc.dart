@@ -1,10 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
-import 'package:collection/collection.dart'; // Import collection package for firstWhereOrNull
-import 'package:uuid/uuid.dart';
+
+import '../../../../core/constants/tracking_unit_detail.dart';
 import '../../../../core/error/failures.dart';
-import '../../../../core/models/mistake_type.dart';
 import '../../../../core/utils/data_status.dart';
 
 // Import your existing domain entities
@@ -15,7 +14,7 @@ import 'package:shafeea/core/models/tracking_type.dart';
 import '../../domain/entities/mistake.dart';
 import '../../domain/usecases/get_all_mistakes.dart';
 import '../../domain/usecases/get_or_create_today_tracking.dart';
-
+import '../../domain/usecases/save_task_progress.dart';
 import '../../domain/usecases/generate_follow_up_report_use_case.dart';
 import '../view_models/follow_up_report_bundle_entity.dart';
 part 'tracking_session_event.dart';
@@ -26,21 +25,24 @@ class TrackingSessionBloc
   final GetOrCreateTodayTrackingDetails _getOrCreateTodayTrackingDetails;
   final GetAllMistakes _getAllMistakes;
   final GenerateFollowUpReportUseCase _generateFollowUpReportUC;
+    final SaveTaskProgress _saveTaskProgress;
+
   TrackingSessionBloc({
     required GetOrCreateTodayTrackingDetails getOrCreateTodayTrackingDetails,
     required GetAllMistakes getAllMistakes,
     required GenerateFollowUpReportUseCase generateFollowUpReportUC,
+        required SaveTaskProgress saveTaskProgress,
+
   }) : _getOrCreateTodayTrackingDetails = getOrCreateTodayTrackingDetails,
        _getAllMistakes = getAllMistakes,
        _generateFollowUpReportUC = generateFollowUpReportUC,
+       _saveTaskProgress = saveTaskProgress,
+
        super(const TrackingSessionState(enrollmentId: "-1")) {
     on<SessionStarted>(_onSessionStarted);
     on<TaskTypeChanged>(_onTaskTypeChanged);
-    on<WordTappedForMistake>(_onWordTappedForMistake);
-
-
-
     on<HistoricalMistakesRequested>(_onHistoricalMistakesRequested);
+    on<RecitationRangeEnded>(_onRecitationRangeEnded);
 on<FollowUpReportFetched>(_onFetchReport, transformer: droppable());
   }
   Future<void> _onSessionStarted(
@@ -50,7 +52,6 @@ on<FollowUpReportFetched>(_onFetchReport, transformer: droppable());
     emit(
       state.copyWith(
         status: DataStatus.loading,
-        
       ),
     );
 
@@ -90,63 +91,85 @@ on<FollowUpReportFetched>(_onFetchReport, transformer: droppable());
     );
   }
 
-  void _onWordTappedForMistake(
-    WordTappedForMistake event,
+  void _onRecitationRangeEnded(
+    RecitationRangeEnded event,
     Emitter<TrackingSessionState> emit,
   ) async {
-    final currentTaskDetail = state.currentTaskDetail;
+    final currentDetail = state.currentTaskDetail;
+    if (currentDetail == null) return;
 
-    if (currentTaskDetail == null) return;
+    // Create a new TrackingUnitDetail for the end point
+    //  double gap = double.parse("${event.pageCount}.${event.ayah}");
 
-    final List<Mistake> updatedMistakes = List.from(currentTaskDetail.mistakes);
-    final existingMistake = updatedMistakes.firstWhereOrNull(
-      (m) => m.ayahIdQuran == event.ayahId && m.wordIndex == event.wordIndex,
-    );
+    int gapPageCount = event.pageNumber;
 
-    if (existingMistake != null) {
-      updatedMistakes.remove(existingMistake);
-    } else {
-      final newMistake = Mistake(
-        id: const Uuid().v4(),
-        trackingDetailId: "${currentTaskDetail.id}",
-        ayahIdQuran: event.ayahId,
-        wordIndex: event.wordIndex,
-        mistakeType: event.newMistakeType,
-      );
-      updatedMistakes.add(newMistake);
+    int addedNumber = 0;
+
+    while (gapPageCount > currentDetail.toTrackingUnitId.toPage &&
+        trackingUnitDetail[(currentDetail.toTrackingUnitId.id - 1) +
+                    addedNumber]
+                .unitId ==
+            currentDetail.toTrackingUnitId.unitId) {
+      gapPageCount -=
+          (trackingUnitDetail[(currentDetail.toTrackingUnitId.id - 1) +
+                  addedNumber]
+              .toAyah -
+          trackingUnitDetail[(currentDetail.toTrackingUnitId.id - 1) +
+                  addedNumber]
+              .fromAyah);
+      ++addedNumber;
     }
+    final newToTrackingUnitId =
+        trackingUnitDetail[(currentDetail.toTrackingUnitId.id - 1) +
+            addedNumber];
+    final gap = double.parse("$gapPageCount.${event.ayah}");
 
-    final updatedTaskDetail = TrackingDetailEntity(
-      id: currentTaskDetail.id,
-      uuid: currentTaskDetail.uuid,
-      trackingId: currentTaskDetail.trackingId,
-      trackingTypeId: currentTaskDetail.trackingTypeId,
-      fromTrackingUnitId: currentTaskDetail.fromTrackingUnitId,
-      toTrackingUnitId: currentTaskDetail.toTrackingUnitId,
-      actualAmount: currentTaskDetail.actualAmount,
-      comment: currentTaskDetail.comment,
-      status: currentTaskDetail.status,
-      score: currentTaskDetail.score,
-      gap: currentTaskDetail.gap,
-      createdAt: currentTaskDetail.createdAt,
-      updatedAt: currentTaskDetail.updatedAt,
-      mistakes: updatedMistakes, // <-- PASS THE UPDATED MISTAKES LIST
+    // Manually rebuild the entity with the new `toTrackingUnitId`
+    final updatedDetail = TrackingDetailEntity(
+      id: currentDetail.id,
+      uuid: currentDetail.uuid,
+      trackingId: currentDetail.trackingId,
+      trackingTypeId: currentDetail.trackingTypeId,
+      fromTrackingUnitId: currentDetail.fromTrackingUnitId,
+      toTrackingUnitId: newToTrackingUnitId,
+      actualAmount: currentDetail.actualAmount,
+      comment: currentDetail.comment,
+      status: currentDetail.status,
+      score: currentDetail.score,
+      gap: gap,
+      createdAt: currentDetail.createdAt,
+      updatedAt: currentDetail.updatedAt,
+      mistakes: currentDetail.mistakes,
     );
-    // ========================================================
-
-    // await _updateStateWithNewDetail(emit, updatedTaskDetail);
-
+    await _updateStateWithNewDetail(emit, updatedDetail);
+  }
+  // The helper method remains the same and is still very useful.
+  Future<void> _updateStateWithNewDetail(
+    Emitter<TrackingSessionState> emit,
+    TrackingDetailEntity updatedDetail,
+  ) async {
     final updatedProgress = Map<TrackingType, TrackingDetailEntity>.from(
       state.taskProgress,
     );
 
-    updatedProgress[state.currentTaskType] = updatedTaskDetail;
-
+    updatedProgress[state.currentTaskType] = updatedDetail;
     emit(state.copyWith(taskProgress: updatedProgress));
+    // Then, call the use case to persist this final entity to the database.
+    emit(state.copyWith(status: DataStatus.loading));
+    final result = await _saveTaskProgress(
+      SaveTaskProgressParams(detail: updatedDetail),
+    );
+
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          status: DataStatus.failure,
+          errorMessage: failure.message,
+        ),
+      ),
+      (_) => emit(state.copyWith(status: DataStatus.success)),
+    );
   }
-
-
-
   // In TrackingSessionBloc
   Future<void> _onHistoricalMistakesRequested(
     HistoricalMistakesRequested event,

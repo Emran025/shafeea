@@ -23,22 +23,15 @@ class TaskTypeChanged extends TrackingSessionEvent {
   List<Object> get props => [newType];
 }
 
-// --- Mistake Interaction Events ---
 
-/// Dispatched when the user taps on a word in the Quran text to mark/unmark a mistake.
-class WordTappedForMistake extends TrackingSessionEvent {
-  final int ayahId;
-  final int wordIndex;
-    final MistakeType newMistakeType;
-
-  const WordTappedForMistake({required this.ayahId, required this.wordIndex ,required this.newMistakeType,});
+/// Dispatched when the user taps the end-of-ayah symbol to mark the recitation range.
+class RecitationRangeEnded extends TrackingSessionEvent {
+  final int pageNumber;
+  final int ayah;
+  const RecitationRangeEnded({required this.pageNumber, required this.ayah});
   @override
-  List<Object> get props => [ayahId, wordIndex,newMistakeType];
+  List<Object> get props => [pageNumber, ayah];
 }
-
-
-
-
 
 // lib/features/daily_tracking/presentation/bloc/tracking_session_event.dart
 

@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 // Import your features' use cases and BLoCs here.
 // Grouping by feature improves readability.
 
+import '../../features/daily_tracking/domain/usecases/save_task_progress.dart';
 import '../../features/home/domain/usecases/delete_student_usecase.dart';
 import '../../features/daily_tracking/domain/usecases/generate_follow_up_report_use_case.dart';
 import '../../features/home/domain/usecases/get_student_by_id.dart';
@@ -162,10 +163,13 @@ abstract class BlocModule {
     GetOrCreateTodayTrackingDetails getOrCreateTodayTrackingDetails,
     GetAllMistakes getAllMistakes,
     GenerateFollowUpReportUseCase generateFollowUpReportUC,
+       SaveTaskProgress saveTaskProgress,
+
   ) {
     return TrackingSessionBloc(
       getOrCreateTodayTrackingDetails: getOrCreateTodayTrackingDetails,
       getAllMistakes: getAllMistakes,
+      saveTaskProgress: saveTaskProgress,
       generateFollowUpReportUC: generateFollowUpReportUC,
     );
   }

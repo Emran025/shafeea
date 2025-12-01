@@ -13,7 +13,6 @@ import '../models/tracking_model.dart';
 /// their synchronization state within the local SQLite database. It operates
 /// exclusively with data layer models.
 abstract interface class StudentLocalDataSource {
-
   /// Retrieves all pending operations from the sync queue.
   Future<List<SyncQueueModel>> getPendingSyncOperations();
 
@@ -87,19 +86,5 @@ abstract interface class StudentLocalDataSource {
   ///
   /// Throws a [CacheException] if the database transaction fails.
   /// {@endtemplate}
-  Future<void> cacheFollowUpTrackings({
-    required List<TrackingModel> trackings,
-  });
-
-  /// Fetches a list of follow-up tracking records by their UUIDs.
-  /// This is useful for syncing operations where we need to
-  /// retrieve the full tracking data based on their unique identifiers.
-  Future<List<TrackingModel>> getFollowUpTrackingsByUuids({
-    required List<String> uuids,
-  });
-
-  Future<List<TrackingModel>> getFollowUpTrackingsByStudentIds({
-    required int studentId,
-  });
-
+  Future<void> cacheFollowUpTrackings({required List<TrackingModel> trackings});
 }

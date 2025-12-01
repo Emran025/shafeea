@@ -33,9 +33,11 @@ final class TrackingRepositoryImpl implements TrackingRepository {
   final TrackingLocalDataSource _localDataSource;
   final StudentLocalDataSource _studentlocalDataSource;
 
-  TrackingRepositoryImpl({required TrackingLocalDataSource localDataSource , required StudentLocalDataSource studentlocalDataSource })
-    : _localDataSource = localDataSource,
-     _studentlocalDataSource = studentlocalDataSource;
+  TrackingRepositoryImpl({
+    required TrackingLocalDataSource localDataSource,
+    required StudentLocalDataSource studentlocalDataSource,
+  }) : _localDataSource = localDataSource,
+       _studentlocalDataSource = studentlocalDataSource;
 
   @override
   Future<Either<Failure, Map<TrackingType, TrackingDetailEntity>>>
@@ -60,22 +62,6 @@ final class TrackingRepositoryImpl implements TrackingRepository {
       await _localDataSource.saveDraftTrackingDetails([detailModel]);
 
       return unit; // Return the dartz unit object on success
-    });
-  }
-
-  @override
-  Future<Either<Failure, Unit>> finalizeSession({
-    required int trackingId,
-    required String finalNotes,
-    required int behaviorScore,
-  }) {
-    return _tryCatch<Unit>(() async {
-      await _localDataSource.finalizeDailyTracking(
-        trackingId: trackingId,
-        finalNotes: finalNotes,
-        behaviorScore: behaviorScore,
-      );
-      return unit;
     });
   }
 
@@ -128,7 +114,6 @@ final class TrackingRepositoryImpl implements TrackingRepository {
     });
   }
 
-  
   @override
   Future<Either<Failure, FollowUpPlanEntity>> getFollowUpPlan() async {
     try {
@@ -154,5 +139,4 @@ final class TrackingRepositoryImpl implements TrackingRepository {
       return Left(ServerFailure(message: e.message));
     }
   }
-
 }

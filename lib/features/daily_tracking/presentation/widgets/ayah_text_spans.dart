@@ -3,7 +3,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shafeea/core/models/mistake_type.dart';
 import 'package:shafeea/core/utils/app_assets.dart';
 import 'package:shafeea/features/daily_tracking/domain/entities/ayah.dart';
 import 'package:shafeea/features/daily_tracking/domain/entities/mistake.dart';
@@ -74,14 +73,6 @@ class _AyahaTextSpansState extends State<AyahTextSpans> {
           if (currentDetail == null) return;
 
           // Safety check: Do not proceed if there is no active task detail.
-
-          context.read<TrackingSessionBloc>().add(
-            WordTappedForMistake(
-              ayahId: ayah.number,
-              wordIndex: tappedWordIndex,
-              newMistakeType: MistakeType.none,
-            ),
-          );
         },
       );
 
@@ -119,7 +110,9 @@ class _AyahaTextSpansState extends State<AyahTextSpans> {
             // When the end-of-ayah symbol is tapped, we dispatch a different event.
             if (currentDetail == null) return;
 
-
+            context.read<TrackingSessionBloc>().add(
+              RecitationRangeEnded(pageNumber: ayah.page, ayah: ayah.number),
+            );
             // We can also still log it as a mistake if needed.
             // context.read<TrackingSessionBloc>().add(
             //   WordTappedForMistake(ayahId: ayah.id, wordIndex: endSymbolIndex),

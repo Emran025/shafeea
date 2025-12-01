@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:injectable/injectable.dart';
 import 'package:sqflite/sqflite.dart';
@@ -8,7 +7,6 @@ import 'package:uuid/uuid.dart';
 // Core imports
 import 'package:shafeea/core/database/app_database.dart';
 import 'package:shafeea/core/error/exceptions.dart';
-import 'package:shafeea/core/models/sync_queue_model.dart';
 import 'package:shafeea/core/models/tracking_type.dart';
 
 // Models
@@ -32,10 +30,6 @@ const String _kHalqaStudentsTable = 'halqa_students';
 
 const String _kDailyTrackingDetailTable = 'daily_tracking_detail';
 const String _kMistakesTable = 'mistakes';
-const String _kPendingOperationsTable = 'pending_operations';
-const String _kSyncMetadataTable = 'sync_metadata';
-const String _kTrackingEntityType = 'tracking';
-
 /// The concrete implementation of [TrackingLocalDataSource].
 ///
 /// This class handles all direct database interactions for the interactive
@@ -163,7 +157,6 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
         final lastUnitsMap = await _getLastCompletedUnitIds(
           db,
           studentEnrollmentDbId,
-
           tenantId,
         );
         await _createMissingDetails(
@@ -219,16 +212,6 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
           }
         }
         await batch.commit(noResult: true);
-        final parentTrackingUuid = await _getParentTrackingUuid(
-          txn,
-          details.first.trackingId,
-        );
-        await _queueSyncOperation(
-          dbExecutor: txn,
-          uuid: parentTrackingUuid,
-          operation: 'update',
-          tenantId: tenantId,
-        );
       });
     } on DatabaseException catch (e) {
       throw CacheException(
@@ -237,179 +220,6 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
     }
   }
 
-  @override
-  Future<void> finalizeDailyTracking({
-    required int trackingId,
-    required String finalNotes,
-    required int behaviorScore,
-  }) async {
-    final db = await _appDb.database;
-    final user = await _authLocalDataSource.getUser();
-    final tenantId = "${user!.id}";
-    try {
-      await db.transaction((txn) async {
-        // 1. Retrieve the current record data (Draft) to find the date and student
-
-        final currentRecord = await txn.query(
-          _kDailyTrackingTable,
-          columns: ['enrollmentId', 'trackDate', 'uuid'],
-          where: 'id = ?',
-          whereArgs: [trackingId],
-        );
-
-        if (currentRecord.isEmpty) {
-          throw CacheException(message: 'Tracking record not found');
-        }
-
-        final enrollmentId = currentRecord.first['enrollmentId'] as int;
-        final trackDate = currentRecord.first['trackDate'] as String;
-        final currentUuid = currentRecord.first['uuid'] as String;
-
-        // 2. Search for a completed record for the same student on the same day
-        final oldCompletedRecord = await txn.query(
-          _kDailyTrackingTable,
-          where:
-              'enrollmentId = ? AND trackDate = ? AND status = ? AND id != ? AND tenant_id = ?',
-          whereArgs: [
-            enrollmentId,
-            trackDate,
-            'completed',
-            trackingId,
-            tenantId,
-          ],
-        );
-
-        if (oldCompletedRecord.isNotEmpty) {
-          // =============================================================
-          // Merger Scenario: A previous record is complete; the current one will be merged into it.
-          // ==========================================================
-
-          final oldRecordId = oldCompletedRecord.first['id'] as int;
-          final oldRecordUuid = oldCompletedRecord.first['uuid'] as String;
-
-          // A. Update the old record header with the new data
-          await txn.update(
-            _kDailyTrackingTable,
-            {
-              'note': finalNotes,
-              'behaviorNote': behaviorScore,
-              'lastModified': DateTime.now().millisecondsSinceEpoch,
-            },
-            where: 'id = ?',
-            whereArgs: [oldRecordId],
-          );
-
-          // B. Retrieve the details of the two records (old and new) to merge them
-          final oldDetails = await txn.query(
-            _kDailyTrackingDetailTable,
-            where: 'trackingId = ?',
-            whereArgs: [oldRecordId],
-          );
-          final newDetails = await txn.query(
-            _kDailyTrackingDetailTable,
-            where: 'trackingId = ?',
-            whereArgs: [trackingId],
-          );
-
-          // C. Combining details for each type (save, review, narrate)
-          for (var newDetail in newDetails) {
-            final typeId = newDetail['typeId'];
-            // Search for the corresponding detail in the old record
-            final matchingOldDetail = oldDetails.firstWhereOrNull(
-              (d) => d['typeId'] == typeId,
-            );
-
-            if (matchingOldDetail != null) {
-              // There is an old detail: We are updating
-              // Rule: From (old), To (new)
-              // But only if there is a new progress in the new record
-              if (newDetail['toTrackingUnitId'] != null) {
-                await txn.update(
-                  _kDailyTrackingDetailTable,
-                  {
-                    'toTrackingUnitId': newDetail['toTrackingUnitId'],
-                    'actualAmount': newDetail['actualAmount'],
-                    'score': newDetail['score'],
-                    'gap': newDetail['gap'],
-                    'comment':
-                        newDetail['comment'], // أو دمج التعليقين إذا أردت
-                    'lastModified': DateTime.now().millisecondsSinceEpoch,
-                  },
-                  where: 'id = ?',
-                  whereArgs: [matchingOldDetail['id']],
-                );
-              }
-
-              // D. Transferring Mistakes from the New Detail to the Old Detail
-              // We update the trackingDetailId in the Mistakes table to point to the old one.
-              await txn.update(
-                _kMistakesTable,
-                {'trackingDetailId': matchingOldDetail['id']},
-                where: 'trackingDetailId = ?',
-                whereArgs: [newDetail['id']],
-              );
-            }
-          }
-
-          // e. The new record (Draft) will be completely deleted because it has been merged.
-          // (Since Cascade deletion is enabled in the table, the Draft details will be deleted automatically.)
-          // (We have already moved the errors to the old record, so there is no need to worry.)
-          await txn.delete(
-            _kDailyTrackingTable,
-            where: 'id = ?',
-            whereArgs: [trackingId],
-          );
-
-          // And. Adding the synchronization process to the old record (because it is the one that remained and was modified)
-          await _queueSyncOperation(
-            dbExecutor: txn,
-            uuid: oldRecordUuid, // We use the old record UUID
-            operation: 'update',
-            tenantId: tenantId,
-          );
-        } else {
-          // =============================================================
-          // Normal scenario: No previous record, current converted to Completed
-          // ==========================================================
-
-          await txn.update(
-            _kDailyTrackingTable,
-            {
-              'status': 'completed',
-              'note': finalNotes,
-              'behaviorNote': behaviorScore,
-              'lastModified': DateTime.now().millisecondsSinceEpoch,
-            },
-            where: 'id = ?',
-            whereArgs: [trackingId],
-          );
-
-          await txn.update(
-            _kDailyTrackingDetailTable,
-            {'status': 'completed'},
-            where: '''
-                trackingId = ? 
-                AND fromTrackingUnitId IS NOT NULL 
-                AND toTrackingUnitId IS NOT NULL 
-                AND fromTrackingUnitId != toTrackingUnitId
-            ''',
-            whereArgs: [trackingId],
-          );
-
-          await _queueSyncOperation(
-            dbExecutor: txn,
-            uuid: currentUuid,
-            operation: 'update',
-            tenantId: tenantId,
-          );
-        }
-      });
-    } on DatabaseException catch (e) {
-      throw CacheException(
-        message: 'Failed to finalize daily tracking: ${e.toString()}',
-      );
-    }
-  }
 
   @override
   Future<List<MistakeModel>> getAllMistakes({
@@ -742,88 +552,6 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
   }
 
   // =========================================================================
-  //                       Synchronization Methods
-  // =========================================================================
-
-  @override
-  Future<List<SyncQueueModel>> getPendingSyncOperations() async {
-    final db = await _appDb.database;
-    final user = await _authLocalDataSource.getUser();
-    final tenantId = "${user!.id}";
-    try {
-      final maps = await db.query(
-        _kPendingOperationsTable,
-        where: 'entity_type = ? AND status = ? AND tenant_id = ?',
-        whereArgs: [_kTrackingEntityType, 'pending', tenantId],
-        orderBy: 'created_at ASC',
-      );
-      return maps.map(SyncQueueModel.fromMap).toList();
-    } on DatabaseException catch (e) {
-      throw CacheException(
-        message: 'Failed to get pending tracking operations: ${e.toString()}',
-      );
-    }
-  }
-
-  @override
-  Future<void> deleteCompletedOperation(int operationId) async {
-    final db = await _appDb.database;
-    try {
-      await db.delete(
-        _kPendingOperationsTable,
-        where: 'id = ?',
-        whereArgs: [operationId],
-      );
-    } on DatabaseException catch (e) {
-      throw CacheException(
-        message: 'Failed to delete completed operation: ${e.toString()}',
-      );
-    }
-  }
-
-  @override
-  Future<int> getLastSyncTimestamp() async {
-    final db = await _appDb.database;
-    final user = await _authLocalDataSource.getUser();
-    final tenantId = "${user!.id}";
-    try {
-      final result = await db.query(
-        _kSyncMetadataTable,
-        columns: ['last_server_sync_timestamp'],
-        where: 'entity_type = ? AND tenant_id = ?',
-        whereArgs: [_kTrackingEntityType, tenantId],
-      );
-      return result.isNotEmpty
-          ? result.first['last_server_sync_timestamp'] as int? ?? 0
-          : 0;
-    } on DatabaseException catch (e) {
-      throw CacheException(
-        message:
-            'Failed to get last sync timestamp for tracking: ${e.toString()}',
-      );
-    }
-  }
-
-  @override
-  Future<void> updateLastSyncTimestamp(int timestamp) async {
-    final db = await _appDb.database;
-    final user = await _authLocalDataSource.getUser();
-    final tenantId = "${user!.id}";
-    try {
-      await db.insert(_kSyncMetadataTable, {
-        'entity_type': _kTrackingEntityType,
-        'last_server_sync_timestamp': timestamp,
-        'tenant_id': tenantId,
-      }, conflictAlgorithm: ConflictAlgorithm.replace);
-    } on DatabaseException catch (e) {
-      throw CacheException(
-        message:
-            'Failed to update last sync timestamp for tracking: ${e.toString()}',
-      );
-    }
-  }
-
-  // =========================================================================
   //                             Private Helper Methods
   // =========================================================================
 
@@ -943,45 +671,6 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
     }).toList();
   }
 
-  /// (Internal Helper) Queues a sync operation within an existing transaction.
-  Future<void> _queueSyncOperation({
-    required DatabaseExecutor dbExecutor,
-    required String uuid,
-    required String operation,
-    required String tenantId,
-    Map<String, dynamic>? payload,
-  }) async {
-    await dbExecutor.insert(_kPendingOperationsTable, {
-      'entity_uuid': uuid,
-      'entity_type': _kTrackingEntityType,
-      'operation_type': operation,
-      'payload': payload != null ? json.encode(payload) : null,
-      'created_at': DateTime.now().millisecondsSinceEpoch,
-      'status': 'pending',
-      'tenant_id': tenantId,
-    });
-  }
-
-  /// Helper to get the UUID of a parent tracking record from its local ID.
-  /// Throws a [CacheException] if the ID is not found, as this indicates a critical logic error.
-  Future<String> _getParentTrackingUuid(
-    DatabaseExecutor db,
-    int trackingId,
-  ) async {
-    final result = await db.query(
-      _kDailyTrackingTable,
-      columns: ['uuid'],
-      where: 'id = ?',
-      whereArgs: [trackingId],
-    );
-    if (result.isNotEmpty) {
-      return result.first['uuid'] as String;
-    }
-    throw CacheException(
-      message:
-          'Consistency Error: Could not find parent tracking record for id $trackingId',
-    );
-  }
 
   /// Generic helper to fetch and group child records efficiently.
   Future<Map<K, List<T>>> _fetchGroupedByForeignKey<K, T>({
