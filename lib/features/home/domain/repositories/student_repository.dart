@@ -1,0 +1,47 @@
+import 'package:dartz/dartz.dart';
+
+import '../../../../core/error/failures.dart';
+import '../../../../core/models/active_status.dart';
+import '../entities/follow_up_plan_entity.dart';
+import '../entities/student_entity.dart';
+import '../entities/student_info_entity.dart';
+import '../entities/tracking_entity.dart';
+
+/// Defines the abstract contract for the student data repository.
+///
+/// This interface is the single gateway for the domain layer to interact with
+/// all student-related data, abstracting away the complexities of data sources,
+/// caching, and synchronization.
+abstract interface class StudentRepository {
+
+  /// Returns [Either<Failure, StudentDetailEntity>]:
+  /// - Right(StudentDetailEntity) on success.
+  /// - Left(Failure) if the student is not found or another error occurs.
+  Future<Either<Failure, StudentInfoEntity>> getStudentById();
+
+  /// Creates a new student or updates an existing one.
+  ///
+  /// Returns [Either<Failure, StudentDetailEntity>]:
+  /// - Right(StudentDetailEntity) on success, returning the created/updated student.
+  /// - Left(Failure) on error.
+  Future<Either<Failure, StudentDetailEntity>> upsertStudent(
+    StudentDetailEntity student,
+  );
+
+  /// Deletes a student by their ID.
+  ///
+  /// Returns [Either<Failure, Unit>]:
+  /// - Right(unit) on successful deletion. `unit` is a void-like type from dartz.
+  /// - Left(Failure) on error.
+  Future<Either<Failure, Unit>> deleteStudent();
+
+  /// Returns [Right(unit)] on success, or a [Left(Failure)] on error.
+  Future<Either<Failure, Unit>> setStudentStatus({
+    required ActiveStatus newStatus,
+  });
+
+  Future<Either<Failure, FollowUpPlanEntity>> getFollowUpPlan();
+  Future<Either<Failure, List<TrackingEntity>>> getFollowUpTrackings(
+  );
+
+}

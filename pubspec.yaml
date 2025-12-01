@@ -43,7 +43,7 @@ dependencies:
   dio: ^5.8.0+1
   dartz: ^0.10.1
   google_fonts: ^6.2.1
-  fl_chart: ^1.0.0
+  fl_chart: ^1.1.0
   flag: ^7.0.0
   sqflite: ^2.4.2
   injectable: ^2.5.0
@@ -66,7 +66,9 @@ dependencies:
   csv: ^5.0.1
   archive: ^3.3.0
   file_picker: ^10.3.7
-
+dependency_overrides:
+  vector_math: 2.2.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
