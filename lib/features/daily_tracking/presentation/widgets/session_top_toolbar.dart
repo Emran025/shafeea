@@ -18,11 +18,9 @@ import 'package:shafeea/features/daily_tracking/presentation/pages/student_error
 /// such as saving progress, viewing the task report, and other session-related tools.
 class SessionTopToolbar extends StatelessWidget {
   final VoidCallback onTap;
-  final String enrollmentId;
   const SessionTopToolbar({
     super.key,
     required this.onTap,
-    required this.enrollmentId,
   });
 
   @override
@@ -72,7 +70,6 @@ class SessionTopToolbar extends StatelessWidget {
                     maxChildSize: 0.75,
                     builder: (context, scrollController) {
                       return StudentErrorAnalysisChart(
-                        enrollmentId: enrollmentId,
                         tile: const ChartTile(
                           title: 'تحليل أداء الطالب',
                           subTitle: 'عرض إحصائيات الأخطاء',

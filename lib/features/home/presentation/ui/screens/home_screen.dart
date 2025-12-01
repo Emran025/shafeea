@@ -5,21 +5,25 @@ import 'package:shafeea/shared/themes/app_theme.dart';
 
 import 'package:shafeea/shared/widgets/avatar.dart';
 
+import '../../../../../config/di/injection.dart';
 import '../../../../../shared/widgets/recitation_mode_sidebar.dart';
 import '../../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../../auth/presentation/ui/widgets/log_out_dialog.dart';
+import '../../../../daily_tracking/presentation/bloc/quran_reader_bloc.dart';
+import '../../../../daily_tracking/presentation/bloc/tracking_session_bloc.dart';
+import '../../../../daily_tracking/presentation/pages/quran_reader_screen.dart';
 import '../../../../settings/presentation/screens/settings_screen.dart';
 
 // import '../../../../../core/constants/app_colors.dart';
 
-class TecherDashboard extends StatefulWidget {
-  const TecherDashboard({super.key});
+class Dashboard extends StatefulWidget {
+  const Dashboard({super.key});
 
   @override
-  State<TecherDashboard> createState() => _TecherDashboardState();
+  State<Dashboard> createState() => _DashboardState();
 }
 
-class _TecherDashboardState extends State<TecherDashboard> {
+class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -46,6 +50,28 @@ class _TecherDashboardState extends State<TecherDashboard> {
               isSelected: false,
               onTap: () {
                 context.push('/profile/1');
+              },
+            ),
+            CustomModeIconButton(
+              icon: Icons.menu_book_sharp,
+              label: "وردي",
+              isSelected: false,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => MultiBlocProvider(
+                      providers: [
+                        BlocProvider.value(value: sl<QuranReaderBloc>()),
+                        // Provider for the new session
+                        BlocProvider(
+                          create: (context) =>
+                              sl<TrackingSessionBloc>()..add(SessionStarted()),
+                        ),
+                      ],
+                      child: QuranReaderScreen(),
+                    ),
+                  ),
+                );
               },
             ),
             CustomModeIconButton(

@@ -9,9 +9,14 @@ import 'package:shafeea/features/home/domain/entities/chart_filter.dart';
 
 // Domain Layer imports
 import '../../../../core/error/failures.dart';
+import '../../../home/data/datasources/student_local_data_source.dart';
+import '../../../home/data/models/follow_up_plan_model.dart';
 import '../../../home/data/models/tracking_detail_model.dart';
-import '../../../home/domain/entities/tracking_detail_entity.dart';
+import '../../../home/data/models/tracking_model.dart';
+import '../../../home/domain/entities/follow_up_plan_entity.dart';
+import '../../domain/entities/tracking_detail_entity.dart';
 import '../../domain/entities/mistake.dart';
+import '../../domain/entities/tracking_entity.dart';
 import '../../domain/repositories/tracking_repository.dart';
 
 // Data Layer imports
@@ -26,18 +31,19 @@ import '../datasources/tracking_local_data_source.dart';
 @LazySingleton(as: TrackingRepository)
 final class TrackingRepositoryImpl implements TrackingRepository {
   final TrackingLocalDataSource _localDataSource;
+  final StudentLocalDataSource _studentlocalDataSource;
 
-  TrackingRepositoryImpl({required TrackingLocalDataSource localDataSource})
-    : _localDataSource = localDataSource;
+  TrackingRepositoryImpl({required TrackingLocalDataSource localDataSource , required StudentLocalDataSource studentlocalDataSource })
+    : _localDataSource = localDataSource,
+     _studentlocalDataSource = studentlocalDataSource;
 
   @override
   Future<Either<Failure, Map<TrackingType, TrackingDetailEntity>>>
-  getOrCreateTodayDraftTrackingDetails({required String enrollmentId}) {
+  getOrCreateTodayDraftTrackingDetails() {
     // REFINEMENT: Wrap the logic in a generic helper for conciseness and robustness.
     return _tryCatch<Map<TrackingType, TrackingDetailEntity>>(() async {
-      final int enrollmentIdInt = int.parse(enrollmentId);
       final modelsMap = await _localDataSource
-          .getOrCreateTodayDraftTrackingDetails(enrollmentId: enrollmentIdInt);
+          .getOrCreateTodayDraftTrackingDetails();
 
       return modelsMap.map((key, model) => MapEntry(key, model.toEntity()));
     });
@@ -96,15 +102,12 @@ final class TrackingRepositoryImpl implements TrackingRepository {
 
   @override
   Future<Either<Failure, List<Mistake>>> getAllMistakes({
-    required String enrollmentId,
     TrackingType? type, // <-- NOW OPTIONAL
     int? fromPage,
     int? toPage,
   }) {
     return _tryCatch<List<Mistake>>(() async {
-      final int enrollmentIdInt = int.parse(enrollmentId);
       final mistakeModels = await _localDataSource.getAllMistakes(
-        enrollmentId: enrollmentIdInt,
         type: type, // Pass it down
         fromPage: fromPage,
         toPage: toPage,
@@ -115,16 +118,41 @@ final class TrackingRepositoryImpl implements TrackingRepository {
 
   @override
   Future<Either<Failure, List<BarChartDatas>>> getErrorAnalysisChartData({
-    required String enrollmentId,
     required ChartFilter filter,
   }) {
     return _tryCatch<List<BarChartDatas>>(() async {
-      final int enrollmentIdInt = int.parse(enrollmentId);
       final chartData = await _localDataSource.getErrorAnalysisChartData(
-        enrollmentId: enrollmentIdInt,
         filter: filter,
       );
       return chartData;
     });
   }
+
+  
+  @override
+  Future<Either<Failure, FollowUpPlanEntity>> getFollowUpPlan() async {
+    try {
+      final FollowUpPlanModel planModel = await _studentlocalDataSource
+          .getFollowUpPlan();
+      return Right(planModel.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<TrackingEntity>>> getFollowUpTrackings() async {
+    try {
+      // await _syncService.performTrackingsSync();
+      final List<TrackingModel> trackingModels = await _studentlocalDataSource
+          .getFollowUpTrackings();
+      final trackingEntities = trackingModels
+          .map((model) => model.toEntity())
+          .toList();
+      return Right(trackingEntities);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
 }

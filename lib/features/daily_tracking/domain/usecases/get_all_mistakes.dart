@@ -21,7 +21,6 @@ class GetAllMistakes extends UseCase<List<Mistake>, GetAllMistakesParams> {
   @override
   Future<Either<Failure, List<Mistake>>> call(GetAllMistakesParams params) async {
     return await repository.getAllMistakes(
-      enrollmentId: params.enrollmentId,
       type: params.type, // Can be null
       fromPage: params.fromPage,
       toPage: params.toPage,

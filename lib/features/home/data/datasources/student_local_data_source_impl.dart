@@ -225,7 +225,6 @@ final class StudentLocalDataSourceImpl implements StudentLocalDataSource {
       }
       orderedIds.add(id);
     }
-
     return orderedIds;
   }
 

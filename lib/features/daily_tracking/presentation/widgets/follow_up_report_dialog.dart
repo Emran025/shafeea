@@ -2,15 +2,15 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shafeea/features/home/presentation/ui/widgets/daily_details_dialog.dart';
+import 'package:shafeea/features/daily_tracking/presentation/pages/daily_details_dialog.dart';
 import 'package:shafeea/shared/widgets/taj.dart';
 
 import 'package:shafeea/shared/themes/app_theme.dart';
-import '../../../../../shared/func/date_format.dart';
-import '../../view_models/follow_up_report_bundle_entity.dart';
-import '../../view_models/follow_up_report_entity.dart';
-import '../../view_models/student_performance_metrics_entity.dart';
-import '../../view_models/student_summary_entity.dart';
+import '../../../../shared/func/date_format.dart';
+import '../view_models/follow_up_report_bundle_entity.dart';
+import '../view_models/follow_up_report_entity.dart';
+import '../view_models/student_performance_metrics_entity.dart';
+import '../view_models/student_summary_entity.dart';
 
 /// A professional, read-only dialog for displaying a student's complete follow-up report.
 ///
@@ -18,11 +18,9 @@ import '../../view_models/student_summary_entity.dart';
 /// processed [FollowUpReportBundleEntity] and is only responsible for rendering
 /// the data, not calculating it.
 class FollowUpReportDialog extends StatefulWidget {
-  final String studentName;
   final FollowUpReportBundleEntity bundle;
   const FollowUpReportDialog({
     super.key,
-    required this.studentName,
     required this.bundle,
   });
 
@@ -120,14 +118,6 @@ class _FollowUpReportDialogState extends State<FollowUpReportDialog> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.studentName,
-                style: GoogleFonts.cairo(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.lightCream,
-                ),
-              ),
               const SizedBox(height: 4),
               Text(
                 "متوسط الإنجاز: ${performance.averageAchievementRate.toStringAsFixed(1)}٪",

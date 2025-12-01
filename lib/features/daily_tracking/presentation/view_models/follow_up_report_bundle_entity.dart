@@ -1,6 +1,6 @@
 
-import 'follow_up_report_entity.dart';
 import 'student_summary_entity.dart';
+import 'follow_up_report_entity.dart';
 
 class FollowUpReportBundleEntity  {
   final List<FollowUpReportEntity> followUpReports;

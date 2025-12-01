@@ -119,9 +119,7 @@ class _AyahaTextSpansState extends State<AyahTextSpans> {
             // When the end-of-ayah symbol is tapped, we dispatch a different event.
             if (currentDetail == null) return;
 
-            context.read<TrackingSessionBloc>().add(
-              RecitationRangeEnded(pageNumber: ayah.page, ayah: ayah.number),
-            );
+
             // We can also still log it as a mistake if needed.
             // context.read<TrackingSessionBloc>().add(
             //   WordTappedForMistake(ayahId: ayah.id, wordIndex: endSymbolIndex),

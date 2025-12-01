@@ -6,15 +6,11 @@ import 'package:shafeea/features/home/domain/entities/student_info_entity.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/models/active_status.dart';
-import '../../domain/entities/follow_up_plan_entity.dart';
 import '../../domain/entities/student_entity.dart';
-import '../../domain/entities/tracking_entity.dart';
 import '../../domain/repositories/student_repository.dart';
 import '../datasources/student_local_data_source.dart';
 import '../datasources/student_remote_data_source.dart';
-import '../models/follow_up_plan_model.dart';
 import '../models/student_model.dart';
-import '../models/tracking_model.dart';
 import '../services/student_sync_service.dart';
 
 @LazySingleton(as: StudentRepository)
@@ -80,37 +76,11 @@ final class StudentRepositoryImpl implements StudentRepository {
     // This method would typically fetch from the local data source first,
     // then potentially trigger a targeted remote fetch if needed.
     try {
-      // await _syncService.performTrackingsSync();
+      await _syncService.performTrackingsSync();
       final model = await _localDataSource.getStudentInfoById();
       return Right(model.toStudentInfoEntity());
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
-    }
-  }
-
-  @override
-  Future<Either<Failure, FollowUpPlanEntity>> getFollowUpPlan() async {
-    try {
-      final FollowUpPlanModel planModel = await _localDataSource
-          .getFollowUpPlan();
-      return Right(planModel.toEntity());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<TrackingEntity>>> getFollowUpTrackings() async {
-    try {
-      // await _syncService.performTrackingsSync();
-      final List<TrackingModel> trackingModels = await _localDataSource
-          .getFollowUpTrackings();
-      final trackingEntities = trackingModels
-          .map((model) => model.toEntity())
-          .toList();
-      return Right(trackingEntities);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
     }
   }
 

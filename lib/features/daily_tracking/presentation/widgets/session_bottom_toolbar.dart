@@ -7,7 +7,6 @@ import '../bloc/quran_reader_bloc.dart';
 import '../bloc/tracking_session_bloc.dart';
 import 'mistakes_dialog.dart';
 import 'surah_juz_list_view.dart';
-import 'task_report_dialog.dart';
 
 /// A specialized bottom toolbar for the recitation session screen.
 ///
@@ -48,37 +47,37 @@ class SessionBottomToolbar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           // --- Button 1: Task Report (The most important one) ---
-          _ToolbarButton(
-            icon: Icons.assignment_turned_in_outlined,
-            label: 'تقرير المهمة',
-            onTap: () {
-              // We need references to both BLoCs from the screen's context.
-              final trackingBloc = BlocProvider.of<TrackingSessionBloc>(
-                context,
-              );
-              final quranReaderBloc = BlocProvider.of<QuranReaderBloc>(context);
-              showDialog(
-                context: context,
-                // It's important to wrap the Dialog with the same BlocProvider
-                // to ensure it can access the TrackingSessionBloc instance.
-                // Since the screen already has the provider, context.read will work,
-                // but wrapping it here is safer if you move the dialog call.
-                // However, the cleanest way is to ensure the calling context
-                // is already under the correct BlocProvider.
-                builder: (_) {
-                  // We must provide the existing Bloc instance to the dialog's context tree.
-                  // BlocProvider.value is the perfect tool for this.
-                  return MultiBlocProvider(
-                    providers: [
-                      BlocProvider.value(value: trackingBloc),
-                      BlocProvider.value(value: quranReaderBloc),
-                    ],
-                    child: const TaskReportDialog(),
-                  );
-                },
-              );
-            },
-          ),
+          // _ToolbarButton(
+          //   icon: Icons.assignment_turned_in_outlined,
+          //   label: 'تقرير المهمة',
+          //   onTap: () {
+          //     // We need references to both BLoCs from the screen's context.
+          //     final trackingBloc = BlocProvider.of<TrackingSessionBloc>(
+          //       context,
+          //     );
+          //     final quranReaderBloc = BlocProvider.of<QuranReaderBloc>(context);
+          //     showDialog(
+          //       context: context,
+          //       // It's important to wrap the Dialog with the same BlocProvider
+          //       // to ensure it can access the TrackingSessionBloc instance.
+          //       // Since the screen already has the provider, context.read will work,
+          //       // but wrapping it here is safer if you move the dialog call.
+          //       // However, the cleanest way is to ensure the calling context
+          //       // is already under the correct BlocProvider.
+          //       builder: (_) {
+          //         // We must provide the existing Bloc instance to the dialog's context tree.
+          //         // BlocProvider.value is the perfect tool for this.
+          //         return MultiBlocProvider(
+          //           providers: [
+          //             BlocProvider.value(value: trackingBloc),
+          //             BlocProvider.value(value: quranReaderBloc),
+          //           ],
+          //           child: const TaskReportDialog(),
+          //         );
+          //       },
+          //     );
+          //   },
+          // ),
 
           // --- Button 1: Task Report (The most important one) ---
 

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../config/di/injection.dart';
-import '../../bloc/student_bloc.dart';
-import '../screens/follow_up_report_dialog.dart';
+import '../../../../config/di/injection.dart';
+import '../bloc/tracking_session_bloc.dart';
+import '../widgets/follow_up_report_dialog.dart';
 
 class ShowStudentReportsDialog extends StatefulWidget {
-  final String studentName;
 
-  const ShowStudentReportsDialog({super.key, required this.studentName});
+
+  const ShowStudentReportsDialog({super.key});
 
   @override
   State<ShowStudentReportsDialog> createState() =>
@@ -19,8 +19,8 @@ class _ShowStudentReportsDialogState extends State<ShowStudentReportsDialog> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<StudentBloc>()..add(FollowUpReportFetched()),
-      child: BlocBuilder<StudentBloc, StudentState>(
+      create: (context) => sl<TrackingSessionBloc>()..add(FollowUpReportFetched()),
+      child: BlocBuilder<TrackingSessionBloc, TrackingSessionState>(
         builder: (dialogContext, state) {
           print("DIALOG: --- 3. BlocBuilder is rebuilding! ---");
           print(
@@ -38,7 +38,6 @@ class _ShowStudentReportsDialogState extends State<ShowStudentReportsDialog> {
           if (state.followUpReportStatus == FollowUpReportStatus.success &&
               state.followUpReport != null) {
             return FollowUpReportDialog(
-              studentName: widget.studentName,
               bundle: state.followUpReport!,
             );
           }
@@ -50,7 +49,7 @@ class _ShowStudentReportsDialogState extends State<ShowStudentReportsDialog> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    dialogContext.read<StudentBloc>().add(
+                    dialogContext.read<TrackingSessionBloc>().add(
                       FollowUpReportFetched(),
                     );
                   },

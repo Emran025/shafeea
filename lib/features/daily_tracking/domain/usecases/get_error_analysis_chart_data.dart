@@ -20,21 +20,18 @@ class GetErrorAnalysisChartData
     GetErrorAnalysisChartDataParams params,
   ) async {
     return await repository.getErrorAnalysisChartData(
-      enrollmentId: params.enrollmentId,
       filter: params.filter,
     );
   }
 }
 
 class GetErrorAnalysisChartDataParams extends Equatable {
-  final String enrollmentId;
   final ChartFilter filter;
 
   const GetErrorAnalysisChartDataParams({
-    required this.enrollmentId,
     required this.filter,
   });
 
   @override
-  List<Object?> get props => [enrollmentId, filter];
+  List<Object?> get props => [filter];
 }

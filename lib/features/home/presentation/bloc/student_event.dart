@@ -57,13 +57,3 @@ final class StudentStatusChanged extends StudentEvent {
   @override
   List<Object> get props => [studentId, newStatus];
 }
-
-/// Dispatched when the user navigates to a student's profile screen
-/// to fetch their detailed information.
-final class FollowUpReportFetched extends StudentEvent {
- 
-  const FollowUpReportFetched();
-
-  @override
-  List<Object> get props => [];
-}

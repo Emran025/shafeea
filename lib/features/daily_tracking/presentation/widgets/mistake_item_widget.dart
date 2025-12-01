@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shafeea/core/models/mistake_type.dart';
 import 'package:shafeea/features/daily_tracking/domain/entities/ayah.dart';
 import '../../domain/entities/mistake.dart';
@@ -58,12 +57,6 @@ class MistakeItemWidget extends StatelessWidget {
                             : theme.colorScheme.onSurfaceVariant,
                       ),
                       onSelected: (selected) {
-                        context.read<TrackingSessionBloc>().add(
-                          MistakeCategorized(
-                            mistakeId: mistake.id, // Use the String UUID
-                            newMistakeType: selected ? type : MistakeType.none,
-                          ),
-                        );
                       },
                     );
                   })

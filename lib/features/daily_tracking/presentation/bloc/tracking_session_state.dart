@@ -1,5 +1,7 @@
 part of 'tracking_session_bloc.dart';
 
+enum FollowUpReportStatus { initial, loading, success, failure }
+
 // The state of the current recitation tracking session.
 class TrackingSessionState extends Equatable {
   final String enrollmentId;
@@ -14,6 +16,10 @@ class TrackingSessionState extends Equatable {
 
   final List<Mistake> historicalMistakes;
   final DataStatus historicalMistakesStatus;
+  // --- Operation State (New) ---
+  final FollowUpReportStatus followUpReportStatus;
+  final FollowUpReportBundleEntity? followUpReport;
+  final Failure? followUpReportFailure;
 
   const TrackingSessionState({
     required this.enrollmentId,
@@ -24,6 +30,11 @@ class TrackingSessionState extends Equatable {
     this.errorMessage,
     this.historicalMistakes = const [], // Initialize as empty map
     this.historicalMistakesStatus = DataStatus.initial,
+
+        // New
+    this.followUpReportStatus = FollowUpReportStatus.initial,
+    this.followUpReport,
+    this.followUpReportFailure,
   });
 
   // A computed property to get the progress for the current task.
@@ -40,6 +51,11 @@ class TrackingSessionState extends Equatable {
     String? errorMessage,
     List<Mistake>? historicalMistakes,
     DataStatus? historicalMistakesStatus,
+        // New
+    FollowUpReportStatus? followUpReportStatus,
+    Failure? followUpReportFailure,
+    FollowUpReportBundleEntity? followUpReport,
+    bool clearFollowUpReportFailure = false,
   }) {
     return TrackingSessionState(
       enrollmentId: enrollmentId ?? this.enrollmentId,
@@ -50,6 +66,12 @@ class TrackingSessionState extends Equatable {
       historicalMistakes: historicalMistakes ?? this.historicalMistakes,
       historicalMistakesStatus:
           historicalMistakesStatus ?? this.historicalMistakesStatus,
+                // New
+      followUpReportStatus: followUpReportStatus ?? this.followUpReportStatus,
+      followUpReport: followUpReport ?? this.followUpReport,
+      followUpReportFailure: clearFollowUpReportFailure
+          ? null
+          : followUpReportFailure ?? this.followUpReportFailure,
     );
   }
 
@@ -62,5 +84,9 @@ class TrackingSessionState extends Equatable {
     errorMessage,
     historicalMistakes,
     historicalMistakesStatus,
+
+        followUpReportStatus,
+    followUpReport,
+    followUpReportFailure,
   ];
 }

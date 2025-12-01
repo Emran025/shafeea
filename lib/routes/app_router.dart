@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shafeea/features/auth/presentation/ui/screens/logIn_screen.dart';
 import 'package:shafeea/features/app/pages/splash_screen.dart';
 import 'package:shafeea/features/app/pages/welcome_screen.dart';
-import 'package:shafeea/features/home/presentation/ui/screens/teacher_home_screen.dart';
+import 'package:shafeea/features/home/presentation/ui/screens/home_screen.dart';
 
 import '../features/home/presentation/ui/screens/student_profile_screen.dart';
 
@@ -41,10 +41,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/home',
       name: 'home',
-      // Note: Ensure the class name 'TecherDashboard' is correct.
+      // Note: Ensure the class name 'Dashboard' is correct.
       // It might be a typo for 'TeacherDashboard'.
       // builder: (_, __) => const SupervisorDashboard(),
-      builder: (_, __) => const TecherDashboard(),
+      builder: (_, __) => const Dashboard(),
     ),
     GoRoute(
       path: '/profile/:id',

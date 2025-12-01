@@ -9,11 +9,10 @@ import '../../../../core/models/active_status.dart';
 import '../../domain/entities/student_entity.dart';
 import '../../domain/entities/student_info_entity.dart';
 import '../../domain/usecases/delete_student_usecase.dart';
-import '../../domain/usecases/generate_follow_up_report_use_case.dart';
+
 import '../../domain/usecases/get_student_by_id.dart';
 import '../../domain/usecases/set_student_status_params.dart';
 import '../../domain/usecases/upsert_student_usecase.dart';
-import '../view_models/follow_up_report_bundle_entity.dart';
 
 part 'student_event.dart';
 part 'student_state.dart';
@@ -25,20 +24,20 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
   final UpsertStudent _upsertStudentUC;
   final DeleteStudentUseCase _deleteStudentUC;
   final SetStudentStatusUseCase _setStudentStatusUC;
-  final GenerateFollowUpReportUseCase _generateFollowUpReportUC;
+  
 
   StudentBloc({
     required GetStudentById getStudentById,
     required UpsertStudent upsertStudent,
     required DeleteStudentUseCase deleteStudent,
     required SetStudentStatusUseCase setStudentStatus,
-    required GenerateFollowUpReportUseCase generateFollowUpReportUC,
+    
   }) : 
        _upsertStudentUC = upsertStudent,
        _deleteStudentUC = deleteStudent,
        _getStudentByIdUC = getStudentById,
        _setStudentStatusUC = setStudentStatus,
-       _generateFollowUpReportUC = generateFollowUpReportUC,
+       
 
        super(const StudentState()) {
 
@@ -46,7 +45,7 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
     on<StudentDeleted>(_onDelete, transformer: droppable());
     on<StudentDetailsFetched>(_onFetchDetails, transformer: restartable());
     on<StudentStatusChanged>(_onStatusChange, transformer: droppable());
-    on<FollowUpReportFetched>(_onFetchReport, transformer: droppable());
+    
 
   }
 
@@ -161,38 +160,6 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
       (_) => emit(
         state.copyWith(submissionStatus: StudentSubmissionStatus.success),
       ),
-    );
-  }
-
-  Future<void> _onFetchReport(
-    FollowUpReportFetched event,
-    Emitter<StudentState> emit,
-  ) async {
-    emit(
-      state.copyWith(
-        followUpReportStatus: FollowUpReportStatus.loading,
-        clearFollowUpReportFailure: true,
-      ),
-    );
-
-    final result = await _generateFollowUpReportUC();
-
-    result.fold(
-      (failure) => emit(
-        state.copyWith(
-          followUpReportStatus: FollowUpReportStatus.failure,
-          detailsFailure: failure,
-        ),
-      ),
-      (followUpReport) {
-        print(followUpReport);
-        emit(
-          state.copyWith(
-            followUpReportStatus: FollowUpReportStatus.success,
-            followUpReport: followUpReport,
-          ),
-        );
-      },
     );
   }
 

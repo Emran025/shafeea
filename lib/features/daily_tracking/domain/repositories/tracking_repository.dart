@@ -5,9 +5,11 @@ import 'package:shafeea/core/models/bar_chart_datas.dart';
 import 'package:shafeea/features/home/domain/entities/chart_filter.dart';
 
 // Import the pure domain entities
-import 'package:shafeea/features/home/domain/entities/tracking_detail_entity.dart';
+import 'package:shafeea/features/daily_tracking/domain/entities/tracking_detail_entity.dart';
 
+import '../../../home/domain/entities/follow_up_plan_entity.dart';
 import '../entities/mistake.dart';
+import '../entities/tracking_entity.dart';
 
 /// Abstract contract for the tracking repository.
 ///
@@ -24,9 +26,7 @@ abstract class TrackingRepository {
   /// value is the corresponding `TrackingDetailEntity`.
   /// Returns a [Left] with a `Failure` on error.
   Future<Either<Failure, Map<TrackingType, TrackingDetailEntity>>>
-  getOrCreateTodayDraftTrackingDetails({
-    required String enrollmentId, // Using String as agreed
-  });
+  getOrCreateTodayDraftTrackingDetails();
 
   /// Saves the current "draft" state of a tracking task.
   ///
@@ -54,14 +54,16 @@ abstract class TrackingRepository {
   ///
 
   Future<Either<Failure, List<Mistake>>> getAllMistakes({
-    required String enrollmentId,
     TrackingType? type, // <-- NOW OPTIONAL
     int? fromPage,
     int? toPage,
   });
 
   Future<Either<Failure, List<BarChartDatas>>> getErrorAnalysisChartData({
-    required String enrollmentId,
     required ChartFilter filter,
   });
+  Future<Either<Failure, List<TrackingEntity>>> getFollowUpTrackings();
+
+
+  Future<Either<Failure, FollowUpPlanEntity>> getFollowUpPlan();
 }

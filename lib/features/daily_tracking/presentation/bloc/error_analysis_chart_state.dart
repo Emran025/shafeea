@@ -14,16 +14,14 @@ class ErrorAnalysisChartLoading extends ErrorAnalysisChartState {}
 class ErrorAnalysisChartLoaded extends ErrorAnalysisChartState {
   final List<BarChartDatas> chartData;
   final ChartFilter filter;
-  final String enrollmentId;
 
   const ErrorAnalysisChartLoaded({
     required this.chartData,
     required this.filter,
-    required this.enrollmentId,
   });
 
   @override
-  List<Object> get props => [chartData, filter, enrollmentId];
+  List<Object> get props => [chartData, filter];
 }
 
 class ErrorAnalysisChartError extends ErrorAnalysisChartState {

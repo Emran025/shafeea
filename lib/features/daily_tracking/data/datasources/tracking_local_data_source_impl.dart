@@ -28,6 +28,8 @@ import 'package:shafeea/core/models/mistake_type.dart';
 
 // Table and column name constants for consistency.
 const String _kDailyTrackingTable = 'daily_tracking';
+const String _kHalqaStudentsTable = 'halqa_students';
+
 const String _kDailyTrackingDetailTable = 'daily_tracking_detail';
 const String _kMistakesTable = 'mistakes';
 const String _kPendingOperationsTable = 'pending_operations';
@@ -53,19 +55,101 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
   );
 
   // =========================================================================
+  //                             Generic Data Helpers
+  // =========================================================================
+
+  /// ... (your existing _fetchMappedIds helper method) ...
+  /// Returns a `Map<K, V>` linking each key to its corresponding value.
+  Future<Map<K, V>> _fetchMappedIds<K, V>({
+    required DatabaseExecutor dbExecutor,
+    required String tableName,
+    required String keyColumn,
+    required String valueColumn,
+    required List<K> keys,
+    String? additionalWhere,
+    List<Object?>? additionalArgs,
+  }) async {
+    if (keys.isEmpty) {
+      return {};
+    }
+
+    // بناء جملة WHERE الأساسية
+    String whereClause =
+        '$keyColumn IN (${List.filled(keys.length, '?').join(',')})';
+    List<Object?> whereArgs = [...keys];
+
+    // إضافة أي شروط إضافية
+    if (additionalWhere != null && additionalWhere.isNotEmpty) {
+      whereClause += ' AND $additionalWhere';
+      if (additionalArgs != null) {
+        whereArgs.addAll(additionalArgs);
+      }
+    }
+
+    try {
+      final maps = await dbExecutor.query(
+        tableName,
+        columns: [keyColumn, valueColumn],
+        where: whereClause,
+        whereArgs: whereArgs,
+      );
+      return {for (var map in maps) map[keyColumn] as K: map[valueColumn] as V};
+    } on DatabaseException catch (e) {
+      throw CacheException(
+        message:
+            'Failed to bulk fetch mapped IDs from $tableName: ${e.toString()}',
+      );
+    }
+  }
+
+  Future<List<int>> _fetchEnrollmentIdsByStudentIds({
+    required DatabaseExecutor dbExecutor,
+    required List<int> studentIds,
+    String? additionalWhere,
+    List<Object?>? additionalArgs,
+  }) async {
+    final Map<int, int> uuidToStudentIdMap = await _fetchMappedIds<int, int>(
+      dbExecutor: dbExecutor,
+      tableName: _kHalqaStudentsTable,
+      keyColumn: 'studentId',
+      valueColumn: 'id',
+      keys: studentIds,
+      additionalWhere: additionalWhere,
+      additionalArgs: additionalArgs,
+    );
+    final List<int> orderedIds = [];
+    for (final uuid in studentIds) {
+      final id = uuidToStudentIdMap[uuid];
+      if (id == null) {
+        throw CacheException(
+          message:
+              'Could not find a matching database ID for enrollmentIds UUID: $uuid',
+        );
+      }
+      orderedIds.add(id);
+    }
+    return orderedIds;
+  }
+  // =========================================================================
   //                             Core Public Methods
   // =========================================================================
 
   @override
   Future<Map<TrackingType, TrackingDetailModel>>
-  getOrCreateTodayDraftTrackingDetails({required int enrollmentId}) async {
+  getOrCreateTodayDraftTrackingDetails() async {
     final db = await _appDb.database;
     final user = await _authLocalDataSource.getUser();
     final tenantId = "${user!.id}";
     try {
+      final studentEnrollmentDbId = (await _fetchEnrollmentIdsByStudentIds(
+        dbExecutor: db,
+        studentIds: [user.id],
+        additionalWhere: 'isDeleted = ?',
+        additionalArgs: [0],
+      )).first;
       final trackingRecord = await _findOrCreateParentDraftTracking(
         db,
-        enrollmentId,
+        studentEnrollmentDbId,
         tenantId,
       );
       final trackingId = trackingRecord['id'] as int;
@@ -78,7 +162,8 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
       if (detailMaps.length < 3) {
         final lastUnitsMap = await _getLastCompletedUnitIds(
           db,
-          enrollmentId,
+          studentEnrollmentDbId,
+
           tenantId,
         );
         await _createMissingDetails(
@@ -328,7 +413,6 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
 
   @override
   Future<List<MistakeModel>> getAllMistakes({
-    required int enrollmentId,
     TrackingType? type,
     int? fromPage,
     int? toPage,
@@ -336,6 +420,14 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
     final db = await _appDb.database;
     final user = await _authLocalDataSource.getUser();
     final tenantId = "${user!.id}";
+
+    final studentEnrollmentDbId = (await _fetchEnrollmentIdsByStudentIds(
+      dbExecutor: db,
+      studentIds: [user.id],
+      additionalWhere: 'isDeleted = ?',
+      additionalArgs: [0],
+    )).first;
+
     try {
       String baseQuery =
           '''
@@ -348,7 +440,7 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
         -- AND tdt.status = 'completed'
     ''';
 
-      List<dynamic> arguments = [enrollmentId, tenantId];
+      List<dynamic> arguments = [studentEnrollmentDbId, tenantId];
 
       // ================== DYNAMIC TYPE FILTERING ==================
       if (type != null) {
@@ -384,17 +476,27 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
 
   @override
   Future<List<BarChartDatas>> getErrorAnalysisChartData({
-    required int enrollmentId,
     required ChartFilter filter,
   }) async {
     final db = await _appDb.database;
     final user = await _authLocalDataSource.getUser();
     final tenantId = "${user!.id}";
+    final studentEnrollmentDbId = (await _fetchEnrollmentIdsByStudentIds(
+      dbExecutor: db,
+      studentIds: [user.id],
+      additionalWhere: 'isDeleted = ?',
+      additionalArgs: [0],
+    )).first;
     try {
       if (filter.dimension == FilterDimension.time) {
-        return _fetchDataByTime(db, enrollmentId, tenantId, filter);
+        return _fetchDataByTime(db, studentEnrollmentDbId, tenantId, filter);
       } else {
-        return _fetchDataByQuantity(db, enrollmentId, tenantId, filter);
+        return _fetchDataByQuantity(
+          db,
+          studentEnrollmentDbId,
+          tenantId,
+          filter,
+        );
       }
     } on DatabaseException catch (e) {
       throw CacheException(

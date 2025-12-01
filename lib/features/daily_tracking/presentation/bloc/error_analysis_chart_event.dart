@@ -8,16 +8,14 @@ abstract class ErrorAnalysisChartEvent extends Equatable {
 }
 
 class LoadErrorAnalysisChartData extends ErrorAnalysisChartEvent {
-  final String enrollmentId;
   final ChartFilter filter;
 
   const LoadErrorAnalysisChartData({
-    required this.enrollmentId,
     required this.filter,
   });
 
   @override
-  List<Object> get props => [enrollmentId, filter];
+  List<Object> get props => [ filter];
 }
 
 class UpdateErrorAnalysisChartFilter extends ErrorAnalysisChartEvent {

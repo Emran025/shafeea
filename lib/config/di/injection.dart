@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 // Grouping by feature improves readability.
 
 import '../../features/home/domain/usecases/delete_student_usecase.dart';
-import '../../features/home/domain/usecases/generate_follow_up_report_use_case.dart';
+import '../../features/daily_tracking/domain/usecases/generate_follow_up_report_use_case.dart';
 import '../../features/home/domain/usecases/get_student_by_id.dart';
 import '../../features/home/domain/usecases/set_student_status_params.dart';
 import '../../features/home/domain/usecases/upsert_student_usecase.dart';
@@ -20,14 +20,12 @@ import '../../features/auth/domain/usecases/login_usecase.dart';
 import '../../features/auth/domain/usecases/logout_usecase.dart';
 import '../../features/auth/domain/usecases/switch_user_usecase.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
-import '../../features/daily_tracking/domain/usecases/finalize_session.dart';
 import '../../features/daily_tracking/domain/usecases/get_all_mistakes.dart';
 import '../../features/daily_tracking/domain/usecases/get_or_create_today_tracking.dart';
 import '../../features/daily_tracking/domain/usecases/get_mistakes_ayahs.dart';
 import '../../features/daily_tracking/domain/usecases/get_error_analysis_chart_data.dart';
 import '../../features/daily_tracking/domain/usecases/get_page_data.dart';
 import '../../features/daily_tracking/domain/usecases/get_surahs_list.dart';
-import '../../features/daily_tracking/domain/usecases/save_task_progress.dart';
 import '../../features/daily_tracking/presentation/bloc/error_analysis_chart_bloc.dart';
 import '../../features/daily_tracking/presentation/bloc/quran_reader_bloc.dart';
 import '../../features/daily_tracking/presentation/bloc/tracking_session_bloc.dart';
@@ -98,14 +96,14 @@ abstract class BlocModule {
     DeleteStudentUseCase deleteStudent,
     GetStudentById getStudentById,
     SetStudentStatusUseCase setStudentStatus,
-    GenerateFollowUpReportUseCase generateFollowUpReportUC,
+    
   ) {
     return StudentBloc(
       upsertStudent: upsertStudent,
       deleteStudent: deleteStudent,
       getStudentById: getStudentById,
       setStudentStatus: setStudentStatus,
-      generateFollowUpReportUC: generateFollowUpReportUC,
+      
     )..add(const StudentDetailsFetched());
   }
 
@@ -162,15 +160,13 @@ abstract class BlocModule {
   @factoryMethod
   TrackingSessionBloc trackingSession(
     GetOrCreateTodayTrackingDetails getOrCreateTodayTrackingDetails,
-    SaveTaskProgress saveTaskProgress,
-    FinalizeSession finalizeSession,
     GetAllMistakes getAllMistakes,
+    GenerateFollowUpReportUseCase generateFollowUpReportUC,
   ) {
     return TrackingSessionBloc(
       getOrCreateTodayTrackingDetails: getOrCreateTodayTrackingDetails,
-      saveTaskProgress: saveTaskProgress,
-      finalizeSession: finalizeSession,
       getAllMistakes: getAllMistakes,
+      generateFollowUpReportUC: generateFollowUpReportUC,
     );
   }
 

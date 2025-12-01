@@ -8,7 +8,6 @@ enum StudentSubmissionStatus { initial, submitting, success, failure }
 
 enum StudentUpsertStatus { initial, submitting, success, failure }
 
-enum FollowUpReportStatus { initial, loading, success, failure }
 
 final class StudentState extends Equatable {
 
@@ -23,10 +22,7 @@ final class StudentState extends Equatable {
   // --- Operation State (New) ---
   final StudentUpsertStatus upsertStatus;
   final Failure? upsertFailure;
-  // --- Operation State (New) ---
-  final FollowUpReportStatus followUpReportStatus;
-  final FollowUpReportBundleEntity? followUpReport;
-  final Failure? followUpReportFailure;
+
 
 
   const StudentState({
@@ -42,10 +38,7 @@ final class StudentState extends Equatable {
     // New
     this.upsertStatus = StudentUpsertStatus.initial,
     this.upsertFailure,
-    // New
-    this.followUpReportStatus = FollowUpReportStatus.initial,
-    this.followUpReport,
-    this.followUpReportFailure,
+
 
 
   });
@@ -68,11 +61,7 @@ final class StudentState extends Equatable {
     StudentUpsertStatus? upsertStatus,
     Failure? upsertFailure,
     bool clearUpsertFailure = false,
-    // New
-    FollowUpReportStatus? followUpReportStatus,
-    Failure? followUpReportFailure,
-    FollowUpReportBundleEntity? followUpReport,
-    bool clearFollowUpReportFailure = false,
+
 
   }) {
     return StudentState(
@@ -94,12 +83,7 @@ final class StudentState extends Equatable {
       upsertFailure: clearUpsertFailure
           ? null
           : upsertFailure ?? this.upsertFailure,
-      // New
-      followUpReportStatus: followUpReportStatus ?? this.followUpReportStatus,
-      followUpReport: followUpReport ?? this.followUpReport,
-      followUpReportFailure: clearFollowUpReportFailure
-          ? null
-          : followUpReportFailure ?? this.followUpReportFailure,
+
 
     );
   }
@@ -113,9 +97,7 @@ final class StudentState extends Equatable {
     submissionFailure,
     upsertStatus,
     upsertFailure,
-    followUpReportStatus,
-    followUpReport,
-    followUpReportFailure,
+
 
   ];
 }

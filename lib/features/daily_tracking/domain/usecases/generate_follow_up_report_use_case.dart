@@ -1,15 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shafeea/core/error/failures.dart';
-import 'package:shafeea/features/home/domain/repositories/student_repository.dart';
-import 'package:shafeea/features/home/presentation/view_models/factories/follow_up_report_factory.dart';
-import 'package:shafeea/features/home/presentation/view_models/follow_up_report_bundle_entity.dart';
+
+import '../../presentation/view_models/factories/follow_up_report_factory.dart';
+import '../../presentation/view_models/follow_up_report_bundle_entity.dart';
+import '../repositories/tracking_repository.dart';
 // ... (imports)
 
 @lazySingleton
 class GenerateFollowUpReportUseCase
     {
-  final StudentRepository _repository;
+  final TrackingRepository _repository;
   final FollowUpReportFactory _factory;
 
   GenerateFollowUpReportUseCase(this._repository, this._factory);

@@ -10,7 +10,7 @@ import '../../../../shared/widgets/avatar.dart';
 import '../bloc/tracking_session_bloc.dart';
 
 // Import the dialogs we will use later
-import 'final_report_dialog.dart';
+import '../pages/show_student_reports_dialog.dart';
 
 // Enum to represent the different tracking modes. Using an enum is safer
 // and more readable than using strings or integers.
@@ -75,17 +75,21 @@ class RecitationSideBar extends StatelessWidget {
               onTap: () {
                 // Action to show the final report dialog
                 Navigator.of(context).pop();
-                showDialog(
-                  context: context,
-                  builder: (_) {
-                    final bloc = context.read<TrackingSessionBloc>();
+                
+    showDialog(
+      context: context,
+      builder: (_) {
+                            final bloc = context.read<TrackingSessionBloc>();
                     return BlocProvider.value(
                       value: bloc,
-                      child: const FinalReportDialog(),
+                      child: ShowStudentReportsDialog()
                     );
-                  },
-                );
-              },
+        
+      },
+    );
+  }
+
+              
             ),
             CustomModeIconButton(
               icon: Icons.arrow_back,

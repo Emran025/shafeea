@@ -24,7 +24,6 @@ class ErrorAnalysisChartBloc
     emit(ErrorAnalysisChartLoading());
     final result = await getErrorAnalysisChartData(
       GetErrorAnalysisChartDataParams(
-        enrollmentId: event.enrollmentId,
         filter: event.filter,
       ),
     );
@@ -34,7 +33,6 @@ class ErrorAnalysisChartBloc
         ErrorAnalysisChartLoaded(
           chartData: chartData,
           filter: event.filter,
-          enrollmentId: event.enrollmentId,
         ),
       ),
     );
@@ -45,10 +43,8 @@ class ErrorAnalysisChartBloc
     Emitter<ErrorAnalysisChartState> emit,
   ) async {
     if (state is ErrorAnalysisChartLoaded) {
-      final currentState = state as ErrorAnalysisChartLoaded;
       add(
         LoadErrorAnalysisChartData(
-          enrollmentId: currentState.enrollmentId,
           filter: event.filter,
         ),
       );

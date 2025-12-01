@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../../../../core/models/attendance_type.dart';
 import 'tracking_detail_model.dart';
-import '../../domain/entities/tracking_entity.dart';
+import '../../../daily_tracking/domain/entities/tracking_entity.dart';
 
 /// The data model for a student's daily tracking record.
 ///

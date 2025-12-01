@@ -1,24 +1,3 @@
-//    +----------------+      +----------------+      +---------------------+
-//    |   UI (Screen)  |----->|   BLoC/Cubit   |----->| StudentRepository   |
-//    | (Presents data)|      | (Handles state)|      | (Public API for     |
-//    +----------------+      +----------------+      |  data access)       |
-//                                                    +----------+----------+
-//                                                               | (Delegates to)
-//                                                               |
-//                                                               v
-//                     +---------------------+      +------------+-------------+
-//                     | WorkManager Plugin  |----->|      Sync Service        |
-//                     | (Background Trigger)|      | (The Sync Engine)        |
-//                     +---------------------+      +-------------+------------+
-//                                                                | (Reads/Writes)
-//                                                                |
-//                                     +--------------------------+--------------------------+
-//                                     |                                                     |
-//                                     v                                                     v
-//                     +------------------------+      +--------------------------+      +------------------------+
-//                     | StudentRemoteDataSource|<---- |      Sync Queue (DB)     |----->| StudentLocalDataSource |
-//                     | (Fetches/Pushes Deltas)|      | (Tracks local changes)   |      | (Single Source of Truth)|
-//                     +------------------------+      +--------------------------+      +------------------------+
 
 /// Defines the abstract contract for the student data synchronization engine.
 ///

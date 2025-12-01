@@ -24,7 +24,7 @@ abstract class TrackingLocalDataSource {
   /// Returns a map where the key is the `TrackingType` and the value is the
   /// fully assembled `TrackingDetailModel` (including mistakes).
   Future<Map<TrackingType, TrackingDetailModel>>
-  getOrCreateTodayDraftTrackingDetails({required int enrollmentId});
+  getOrCreateTodayDraftTrackingDetails();
 
   /// Persists the current state of a list of tracking details to the database.
   ///
@@ -52,14 +52,12 @@ abstract class TrackingLocalDataSource {
   // ... other methods
 
   Future<List<MistakeModel>> getAllMistakes({
-    required int enrollmentId,
     TrackingType? type, // <-- NOW OPTIONAL
     int? fromPage,
     int? toPage,
   });
 
   Future<List<BarChartDatas>> getErrorAnalysisChartData({
-    required int enrollmentId,
     required ChartFilter filter,
   });
 

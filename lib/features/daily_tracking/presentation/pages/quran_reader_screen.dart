@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,9 +10,7 @@ import '../widgets/session_bottom_toolbar.dart';
 import '../widgets/session_top_toolbar.dart';
 
 class QuranReaderScreen extends StatefulWidget {
-  final String enrollmentId; // Type is now String
-
-  const QuranReaderScreen({super.key, required this.enrollmentId});
+  const QuranReaderScreen({super.key});
 
   @override
   State<QuranReaderScreen> createState() => _QuranReaderScreenState();
@@ -32,8 +28,6 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
   void initState() {
     super.initState();
     _pageController = PageController();
-
-    log("------------------${widget.enrollmentId}");
 
     // 3. Request initial data for Quran Reader
     context.read<QuranReaderBloc>().add(SurahsListRequested());
@@ -134,7 +128,6 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
                             },
                             child: SessionTopToolbar(
                               onTap: _toggleSidebarsVisibility,
-                              enrollmentId: widget.enrollmentId,
                             ),
                           ),
                           ValueListenableBuilder<bool>(

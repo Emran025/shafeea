@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../../domain/entities/tracking_detail_entity.dart';
+import '../../../daily_tracking/domain/entities/tracking_detail_entity.dart';
 import 'package:shafeea/core/constants/tracking_unit_detail.dart';
 import 'package:shafeea/core/models/tracking_type.dart';
 

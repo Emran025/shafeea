@@ -3,10 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../widgets/show_student_reports_dialog.dart';
 import '../../../../../shared/themes/app_theme.dart';
 import '../../../../../core/models/active_status.dart';
-import '../widgets/add_traking_session.dart';
 import '../widgets/study_halaqa_card.dart';
 
 import '../../../../../shared/widgets/avatar.dart';
@@ -207,14 +205,6 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                 ),
               },
 
-              titles("سجل المتابعة"),
-              if (halaqa.halaqaId != "0") ...{
-                SizedBox(height: 12),
-                AddTrakingSession(
-                  assignedHalaqasEntity: halaqa,
-                  onTap: () => _showStudentReports(context, student.name),
-                ),
-              },
               titles("مؤشرات الأداء"),
               SingleChildScrollView(
                 child: SegmentedButton<String>(
@@ -242,6 +232,15 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
     );
   }
 
+  // void _showStudentReports(BuildContext screenContext, String studentName) {
+  //   showDialog(
+  //     context: screenContext,
+  //     builder: (_) {
+  //       return ShowStudentReportsDialog(studentName: studentName);
+  //     },
+  //   );
+  // }
+
   Widget titles(String title) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,15 +257,6 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  void _showStudentReports(BuildContext screenContext, String studentName) {
-    showDialog(
-      context: screenContext,
-      builder: (_) {
-        return ShowStudentReportsDialog(studentName: studentName);
-      },
     );
   }
 

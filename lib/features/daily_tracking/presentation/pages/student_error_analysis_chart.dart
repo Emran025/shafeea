@@ -11,12 +11,10 @@ import '../../../home/presentation/ui/widgets/base_bar_chart.dart';
 
 class StudentErrorAnalysisChart extends StatelessWidget {
   final ChartTile tile;
-  final String enrollmentId;
 
   const StudentErrorAnalysisChart({
     super.key,
     required this.tile,
-    required this.enrollmentId,
   });
 
   @override
@@ -25,7 +23,6 @@ class StudentErrorAnalysisChart extends StatelessWidget {
       create: (context) => sl<ErrorAnalysisChartBloc>()
         ..add(
           LoadErrorAnalysisChartData(
-            enrollmentId: enrollmentId,
             filter: const ChartFilter(),
           ),
         ),

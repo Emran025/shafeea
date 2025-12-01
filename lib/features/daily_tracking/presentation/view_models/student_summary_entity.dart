@@ -1,4 +1,4 @@
-import 'package:shafeea/features/home/presentation/view_models/student_performance_metrics_entity.dart';
+import 'package:shafeea/features/daily_tracking/presentation/view_models/student_performance_metrics_entity.dart';
 
 // من الأفضل استخدام enum للحالات المحددة
 enum PerformanceStatus { ahead, onTrack, behind }

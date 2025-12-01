@@ -1,5 +1,5 @@
-import 'package:shafeea/features/home/presentation/view_models/actual_progress_entity.dart';
-import 'package:shafeea/features/home/presentation/view_models/planned_detail_entity.dart';
+import 'package:shafeea/features/daily_tracking/presentation/view_models/actual_progress_entity.dart';
+import 'package:shafeea/features/daily_tracking/presentation/view_models/planned_detail_entity.dart';
 
 import '../../../../core/models/tracking_type.dart';
 

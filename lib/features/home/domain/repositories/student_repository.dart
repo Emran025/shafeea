@@ -2,10 +2,8 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/active_status.dart';
-import '../entities/follow_up_plan_entity.dart';
 import '../entities/student_entity.dart';
 import '../entities/student_info_entity.dart';
-import '../entities/tracking_entity.dart';
 
 /// Defines the abstract contract for the student data repository.
 ///
@@ -13,7 +11,6 @@ import '../entities/tracking_entity.dart';
 /// all student-related data, abstracting away the complexities of data sources,
 /// caching, and synchronization.
 abstract interface class StudentRepository {
-
   /// Returns [Either<Failure, StudentDetailEntity>]:
   /// - Right(StudentDetailEntity) on success.
   /// - Left(Failure) if the student is not found or another error occurs.
@@ -39,9 +36,5 @@ abstract interface class StudentRepository {
   Future<Either<Failure, Unit>> setStudentStatus({
     required ActiveStatus newStatus,
   });
-
-  Future<Either<Failure, FollowUpPlanEntity>> getFollowUpPlan();
-  Future<Either<Failure, List<TrackingEntity>>> getFollowUpTrackings(
-  );
 
 }
