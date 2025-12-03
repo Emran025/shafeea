@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import '../../../../core/models/attendance_type.dart';
 import 'tracking_detail_model.dart';
@@ -46,7 +48,7 @@ final class TrackingModel {
               TrackingDetailModel.fromJson(detailJson as Map<String, dynamic>),
         )
         .toList();
-
+    log("createdAt : ${json['createdAt']} ");
     return TrackingModel(
       id: json['id'] as int? ?? 0,
       date: json['date'] as String? ?? '',
@@ -78,8 +80,12 @@ final class TrackingModel {
       ),
       behaviorNote: map['behaviorNote'] as int? ?? 2,
       status: map['status'] as String? ?? 'draft',
-      createdAt: map['createdAt'] as String? ?? '',
-      updatedAt: map['updatedAt'] as String? ?? '',
+      createdAt: (DateTime.fromMicrosecondsSinceEpoch(
+        map['createdAt'] as int? ?? 0,
+      )).toString(),
+      updatedAt: (DateTime.fromMicrosecondsSinceEpoch(
+        map['lastModified'] as int? ?? 0,
+      )).toString(),
       details: details,
     );
   }
@@ -114,6 +120,8 @@ final class TrackingModel {
       'attendanceTypeId': attendanceTypeId.id,
       'behaviorNote': behaviorNote,
       'status': status,
+      'createdAt ': (DateTime.tryParse(createdAt) ?? DateTime.now())
+          .millisecondsSinceEpoch,
       'lastModified': (DateTime.tryParse(updatedAt) ?? DateTime.now())
           .millisecondsSinceEpoch,
     };

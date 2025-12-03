@@ -91,7 +91,7 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
     );
 
     // 2. Call the use case to fetch the data.
-    final result = await _getStudentByIdUC();
+    final result = await _getStudentByIdUC(NoParams());
 
     // 3. Fold the result and emit either a success or failure state.
     result.fold(
@@ -147,7 +147,7 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
   ) async {
     emit(state.copyWith(submissionStatus: StudentSubmissionStatus.submitting));
 
-    final result = await _deleteStudentUC();
+    final result = await _deleteStudentUC(NoParams());
 
     result.fold(
       (failure) => emit(

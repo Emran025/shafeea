@@ -160,6 +160,28 @@ class QuranLocalDataSourceImpl implements QuranLocalDataSource {
   }
 
   @override
+  Future<AyahModel> getAyahById(int ayahId) async {
+    try {
+      final db = await database;
+      final map = await db.query(
+        'Quran', // Correct table name
+        where: 'ID = ?', // Correct column name
+        whereArgs: [ayahId],
+        orderBy: 'AyaNum ASC', // Correct column name for ordering within page
+      );
+
+    
+       return AyahModel.fromMap(map.first);
+      
+      
+    } catch (e) {
+      throw CacheException(
+        message: 'Failed to load ayahs for page $ayahId: ${e.toString()}',
+      );
+    }
+  }
+
+  @override
   Future<List<SurahModel>> getSurahsList() async {
     try {
       final db = await database;

@@ -5,6 +5,9 @@ import 'package:shafeea/features/home/domain/repositories/student_repository.dar
 import '../../../../core/error/failures.dart';
 import 'usecase.dart';
 
+import 'package:injectable/injectable.dart';
+
+@lazySingleton
 class GetPlanForTheDay implements UseCase<PlanForTheDayEntity, NoParams> {
   final StudentRepository repository;
 

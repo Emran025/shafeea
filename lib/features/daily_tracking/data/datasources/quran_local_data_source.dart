@@ -23,4 +23,6 @@ abstract class QuranLocalDataSource {
   ///
   /// Throws a [CacheException] if there is an error accessing the database.
   Future<List<SurahModel>> getSurahsList();
+
+  Future<AyahModel> getAyahById(int ayahId);
 }

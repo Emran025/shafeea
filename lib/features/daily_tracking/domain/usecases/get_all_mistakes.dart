@@ -29,19 +29,17 @@ class GetAllMistakes extends UseCase<List<Mistake>, GetAllMistakesParams> {
 }
 
 class GetAllMistakesParams extends Equatable {
-  final String enrollmentId;
   final TrackingType? type; // <-- NOW OPTIONAL
 
   final int? fromPage;
   final int? toPage;
 
   const GetAllMistakesParams({
-    required this.enrollmentId,
     this.type, // <-- NOW OPTIONAL
     this.fromPage,
     this.toPage,
   });
 
   @override
-  List<Object?> get props => [enrollmentId, type, fromPage, toPage];
+  List<Object?> get props => [ type, fromPage, toPage];
 }

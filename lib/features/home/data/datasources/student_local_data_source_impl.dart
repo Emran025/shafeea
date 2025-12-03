@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:collection/collection.dart';
 import 'package:injectable/injectable.dart';
@@ -760,6 +761,7 @@ final class StudentLocalDataSourceImpl implements StudentLocalDataSource {
         for (final trackingModel in trackings) {
           // 2a. Insert the parent `daily_tracking` record and get its new local ID.
           final trackingMap = trackingModel.toMap(enrollmentId);
+          log("$trackingMap");
           trackingMap['tenant_id'] = tenantId;
           final newParentTrackingId = await txn.insert(
             _kDailyTrackingTable,

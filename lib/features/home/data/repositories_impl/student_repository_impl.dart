@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shafeea/features/home/domain/entities/plan_detail_entity.dart';
-import 'package.shafeea/features/daily_tracking/data/datasources/quran_local_data_source.dart';
+import '../../../daily_tracking/data/datasources/quran_local_data_source.dart';
 import 'package:shafeea/features/home/domain/entities/plan_for_the_day_entity.dart';
 import 'package:shafeea/features/home/domain/entities/student_info_entity.dart';
 
@@ -27,10 +28,11 @@ final class StudentRepositoryImpl implements StudentRepository {
   StudentRepositoryImpl({
     required StudentLocalDataSource localDataSource,
     required StudentRemoteDataSource remoteDataSource,
-    required this._quranLocalDataSource,
+    required QuranLocalDataSource quranLocalDataSource,
     required StudentSyncService syncService,
-  })  : _localDataSource = localDataSource,
-        _syncService = syncService;
+  }) : _localDataSource = localDataSource,
+       _quranLocalDataSource = quranLocalDataSource,
+       _syncService = syncService;
 
   @override
   Future<Either<Failure, StudentDetailEntity>> upsertStudent(
@@ -102,64 +104,76 @@ final class StudentRepositoryImpl implements StudentRepository {
       final followUpPlan = await _localDataSource.getFollowUpPlan();
       final trackings = await _localDataSource.getFollowUpTrackings();
 
-      if (followUpPlan.planDetails.isEmpty) {
+      if (followUpPlan.details.isEmpty) {
         return Left(CacheFailure(message: 'You have no plan details.'));
       }
 
       if (trackings.isEmpty) {
-        return Right(_getFirstPlan(followUpPlan.planDetails.first));
+        return Right(_getFirstPlan(followUpPlan.details.first.toEntity()));
+      }
+      for (final lastTracking in trackings) {
+        log(
+          "----------------------------${lastTracking.createdAt}------------------------------",
+        );
       }
 
       final lastTracking = trackings.last;
-      final lastTrackingDate = DateTime.parse(lastTracking.trackDate);
+      final lastTrackingDate = DateTime.parse(lastTracking.createdAt);
       final frequency = followUpPlan.frequency;
       final daysCount = frequency.daysCount;
       final nextTrackingDate = lastTrackingDate.add(Duration(days: daysCount));
       final now = DateTime.now();
 
       if (now.isBefore(nextTrackingDate)) {
-        return Left(CacheFailure(
+        return Left(
+          CacheFailure(
             message:
-                'You have already completed your plan for today. Please come back tomorrow.'));
+                'You have already completed your plan for today. Please come back tomorrow.',
+          ),
+        );
       }
 
-      final planDetails = followUpPlan.planDetails;
+      final planDetails = followUpPlan.details;
 
-      if (lastTracking.trackingDetails.isEmpty) {
-        return Right(_getFirstPlan(planDetails.first));
+      if (lastTracking.details.isEmpty) {
+        return Right(_getFirstPlan(planDetails.first.toEntity()));
       }
 
-      final lastTrackingDetail = lastTracking.trackingDetails.first;
+      final lastTrackingDetail = lastTracking.details.first;
       final toTrackingUnitId = lastTrackingDetail.toTrackingUnitId;
 
-      if (toTrackingUnitId == null) {
-        return Right(_getFirstPlan(planDetails.first));
-      }
+      // if (toTrackingUnitId.fromAyah == null) {
+      //   return Right(_getFirstPlan(planDetails.first.toEntity()));
+      // }
 
-      final fromAyah = await _quranLocalDataSource
-          .getAyahById(toTrackingUnitId as int + 1);
+      final fromAyah = await _quranLocalDataSource.getAyahById(
+        toTrackingUnitId.fromAyah + 1,
+      );
 
       final lastCompletedPlanDetailIndex = trackings.length - 1;
 
       if (lastCompletedPlanDetailIndex + 1 >= planDetails.length) {
         return Left(
-            CacheFailure(message: 'You have completed all your plan details.'));
+          CacheFailure(message: 'You have completed all your plan details.'),
+        );
       }
 
-      final nextPlanDetail = planDetails[lastCompletedPlanDetailIndex + 1];
-
-      final toAyah = await _quranLocalDataSource
-          .getAyahById(toTrackingUnitId as int + nextPlanDetail.amount);
+      final nextPlanDetail = planDetails[lastCompletedPlanDetailIndex + 1]
+          .toEntity();
+      final getSurahsList = await _quranLocalDataSource.getSurahsList();
+      final toAyah = (await _quranLocalDataSource.getAyahById(
+        toTrackingUnitId.fromAyah + nextPlanDetail.amount,
+      )).toEntity();
 
       return Right(
         PlanForTheDayEntity(
           planDetail: nextPlanDetail,
-          fromSurah: fromAyah.surahName,
+          fromSurah: getSurahsList[fromAyah.surahNumber].name,
           fromPage: fromAyah.page,
-          fromAyah: fromAyah.ayahNumber,
-          toSurah: toAyah.surahName,
+          fromAyah: fromAyah.number,
+          toSurah: getSurahsList[toAyah.surahNumber].name,
           toPage: toAyah.page,
-          toAyah: toAyah.ayahNumber,
+          toAyah: toAyah.number,
         ),
       );
     } on CacheException catch (e) {

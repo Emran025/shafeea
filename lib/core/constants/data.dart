@@ -32,17 +32,17 @@ final FollowUpPlanModel studentPlan = FollowUpPlanModel(
   details: [
     PlanDetailModel(
       type: TrackingType.memorization, // يطابق trackingTypeId: 1
-      unit: TrackingUnit.page,
+      unit: TrackingUnitTyps.page,
       amount: 1,
     ),
     PlanDetailModel(
       type: TrackingType.review, // يطابق trackingTypeId: 2
-      unit: TrackingUnit.page,
+      unit: TrackingUnitTyps.page,
       amount: 10, // ما يعادل نصف جزء تقريبًا
     ),
     PlanDetailModel(
       type: TrackingType.recitation, // يطابق trackingTypeId: 3
-      unit: TrackingUnit.page,
+      unit: TrackingUnitTyps.page,
       amount: 10, // ما يعادل حزبًا واحدًا
     ),
   ],
@@ -613,17 +613,17 @@ final StudentInfoEntity fakeStudentInfo = StudentInfoEntity(
     details: [
       PlanDetailEntity(
         type: TrackingType.memorization,
-        unit: TrackingUnit.page,
+        unit: TrackingUnitTyps.page,
         amount: 5,
       ),
       PlanDetailEntity(
         type: TrackingType.review,
-        unit: TrackingUnit.juz,
+        unit: TrackingUnitTyps.juz,
         amount: 1,
       ),
       PlanDetailEntity(
         type: TrackingType.recitation,
-        unit: TrackingUnit.halfHizb,
+        unit: TrackingUnitTyps.halfHizb,
         amount: 2,
       ),
     ],
@@ -666,4 +666,3 @@ final List<StudentDetailEntity> fakeStudents1 = [
   fakeStudent,
   fakeStudent,
 ];
-

@@ -38,7 +38,7 @@ class TrackingSessionBloc
        _generateFollowUpReportUC = generateFollowUpReportUC,
        _saveTaskProgress = saveTaskProgress,
 
-       super(const TrackingSessionState(enrollmentId: "-1")) {
+       super(const TrackingSessionState()) {
     on<SessionStarted>(_onSessionStarted);
     on<TaskTypeChanged>(_onTaskTypeChanged);
     on<HistoricalMistakesRequested>(_onHistoricalMistakesRequested);
@@ -180,7 +180,6 @@ on<FollowUpReportFetched>(_onFetchReport, transformer: droppable());
     // Call the UseCase without a type to fetch all mistakes.
     final result = await _getAllMistakes(
       GetAllMistakesParams(
-        enrollmentId: state.enrollmentId,
         // No type specified, so we get all types.
         // We can pass page filters from the event if needed.
         fromPage: event.fromPage,

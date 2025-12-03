@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shafeea/shared/themes/app_theme.dart';
 
 import 'package:shafeea/shared/widgets/avatar.dart';
@@ -37,6 +36,7 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.ltr,
+
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: AppColors.darkBackground,
@@ -113,11 +113,12 @@ class _DashboardState extends State<Dashboard> {
           textDirection: TextDirection.rtl,
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
                   Card(
-                    color: AppColors.primary,
+                    margin: EdgeInsets.all(0),
+                    color: AppColors.mediumDark100,
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -130,7 +131,8 @@ class _DashboardState extends State<Dashboard> {
                           const SizedBox(height: 8.0),
                           Text(
                             'This is a static alert message. No new alerts at the moment.',
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodyMedium!
+                                .copyWith(color: Colors.white70),
                           ),
                         ],
                       ),
@@ -145,18 +147,19 @@ class _DashboardState extends State<Dashboard> {
                       } else if (state.planForTheDayStatus ==
                           PlanForTheDayStatus.failure) {
                         return Text(
-                            state.planForTheDayFailure?.message ?? 'Error');
+                          state.planForTheDayFailure?.message ?? 'Error',
+                        );
                       } else if (state.planForTheDayStatus ==
                           PlanForTheDayStatus.success) {
                         return Card(
-                          color: AppColors.primary,
+                          color: AppColors.mediumDark,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Plan for the Day',
+                                  'مــهــام الــيــوم',
                                   style: Theme.of(context).textTheme.titleLarge,
                                 ),
                                 const SizedBox(height: 8.0),
@@ -203,7 +206,7 @@ class _DashboardState extends State<Dashboard> {
           children: [
             Expanded(
               child: _buildDetailColumn(
-                "From",
+                "مـــن :",
                 planForTheDay.fromSurah,
                 planForTheDay.fromPage.toString(),
                 planForTheDay.fromAyah.toString(),
@@ -212,7 +215,7 @@ class _DashboardState extends State<Dashboard> {
             const VerticalDivider(color: AppColors.accent70),
             Expanded(
               child: _buildDetailColumn(
-                "To",
+                "حـتـى :",
                 planForTheDay.toSurah,
                 planForTheDay.toPage.toString(),
                 planForTheDay.toAyah.toString(),
@@ -225,17 +228,18 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget _buildDetailColumn(
-      String header, String surah, String page, String ayah) {
+    String header,
+    String surah,
+    String page,
+    String ayah,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          header,
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
-        _buildDetailRow("Surah:", surah),
-        _buildDetailRow("Page:", page),
-        _buildDetailRow("Ayah:", ayah),
+        Text(header, style: Theme.of(context).textTheme.titleMedium),
+        _buildDetailRow("سورة:", surah),
+        _buildDetailRow("صفحة:", page),
+        _buildDetailRow("آية:", ayah),
       ],
     );
   }
@@ -245,7 +249,7 @@ class _DashboardState extends State<Dashboard> {
       padding: const EdgeInsets.only(top: 4.0, right: 8),
       child: Text(
         "$label $value",
-        style: Theme.of(context).textTheme.bodyMedium,
+        style: Theme.of(context).textTheme.titleMedium,
       ),
     );
   }

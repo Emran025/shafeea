@@ -30,6 +30,7 @@ const String _kHalqaStudentsTable = 'halqa_students';
 
 const String _kDailyTrackingDetailTable = 'daily_tracking_detail';
 const String _kMistakesTable = 'mistakes';
+
 /// The concrete implementation of [TrackingLocalDataSource].
 ///
 /// This class handles all direct database interactions for the interactive
@@ -219,7 +220,6 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
       );
     }
   }
-
 
   @override
   Future<List<MistakeModel>> getAllMistakes({
@@ -579,6 +579,7 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
       'trackDate': today,
       'status': 'draft',
       'lastModified': DateTime.now().millisecondsSinceEpoch,
+      'createdAt': DateTime.now().millisecondsSinceEpoch,
       'tenant_id': tenantId,
     };
     final newId = await db.insert(_kDailyTrackingTable, newRecord);
@@ -670,7 +671,6 @@ final class TrackingLocalDataSourceImpl implements TrackingLocalDataSource {
       return TrackingDetailModel.fromMap(detailMap, mistakes);
     }).toList();
   }
-
 
   /// Generic helper to fetch and group child records efficiently.
   Future<Map<K, List<T>>> _fetchGroupedByForeignKey<K, T>({

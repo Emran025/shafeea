@@ -5,14 +5,15 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/error/failures.dart';
 import '../entities/student_info_entity.dart';
 import '../repositories/student_repository.dart';
+import 'usecase.dart';
 
 @lazySingleton
-class GetStudentById {
+class GetStudentById  implements UseCase<StudentInfoEntity, NoParams> {
   final StudentRepository repository;
 
   GetStudentById(this.repository);
-
-  Future<Either<Failure, StudentInfoEntity>> call() async {
+  @override
+  Future<Either<Failure, StudentInfoEntity>> call(NoParams params) async {
     return await repository.getStudentById();
   }
 }

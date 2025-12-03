@@ -116,6 +116,8 @@ import 'package:shafeea/features/home/domain/repositories/student_repository.dar
     as _i634;
 import 'package:shafeea/features/home/domain/usecases/delete_student_usecase.dart'
     as _i564;
+import 'package:shafeea/features/home/domain/usecases/get_plan_for_the_day.dart'
+    as _i314;
 import 'package:shafeea/features/home/domain/usecases/get_student_by_id.dart'
     as _i1070;
 import 'package:shafeea/features/home/domain/usecases/set_student_status_params.dart'
@@ -370,13 +372,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i741.SwitchUserUseCase>(
       () => _i741.SwitchUserUseCase(gh<_i424.AuthRepository>()),
     );
-    gh.lazySingleton<_i634.StudentRepository>(
-      () => _i408.StudentRepositoryImpl(
-        localDataSource: gh<_i155.StudentLocalDataSource>(),
-        remoteDataSource: gh<_i183.StudentRemoteDataSource>(),
-        syncService: gh<_i331.StudentSyncService>(),
-      ),
-    );
     gh.lazySingleton<_i500.GetAllMistakes>(
       () => _i500.GetAllMistakes(gh<_i341.TrackingRepository>()),
     );
@@ -396,6 +391,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i799.FollowUpReportFactory>(),
       ),
     );
+    gh.lazySingleton<_i634.StudentRepository>(
+      () => _i408.StudentRepositoryImpl(
+        localDataSource: gh<_i155.StudentLocalDataSource>(),
+        remoteDataSource: gh<_i183.StudentRemoteDataSource>(),
+        quranLocalDataSource: gh<_i750.QuranLocalDataSource>(),
+        syncService: gh<_i331.StudentSyncService>(),
+      ),
+    );
     gh.lazySingleton<_i273.ExportDataUseCase>(
       () => _i273.ExportDataUseCase(gh<_i844.SettingsRepository>()),
     );
@@ -413,6 +416,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i564.DeleteStudentUseCase>(
       () => _i564.DeleteStudentUseCase(gh<_i634.StudentRepository>()),
+    );
+    gh.lazySingleton<_i314.GetPlanForTheDay>(
+      () => _i314.GetPlanForTheDay(gh<_i634.StudentRepository>()),
     );
     gh.lazySingleton<_i1070.GetStudentById>(
       () => _i1070.GetStudentById(gh<_i634.StudentRepository>()),
@@ -455,20 +461,21 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i830.GetTermsOfUseUseCase>(),
       ),
     );
-    gh.factory<_i516.StudentBloc>(
-      () => blocModule.studentBloc(
-        gh<_i43.UpsertStudent>(),
-        gh<_i564.DeleteStudentUseCase>(),
-        gh<_i1070.GetStudentById>(),
-        gh<_i546.SetStudentStatusUseCase>(),
-      ),
-    );
     gh.factory<_i820.TrackingSessionBloc>(
       () => blocModule.trackingSession(
         gh<_i949.GetOrCreateTodayTrackingDetails>(),
         gh<_i500.GetAllMistakes>(),
         gh<_i268.GenerateFollowUpReportUseCase>(),
         gh<_i587.SaveTaskProgress>(),
+      ),
+    );
+    gh.factory<_i516.StudentBloc>(
+      () => blocModule.studentBloc(
+        gh<_i43.UpsertStudent>(),
+        gh<_i564.DeleteStudentUseCase>(),
+        gh<_i1070.GetStudentById>(),
+        gh<_i546.SetStudentStatusUseCase>(),
+        gh<_i314.GetPlanForTheDay>(),
       ),
     );
     return this;

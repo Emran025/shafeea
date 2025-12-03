@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 import '../../features/daily_tracking/domain/usecases/save_task_progress.dart';
 import '../../features/home/domain/usecases/delete_student_usecase.dart';
 import '../../features/daily_tracking/domain/usecases/generate_follow_up_report_use_case.dart';
+import '../../features/home/domain/usecases/get_plan_for_the_day.dart';
 import '../../features/home/domain/usecases/get_student_by_id.dart';
 import '../../features/home/domain/usecases/set_student_status_params.dart';
 import '../../features/home/domain/usecases/upsert_student_usecase.dart';
@@ -97,14 +98,14 @@ abstract class BlocModule {
     DeleteStudentUseCase deleteStudent,
     GetStudentById getStudentById,
     SetStudentStatusUseCase setStudentStatus,
-    
+    GetPlanForTheDay getPlanForTheDay
   ) {
     return StudentBloc(
       upsertStudent: upsertStudent,
       deleteStudent: deleteStudent,
       getStudentById: getStudentById,
       setStudentStatus: setStudentStatus,
-      
+       getPlanForTheDay : getPlanForTheDay,
     )..add(const StudentDetailsFetched());
   }
 
