@@ -1,18 +1,8 @@
 // path: lib/features/settings/data/repositories/settings_repository_impl.dart
 
-import 'dart:convert';
-import 'dart:io';
 
-import 'package:archive/archive_io.dart';
-import 'package:csv/csv.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shafeea/features/home/data/models/student_model.dart';
-import 'package:shafeea/features/settings/domain/entities/export_config.dart';
-import 'package:shafeea/features/settings/domain/entities/import_config.dart';
-import 'package:shafeea/features/settings/domain/entities/import_export.dart';
-import 'package:shafeea/features/settings/domain/entities/import_summary.dart';
 
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
@@ -25,7 +15,6 @@ import '../../domain/entities/support_ticket_entity.dart';
 import '../../domain/entities/terms_of_use_entity.dart';
 import '../../domain/entities/user_profile_entity.dart';
 import '../../domain/repositories/settings_repository.dart';
-import '../datasources/core_data_local_data_source.dart';
 import '../datasources/settings_local_data_source.dart';
 import '../datasources/settings_remote_data_source.dart';
 import '../models/support_ticket_model.dart';
@@ -43,7 +32,6 @@ import '../models/support_ticket_model.dart';
 class SettingsRepositoryImpl implements SettingsRepository {
   final SettingsLocalDataSource localDataSource;
   final SettingsRemoteDataSource remoteDataSource;
-  final CoreDataLocalDataSource coreDataSource;
   final NetworkInfo networkInfo;
 
   /// Constructs a [SettingsRepositoryImpl].
@@ -53,7 +41,6 @@ class SettingsRepositoryImpl implements SettingsRepository {
   SettingsRepositoryImpl({
     required this.localDataSource,
     required this.remoteDataSource,
-    required this.coreDataSource,
     required this.networkInfo,
   });
 
@@ -199,147 +186,6 @@ class SettingsRepositoryImpl implements SettingsRepository {
     // } else {
     //   return Left(NetworkFailure(message: 'No internet connection detected.'));
     // }
-  }
-
-  @override
-  Future<Either<Failure, String>> exportData({
-    required ExportConfig config,
-  }) async {
-    try {
-      final List<StudentModel> students = [];
-      if (config.entityTypes.contains(EntityType.student)) {
-        students.addAll(await coreDataSource.getStudentsForExport());
-      }
-
-      final data = {
-        'students': students.map((s) => s.toJson()).toList(),
-      };
-
-      final directory = await getApplicationDocumentsDirectory();
-      final timestamp = DateTime.now().toIso8601String();
-      final fileExtension = config.fileFormat;
-      final file = File('${directory.path}/export_$timestamp.$fileExtension');
-
-      if (fileExtension.label == 'json') {
-        await file.writeAsString(jsonEncode(data));
-        return Right(file.path);
-      } else if (fileExtension.label == 'csv') {
-        final archive = Archive();
-        if (students.isNotEmpty) {
-          final csvData = <List<dynamic>>[];
-          csvData.add(StudentModel.csvHeader());
-          csvData.addAll(students.map((s) => s.toCsv()));
-          final csvString = const ListToCsvConverter().convert(csvData);
-          archive.addFile(
-            ArchiveFile(
-              'students.csv',
-              csvString.length,
-              utf8.encode(csvString),
-            ),
-          );
-        }
-        
-        final zipFile = File('${directory.path}/export_$timestamp.zip');
-        final encoder = ZipFileEncoder();
-        encoder.create(zipFile.path);
-        for (final file in archive) {
-          encoder.addArchiveFile(file);
-        }
-        encoder.close();
-        return Right(zipFile.path);
-      } else {
-        return Left(
-          CacheFailure(
-            message: 'Unsupported export file format: $fileExtension',
-          ),
-        );
-      }
-    } catch (e) {
-      return Left(CacheFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, ImportSummary>> importData({
-    required String filePath,
-    required ImportConfig config,
-  }) async {
-    try {
-      final file = File(filePath);
-      final content = await file.readAsString();
-      final errorMessages = <String>[];
-      int successfulRows = 0;
-      int totalRows = 0;
-
-      if (filePath.endsWith('.json')) {
-        final data = jsonDecode(content) as Map<String, dynamic>;
-        if (config.entityType == EntityType.student &&
-            data.containsKey('students')) {
-          final studentsData = data['students'] as List;
-          totalRows = studentsData.length;
-          final studentsToImport = <StudentModel>[];
-          for (var i = 0; i < totalRows; i++) {
-            try {
-              studentsToImport.add(
-                StudentModel.fromMap(studentsData[i] as Map<String, dynamic>),
-              );
-            } catch (e) {
-              errorMessages.add(
-                'Row ${i + 1}: Invalid student data - ${e.toString()}',
-              );
-            }
-          }
-          if (studentsToImport.isNotEmpty) {
-            successfulRows = await coreDataSource.importStudents(
-              studentsToImport,
-              config.conflictResolution.name,
-            );
-          }
-        } 
-      } else if (filePath.endsWith('.csv')) {
-        final csvData = const CsvToListConverter().convert(content);
-        if (csvData.isNotEmpty) {
-          final header = csvData[0];
-          final dataRows = csvData.sublist(1);
-          totalRows = dataRows.length;
-
-          if (config.entityType == EntityType.student) {
-            final studentsToImport = <StudentModel>[];
-            for (var i = 0; i < totalRows; i++) {
-              try {
-                final row = dataRows[i];
-                final map = Map<String, dynamic>.fromIterables(
-                  header.map((e) => e.toString()),
-                  row,
-                );
-                studentsToImport.add(StudentModel.fromMap(map));
-              } catch (e) {
-                errorMessages.add(
-                  'Row ${i + 1}: Invalid student data - ${e.toString()}',
-                );
-              }
-            }
-            if (studentsToImport.isNotEmpty) {
-              successfulRows = await coreDataSource.importStudents(
-                studentsToImport,
-                config.conflictResolution.name,
-              );
-            }
-          }
-        }
-      }
-
-      return Right(
-        ImportSummary(
-          totalRows: totalRows,
-          successfulRows: successfulRows,
-          failedRows: totalRows - successfulRows,
-          errorMessages: errorMessages,
-        ),
-      );
-    } catch (e) {
-      return Left(CacheFailure(message: e.toString()));
-    }
   }
 
   @override

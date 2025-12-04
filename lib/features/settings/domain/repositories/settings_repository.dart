@@ -6,10 +6,8 @@ import '../../../../core/error/failures.dart';
 import '../../../../shared/themes/app_theme.dart';
 import '../entities/privacy_policy_entity.dart';
 import '../entities/settings_entity.dart';
-import '../entities/export_config.dart';
-import '../entities/import_config.dart';
+
 import '../entities/faq_entity.dart';
-import '../entities/import_summary.dart';
 import '../entities/support_ticket_entity.dart';
 import '../entities/terms_of_use_entity.dart';
 import '../entities/user_profile_entity.dart';
@@ -59,19 +57,6 @@ abstract class SettingsRepository {
   /// Fetches the latest privacy policy, using a remote-first with cache-fallback strategy.
   Future<Either<Failure, PrivacyPolicyEntity>> getLatestPolicy();
 
-  /// Exports application data based on the provided configuration.
-  ///
-  /// - [config]: The [ExportConfig] specifying what to export and how.
-  /// Returns a [Future] completing to the file path of the exported data.
-  Future<Either<Failure, String>> exportData({required ExportConfig config});
-
-  /// Imports application data from a file.
-  ///
-  /// - [filePath]: The path to the file to be imported.
-  /// - [config]: The [ImportConfig] specifying how to handle the import.
-  /// Returns a [Future] completing to an [ImportSummary].
-  Future<Either<Failure, ImportSummary>> importData(
-      {required String filePath, required ImportConfig config});
 
   /// Fetches the frequently asked questions.
   Future<Either<Failure, List<FaqEntity>>> getFaqs(int page);

@@ -1,9 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import '../../../../core/models/attendance_type.dart';
 import 'tracking_detail_model.dart';
-import '../../../daily_tracking/domain/entities/tracking_entity.dart';
+import '../../domain/entities/tracking_entity.dart';
 
 /// The data model for a student's daily tracking record.
 ///
@@ -16,6 +14,7 @@ import '../../../daily_tracking/domain/entities/tracking_entity.dart';
 final class TrackingModel {
   final int id;
   final String date;
+  final int enrollmentId;
   final String note;
   final AttendanceType attendanceTypeId;
   final int behaviorNote;
@@ -29,6 +28,7 @@ final class TrackingModel {
   const TrackingModel({
     required this.id,
     required this.date,
+    required this.enrollmentId,
     required this.note,
     required this.details,
     required this.attendanceTypeId,
@@ -48,10 +48,11 @@ final class TrackingModel {
               TrackingDetailModel.fromJson(detailJson as Map<String, dynamic>),
         )
         .toList();
-    log("createdAt : ${json['createdAt']} ");
+
     return TrackingModel(
       id: json['id'] as int? ?? 0,
       date: json['date'] as String? ?? '',
+      enrollmentId: json['enrollmentId'] as int? ?? 0,
       note: json['note'] as String? ?? '',
       attendanceTypeId: detailsList.isEmpty
           ? AttendanceType.absent
@@ -74,6 +75,7 @@ final class TrackingModel {
       // The local 'uuid' column stores the server's integer ID as a string.
       id: int.tryParse(map['uuid'] as String? ?? '0') ?? 0,
       date: map['trackDate'] as String? ?? '',
+      enrollmentId: map['enrollmentId'] as int? ?? 0,
       note: map['note'] as String? ?? '',
       attendanceTypeId: AttendanceType.fromId(
         map['attendanceTypeId'] as int? ?? 1,
@@ -133,11 +135,47 @@ final class TrackingModel {
       id: id.toString(),
       date: DateTime.tryParse(date) ?? DateTime.now(),
       note: note,
+      enrollmentId: enrollmentId,
       attendanceTypeId: attendanceTypeId,
       behaviorNote: behaviorNote,
       createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
       updatedAt: DateTime.tryParse(updatedAt) ?? DateTime.now(),
       details: details.map((detailModel) => detailModel.toEntity()).toList(),
+    );
+  }
+
+  factory TrackingModel.fromEntity(TrackingEntity entity) {
+    return TrackingModel(
+      id: int.tryParse(entity.id) ?? 0,
+      date: entity.date.toIso8601String(),
+      enrollmentId: entity.enrollmentId,
+      note: entity.note,
+      attendanceTypeId: entity.attendanceTypeId,
+      behaviorNote: entity.behaviorNote,
+      createdAt: entity.createdAt.toIso8601String(),
+      updatedAt: entity.updatedAt.toIso8601String(),
+      details: entity.details
+          .map((detailEntity) => TrackingDetailModel.fromEntity(detailEntity))
+          .toList(),
+    );
+  }
+
+  factory TrackingModel.fromCsvRow(
+    Map<String, dynamic> row,
+    List<TrackingDetailModel> details,
+  ) {
+    return TrackingModel(
+      id: row['trackingId'] as int,
+      date: row['date'] as String,
+      note: row['note'] as String? ?? '',
+      enrollmentId: row['note'] as int? ?? 0,
+      attendanceTypeId: AttendanceType.values.firstWhere(
+        (e) => e.toString() == row['attendance'] as String,
+      ),
+      behaviorNote: int.tryParse(row['behaviorNote'] as String? ?? '0') ?? 0,
+      createdAt: row['createdAt'] as String,
+      updatedAt: row['updatedAt'] as String,
+      details: details,
     );
   }
 }

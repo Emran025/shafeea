@@ -6,10 +6,11 @@ import 'package:collection/collection.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../core/models/tracking_units.dart';
+import '../../../../home/domain/entities/tracking_detail_entity.dart';
+import '../../../../home/domain/entities/tracking_entity.dart';
 import '../actual_progress_entity.dart';
 import '../../../../home/domain/entities/follow_up_plan_entity.dart';
-import '../../../domain/entities/tracking_detail_entity.dart';
-import '../../../domain/entities/tracking_entity.dart';
+
 import '../planned_detail_entity.dart';
 import '../follow_up_report_bundle_entity.dart';
 import '../follow_up_report_entity.dart';

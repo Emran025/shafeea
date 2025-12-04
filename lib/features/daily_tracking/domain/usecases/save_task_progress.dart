@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:shafeea/features/daily_tracking/domain/entities/tracking_detail_entity.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/usecases/usecase.dart';
+import '../../../home/domain/entities/tracking_detail_entity.dart';
 import '../repositories/tracking_repository.dart';
 import 'package:injectable/injectable.dart';
 

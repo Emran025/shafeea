@@ -56,7 +56,6 @@ final class StudentSyncServiceImpl implements StudentSyncService {
 
     final userProfile = await _remoteDataSource.getStudent(tenantId);
     await _localDataSource.upsertStudentInfo(userProfile);
-    
 
     if (_isGlobalSyncInProgress || _syncingEntityIds.contains(syncKey)) {
       print(
@@ -98,9 +97,7 @@ final class StudentSyncServiceImpl implements StudentSyncService {
   Future<void> _pullRemoteFollowUpTrackingsChanges({
     required String studentId,
   }) async {
-    final lastSyncTimestamp = await _localDataSource.getLastSyncTimestampFor(
-      
-    );
+    final lastSyncTimestamp = await _localDataSource.getLastSyncTimestampFor();
     final lastSyncTime = DateTime.fromMillisecondsSinceEpoch(lastSyncTimestamp);
 
     final isFresh = DateTime.now().difference(lastSyncTime) < _staleThresholdTr;
@@ -127,9 +124,7 @@ final class StudentSyncServiceImpl implements StudentSyncService {
     }
 
     final finalSyncTimestamp = DateTime.now().millisecondsSinceEpoch;
-    await _localDataSource.updateLastSyncTimestampFor(
-      finalSyncTimestamp,
-    );
+    await _localDataSource.updateLastSyncTimestampFor(finalSyncTimestamp);
 
     print(
       '[SyncService-Pull-Trackings] Finished. New sync timestamp is $finalSyncTimestamp.',

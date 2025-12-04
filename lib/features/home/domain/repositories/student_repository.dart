@@ -2,6 +2,9 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/active_status.dart';
+import '../../../settings/domain/entities/export_config.dart';
+import '../../../settings/domain/entities/import_config.dart';
+import '../../../settings/domain/entities/import_summary.dart';
 import '../entities/plan_for_the_day_entity.dart';
 import '../entities/student_entity.dart';
 import '../entities/student_info_entity.dart';
@@ -39,4 +42,11 @@ abstract interface class StudentRepository {
   });
 
   Future<Either<Failure, PlanForTheDayEntity>> getPlanForTheDay();
+
+    Future<Either<Failure, String>> exportFollowUpReports({
+    required ExportConfig config,
+  });
+  Future<Either<Failure, ImportSummary>> importFollowUpReports({
+    required ImportConfig config,
+  });
 }

@@ -14,9 +14,9 @@ import '../../../home/data/models/follow_up_plan_model.dart';
 import '../../../home/data/models/tracking_detail_model.dart';
 import '../../../home/data/models/tracking_model.dart';
 import '../../../home/domain/entities/follow_up_plan_entity.dart';
-import '../../domain/entities/tracking_detail_entity.dart';
+import '../../../home/domain/entities/tracking_detail_entity.dart';
+import '../../../home/domain/entities/tracking_entity.dart';
 import '../../domain/entities/mistake.dart';
-import '../../domain/entities/tracking_entity.dart';
 import '../../domain/repositories/tracking_repository.dart';
 
 // Data Layer imports
