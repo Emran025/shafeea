@@ -4,7 +4,7 @@ enum FollowUpReportStatus { initial, loading, success, failure }
 
 // The state of the current recitation tracking session.
 class TrackingSessionState extends Equatable {
-  final String enrollmentId;
+  
   final TrackingType currentTaskType;
 
   // The key is now the domain TrackingType from your core models,
@@ -22,7 +22,6 @@ class TrackingSessionState extends Equatable {
   final Failure? followUpReportFailure;
 
   const TrackingSessionState({
-    required this.enrollmentId,
     this.currentTaskType =
         TrackingType.memorization, // Assuming memorize is the default
     this.taskProgress = const {},
@@ -58,7 +57,6 @@ class TrackingSessionState extends Equatable {
     bool clearFollowUpReportFailure = false,
   }) {
     return TrackingSessionState(
-      enrollmentId: enrollmentId ?? this.enrollmentId,
       currentTaskType: currentTaskType ?? this.currentTaskType,
       taskProgress: taskProgress ?? this.taskProgress,
       status: status ?? this.status,
@@ -77,7 +75,6 @@ class TrackingSessionState extends Equatable {
 
   @override
   List<Object?> get props => [
-    enrollmentId,
     currentTaskType,
     taskProgress,
     status,

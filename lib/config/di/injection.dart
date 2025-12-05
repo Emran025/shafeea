@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 import '../../features/daily_tracking/domain/usecases/save_task_progress.dart';
 import '../../features/home/domain/usecases/delete_student_usecase.dart';
 import '../../features/daily_tracking/domain/usecases/generate_follow_up_report_use_case.dart';
+import '../../features/home/domain/usecases/get_plan_for_the_day.dart';
 import '../../features/home/domain/usecases/get_student_by_id.dart';
 import '../../features/home/domain/usecases/set_student_status_params.dart';
 import '../../features/home/domain/usecases/upsert_student_usecase.dart';
@@ -30,13 +31,13 @@ import '../../features/daily_tracking/domain/usecases/get_surahs_list.dart';
 import '../../features/daily_tracking/presentation/bloc/error_analysis_chart_bloc.dart';
 import '../../features/daily_tracking/presentation/bloc/quran_reader_bloc.dart';
 import '../../features/daily_tracking/presentation/bloc/tracking_session_bloc.dart';
-import '../../features/settings/domain/usecases/export_data_usecase.dart';
+import '../../features/settings/domain/usecases/import_follow_up_reports_usecase.dart';
 import '../../features/settings/domain/usecases/get_latest_policy_usecase.dart';
 import '../../features/settings/domain/usecases/get_settings.dart';
 import '../../features/settings/domain/usecases/get_faqs_usecase.dart';
 import '../../features/settings/domain/usecases/get_terms_of_use_usecase.dart';
 import '../../features/settings/domain/usecases/get_user_profile.dart';
-import '../../features/settings/domain/usecases/import_data_usecase.dart';
+import '../../features/settings/domain/usecases/export_follow_up_reports_usecase.dart';
 import '../../features/settings/domain/usecases/save_theme.dart';
 import '../../features/settings/domain/usecases/set_analytics_preference.dart';
 import '../../features/settings/domain/usecases/set_notifications_preference.dart';
@@ -97,14 +98,14 @@ abstract class BlocModule {
     DeleteStudentUseCase deleteStudent,
     GetStudentById getStudentById,
     SetStudentStatusUseCase setStudentStatus,
-    
+    GetPlanForTheDay getPlanForTheDay
   ) {
     return StudentBloc(
       upsertStudent: upsertStudent,
       deleteStudent: deleteStudent,
       getStudentById: getStudentById,
       setStudentStatus: setStudentStatus,
-      
+       getPlanForTheDay : getPlanForTheDay,
     )..add(const StudentDetailsFetched());
   }
 
@@ -134,8 +135,8 @@ abstract class BlocModule {
     GetUserProfile getUserProfile,
     UpdateUserProfile updateUserProfile,
     GetLatestPolicyUseCase getLatestPolicy,
-    ImportDataUseCase importDataUseCase,
-    ExportDataUseCase exportDataUseCase,
+    ImportFollowUpReportsUseCase importFollowUpReportsUseCase,
+    ExportFollowUpReportsUseCase exportFollowUpReportsUseCase,
     GetFaqsUseCase getFaqsUseCase,
     SubmitSupportTicketUseCase submitSupportTicketUseCase,
     GetTermsOfUseUseCase getTermsOfUseUseCase,
@@ -148,8 +149,8 @@ abstract class BlocModule {
       setAnalyticsPreference: setAnalyticsPreference,
       getUserProfile: getUserProfile,
       updateUserProfile: updateUserProfile,
-      importDataUseCase: importDataUseCase,
-      exportDataUseCase: exportDataUseCase,
+      importFollowUpReportsUseCase: importFollowUpReportsUseCase,
+      exportFollowUpReportsUseCase: exportFollowUpReportsUseCase,
       getFaqsUseCase: getFaqsUseCase,
       submitSupportTicketUseCase: submitSupportTicketUseCase,
       getTermsOfUseUseCase: getTermsOfUseUseCase,

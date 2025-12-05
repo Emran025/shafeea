@@ -7,10 +7,10 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/utils/data_status.dart';
 
 // Import your existing domain entities
-import 'package:shafeea/features/daily_tracking/domain/entities/tracking_detail_entity.dart';
 import 'package:shafeea/core/models/tracking_type.dart';
 
 // Import our new domain entities and use cases
+import '../../../home/domain/entities/tracking_detail_entity.dart';
 import '../../domain/entities/mistake.dart';
 import '../../domain/usecases/get_all_mistakes.dart';
 import '../../domain/usecases/get_or_create_today_tracking.dart';
@@ -38,7 +38,7 @@ class TrackingSessionBloc
        _generateFollowUpReportUC = generateFollowUpReportUC,
        _saveTaskProgress = saveTaskProgress,
 
-       super(const TrackingSessionState(enrollmentId: "-1")) {
+       super(const TrackingSessionState()) {
     on<SessionStarted>(_onSessionStarted);
     on<TaskTypeChanged>(_onTaskTypeChanged);
     on<HistoricalMistakesRequested>(_onHistoricalMistakesRequested);
@@ -131,7 +131,7 @@ on<FollowUpReportFetched>(_onFetchReport, transformer: droppable());
       trackingId: currentDetail.trackingId,
       trackingTypeId: currentDetail.trackingTypeId,
       fromTrackingUnitId: currentDetail.fromTrackingUnitId,
-      toTrackingUnitId: newToTrackingUnitId,
+      toTrackingUnitId: newToTrackingUnitId.toEntity(),
       actualAmount: currentDetail.actualAmount,
       comment: currentDetail.comment,
       status: currentDetail.status,
@@ -180,7 +180,6 @@ on<FollowUpReportFetched>(_onFetchReport, transformer: droppable());
     // Call the UseCase without a type to fetch all mistakes.
     final result = await _getAllMistakes(
       GetAllMistakesParams(
-        enrollmentId: state.enrollmentId,
         // No type specified, so we get all types.
         // We can pass page filters from the event if needed.
         fromPage: event.fromPage,

@@ -32,17 +32,17 @@ final FollowUpPlanModel studentPlan = FollowUpPlanModel(
   details: [
     PlanDetailModel(
       type: TrackingType.memorization, // يطابق trackingTypeId: 1
-      unit: TrackingUnit.page,
+      unit: TrackingUnitTyps.page,
       amount: 1,
     ),
     PlanDetailModel(
       type: TrackingType.review, // يطابق trackingTypeId: 2
-      unit: TrackingUnit.page,
+      unit: TrackingUnitTyps.page,
       amount: 10, // ما يعادل نصف جزء تقريبًا
     ),
     PlanDetailModel(
       type: TrackingType.recitation, // يطابق trackingTypeId: 3
-      unit: TrackingUnit.page,
+      unit: TrackingUnitTyps.page,
       amount: 10, // ما يعادل حزبًا واحدًا
     ),
   ],
@@ -56,7 +56,8 @@ final List<TrackingModel> studentTrackings = [
   TrackingModel(
     id: 1001,
     date: '2025-07-21',
-    note: 'بداية أسبوع غير موفقة، كان الطالب مشتتاً.',
+    note: 'بداية أسبوع غير موفقة، كان الطالب مشتتاً.',    
+    enrollmentId:0,
     behaviorNote: 3, // (من 5)
     attendanceTypeId: AttendanceType.present,
     createdAt: '2025-07-21T18:00:00Z',
@@ -111,7 +112,8 @@ final List<TrackingModel> studentTrackings = [
   TrackingModel(
     id: 1002,
     date: '2025-07-22',
-    note: 'يوم استثنائي، أظهر الطالب تركيزًا عاليًا.',
+    note: 'يوم استثنائي، أظهر الطالب تركيزًا عاليًا.',    
+    enrollmentId:0,
     behaviorNote: 5,
     attendanceTypeId: AttendanceType.present,
     createdAt: '2025-07-22T18:00:00Z',
@@ -167,7 +169,8 @@ final List<TrackingModel> studentTrackings = [
     id: 1003,
     attendanceTypeId: AttendanceType.present,
     date: '2025-07-23',
-    note: 'أداء مستقر، التزم بالخطة المحددة.',
+    note: 'أداء مستقر، التزم بالخطة المحددة.',    
+    enrollmentId:0,
     behaviorNote: 4,
     createdAt: '2025-07-23T18:00:00Z',
     updatedAt: '2025-07-23T18:00:00Z',
@@ -209,7 +212,8 @@ final List<TrackingModel> studentTrackings = [
     id: 1004,
     attendanceTypeId: AttendanceType.present,
     date: '2025-07-24',
-    note: 'يوم مستقر، تم الالتزام بالخطة.',
+    note: 'يوم مستقر، تم الالتزام بالخطة.',    
+    enrollmentId:0,
     behaviorNote: 4,
     createdAt: '2025-07-24T18:00:00Z',
     updatedAt: '2025-07-24T18:00:00Z',
@@ -250,7 +254,8 @@ final List<TrackingModel> studentTrackings = [
     id: 1005,
     attendanceTypeId: AttendanceType.present,
     date: '2025-07-25',
-    note: 'كان الطالب متعباً قليلاً.',
+    note: 'كان الطالب متعباً قليلاً.',    
+    enrollmentId:0,
     behaviorNote: 3,
     createdAt: '2025-07-25T18:00:00Z',
     updatedAt: '2025-07-25T18:00:00Z',
@@ -305,7 +310,8 @@ final List<TrackingModel> studentTrackings = [
     id: 1006,
 
     date: '2025-07-26',
-    note: 'تركيز عالٍ ورغبة في تعويض الأمس.',
+    note: 'تركيز عالٍ ورغبة في تعويض الأمس.',    
+    enrollmentId:0,
     behaviorNote: 5,
     attendanceTypeId: AttendanceType.present,
     createdAt: '2025-07-26T18:00:00Z',
@@ -346,7 +352,8 @@ final List<TrackingModel> studentTrackings = [
   TrackingModel(
     id: 1007,
     date: '2025-07-27',
-    note: 'غياب الطالب لظرف طارئ.',
+    note: 'غياب الطالب لظرف طارئ.',    
+    enrollmentId:0,
     behaviorNote: 1, // سلوك منخفض لأنه لم يحضر
     attendanceTypeId: AttendanceType.present,
     createdAt: '2025-07-27T18:00:00Z',
@@ -359,7 +366,8 @@ final List<TrackingModel> studentTrackings = [
     id: 1008,
 
     date: '2025-07-28',
-    note: 'العقل ما زال متأثراً بالغياب.',
+    note: 'العقل ما زال متأثراً بالغياب.',    
+    enrollmentId:0,
     behaviorNote: 2,
     attendanceTypeId: AttendanceType.present,
     createdAt: '2025-07-28T18:00:00Z',
@@ -404,7 +412,8 @@ final List<TrackingModel> studentTrackings = [
     id: 1009,
 
     date: '2025-07-29',
-    note: 'بدأ يستعيد تركيزه.',
+    note: 'بدأ يستعيد تركيزه.',    
+    enrollmentId:0,
     behaviorNote: 4,
     attendanceTypeId: AttendanceType.present,
     createdAt: '2025-07-29T18:00:00Z',
@@ -446,7 +455,8 @@ final List<TrackingModel> studentTrackings = [
     id: 1010,
 
     date: '2025-07-30',
-    note: 'يوم رائع، حماس عالي.',
+    note: 'يوم رائع، حماس عالي.',    
+    enrollmentId:0,
     behaviorNote: 5,
     attendanceTypeId: AttendanceType.present,
     createdAt: '2025-07-30T18:00:00Z',
@@ -474,7 +484,8 @@ final List<TrackingModel> studentTrackings = [
     id: 1011,
 
     date: '2025-07-31',
-    note: 'عانى من التشتت الذهني.',
+    note: 'عانى من التشتت الذهني.',    
+    enrollmentId:0,
     behaviorNote: 3,
     attendanceTypeId: AttendanceType.present,
     createdAt: '2025-07-31T18:00:00Z',
@@ -516,7 +527,8 @@ final List<TrackingModel> studentTrackings = [
     id: 1012,
 
     date: '2025-08-01',
-    note: 'أداء قياسي لتعويض كل التقصير السابق.',
+    note: 'أداء قياسي لتعويض كل التقصير السابق.',    
+    enrollmentId:0,
     behaviorNote: 5,
     attendanceTypeId: AttendanceType.present,
     createdAt: '2025-08-01T18:00:00Z',
@@ -558,7 +570,8 @@ final List<TrackingModel> studentTrackings = [
     id: 1013,
 
     date: '2025-08-02',
-    note: 'عودة إلى المسار الصحيح.',
+    note: 'عودة إلى المسار الصحيح.',    
+    enrollmentId:0,
     behaviorNote: 4,
     attendanceTypeId: AttendanceType.present,
     createdAt: '2025-08-02T18:00:00Z',
@@ -613,17 +626,17 @@ final StudentInfoEntity fakeStudentInfo = StudentInfoEntity(
     details: [
       PlanDetailEntity(
         type: TrackingType.memorization,
-        unit: TrackingUnit.page,
+        unit: TrackingUnitTyps.page,
         amount: 5,
       ),
       PlanDetailEntity(
         type: TrackingType.review,
-        unit: TrackingUnit.juz,
+        unit: TrackingUnitTyps.juz,
         amount: 1,
       ),
       PlanDetailEntity(
         type: TrackingType.recitation,
-        unit: TrackingUnit.halfHizb,
+        unit: TrackingUnitTyps.halfHizb,
         amount: 2,
       ),
     ],
@@ -666,4 +679,3 @@ final List<StudentDetailEntity> fakeStudents1 = [
   fakeStudent,
   fakeStudent,
 ];
-

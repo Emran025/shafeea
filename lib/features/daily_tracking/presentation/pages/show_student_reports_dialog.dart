@@ -6,8 +6,6 @@ import '../bloc/tracking_session_bloc.dart';
 import '../widgets/follow_up_report_dialog.dart';
 
 class ShowStudentReportsDialog extends StatefulWidget {
-
-
   const ShowStudentReportsDialog({super.key});
 
   @override
@@ -19,7 +17,8 @@ class _ShowStudentReportsDialogState extends State<ShowStudentReportsDialog> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<TrackingSessionBloc>()..add(FollowUpReportFetched()),
+      create: (context) =>
+          sl<TrackingSessionBloc>()..add(FollowUpReportFetched()),
       child: BlocBuilder<TrackingSessionBloc, TrackingSessionState>(
         builder: (dialogContext, state) {
           print("DIALOG: --- 3. BlocBuilder is rebuilding! ---");
@@ -37,9 +36,7 @@ class _ShowStudentReportsDialogState extends State<ShowStudentReportsDialog> {
 
           if (state.followUpReportStatus == FollowUpReportStatus.success &&
               state.followUpReport != null) {
-            return FollowUpReportDialog(
-              bundle: state.followUpReport!,
-            );
+            return FollowUpReportDialog(bundle: state.followUpReport!);
           }
 
           if (state.followUpReportStatus == FollowUpReportStatus.failure) {

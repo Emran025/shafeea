@@ -1,13 +1,16 @@
 // lib/features/StudentsManagement/domain/factories/follow_up_report_factory.dart
 
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../core/models/tracking_units.dart';
+import '../../../../home/domain/entities/tracking_detail_entity.dart';
+import '../../../../home/domain/entities/tracking_entity.dart';
 import '../actual_progress_entity.dart';
 import '../../../../home/domain/entities/follow_up_plan_entity.dart';
-import '../../../domain/entities/tracking_detail_entity.dart';
-import '../../../domain/entities/tracking_entity.dart';
+
 import '../planned_detail_entity.dart';
 import '../follow_up_report_bundle_entity.dart';
 import '../follow_up_report_entity.dart';
@@ -91,13 +94,17 @@ class FollowUpReportFactory {
             return null;
           }
 
-          final plannedAmount = _normalizeToCommonUnit(
-            planDetail.amount,
+          final plannedAmount = planDetail.amount;
+
+          final actualAmount = _normalizeToActUnit(
+            (trackingDetail.fromTrackingUnitId.fromPage + trackingDetail.gap) -
+                trackingDetail.fromTrackingUnitId.fromPage,
             planDetail.unit,
           );
-          final actualAmount = trackingDetail.actualAmount.toDouble();
-          final gap = actualAmount - plannedAmount;
 
+          final gap = actualAmount - plannedAmount;
+          log("gap :$gap");
+          log("actualAmount :$actualAmount");
           return FollowUpReportDetailEntity(
             type: trackingDetail.trackingTypeId,
             plannedDetail: PlannedDetailEntity(
@@ -105,10 +112,10 @@ class FollowUpReportFactory {
               amount: planDetail.amount,
             ),
             actual: ActualProgressEntity(
-              unit: TrackingUnit
-                  .page, // يجب أن تكون الوحدة ديناميكية إذا كانت تتغير
+              unit: planDetail.unit,
               fromTrackingUnitId: trackingDetail.fromTrackingUnitId,
               toTrackingUnitId: trackingDetail.toTrackingUnitId,
+              actualAmount: actualAmount,
             ),
             gap: gap,
             performanceScore: trackingDetail.score.toDouble(),
@@ -163,12 +170,12 @@ class FollowUpReportFactory {
           _normalizeToCommonUnit(
             detail.actual.fromTrackingUnitId.toPage -
                 detail.actual.fromTrackingUnitId.fromPage,
-            TrackingUnit.fromId(detail.actual.fromTrackingUnitId.unitId),
+            TrackingUnitTyps.fromId(detail.actual.fromTrackingUnitId.unitId),
           ) +
           _normalizeToCommonUnit(
             detail.actual.toTrackingUnitId.toPage -
                 detail.actual.toTrackingUnitId.fromPage,
-            TrackingUnit.fromId(detail.actual.toTrackingUnitId.unitId),
+            TrackingUnitTyps.fromId(detail.actual.toTrackingUnitId.unitId),
           ); // افتراض
       if (plannedAmount > 0) {
         totalAchievementRate += (actualAmount / plannedAmount) * 100;
@@ -197,16 +204,31 @@ class FollowUpReportFactory {
     );
   }
 
-  double _normalizeToCommonUnit(num amount, TrackingUnit unit) {
+  double _normalizeToCommonUnit(num amount, TrackingUnitTyps unit) {
     switch (unit) {
-      case TrackingUnit.hizb:
+      case TrackingUnitTyps.hizb:
         return amount * _pagesPerHizb;
-      case TrackingUnit.juz:
+      case TrackingUnitTyps.juz:
         return amount * _pagesPerJuz;
-      case TrackingUnit.halfHizb:
+      case TrackingUnitTyps.halfHizb:
         return amount * _pagesPerHalfHizb;
-      case TrackingUnit.quarterHizb:
+      case TrackingUnitTyps.quarterHizb:
         return amount * _pagesPerQuarterHizb;
+      default:
+        return amount.toDouble();
+    }
+  }
+
+  double _normalizeToActUnit(num amount, TrackingUnitTyps unit) {
+    switch (unit) {
+      case TrackingUnitTyps.hizb:
+        return amount / _pagesPerHizb;
+      case TrackingUnitTyps.juz:
+        return amount / _pagesPerJuz;
+      case TrackingUnitTyps.halfHizb:
+        return amount / _pagesPerHalfHizb;
+      case TrackingUnitTyps.quarterHizb:
+        return amount / _pagesPerQuarterHizb;
       default:
         return amount.toDouble();
     }

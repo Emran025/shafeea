@@ -19,10 +19,7 @@ import '../view_models/student_summary_entity.dart';
 /// the data, not calculating it.
 class FollowUpReportDialog extends StatefulWidget {
   final FollowUpReportBundleEntity bundle;
-  const FollowUpReportDialog({
-    super.key,
-    required this.bundle,
-  });
+  const FollowUpReportDialog({super.key, required this.bundle});
 
   @override
   State<FollowUpReportDialog> createState() => _FollowUpReportDialogState();
@@ -242,7 +239,7 @@ class _FollowUpReportDialogState extends State<FollowUpReportDialog> {
         ),
         ...report.details.map((detail) {
           // The actual amount can be derived from the plan and the gap
-          final actualAmount = detail.plannedDetail.amount + detail.gap;
+          final actualAmount = detail.actual.actualAmount;
           return TableRow(
             children: [
               _buildTableCell(detail.type.labelAr),

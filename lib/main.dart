@@ -5,6 +5,7 @@ import 'config/localization/l10n_config.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'config/di/injection.dart';
 import 'features/app/cubit/app_setup_cubit.dart';
+import 'features/home/presentation/bloc/student_bloc.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
 import 'shared/themes/app_theme.dart';
 import 'routes/app_router.dart';
@@ -34,6 +35,7 @@ void main() async {
         // creating it is standard practice unless the instance must be preserved
         // across widget trees, which is not the case at the root.
         BlocProvider<AuthBloc>(create: (context) => sl<AuthBloc>()),
+        BlocProvider<StudentBloc>(create: (context) => sl<StudentBloc>()),
       ],
       child: const ShafeeaApp(),
     ),

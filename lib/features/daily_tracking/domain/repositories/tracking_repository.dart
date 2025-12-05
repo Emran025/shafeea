@@ -5,11 +5,11 @@ import 'package:shafeea/core/models/bar_chart_datas.dart';
 import 'package:shafeea/features/home/domain/entities/chart_filter.dart';
 
 // Import the pure domain entities
-import 'package:shafeea/features/daily_tracking/domain/entities/tracking_detail_entity.dart';
 
 import '../../../home/domain/entities/follow_up_plan_entity.dart';
+import '../../../home/domain/entities/tracking_detail_entity.dart';
+import '../../../home/domain/entities/tracking_entity.dart';
 import '../entities/mistake.dart';
-import '../entities/tracking_entity.dart';
 
 /// Abstract contract for the tracking repository.
 ///

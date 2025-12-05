@@ -6,13 +6,15 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/active_status.dart';
+import '../../domain/entities/plan_for_the_day_entity.dart';
 import '../../domain/entities/student_entity.dart';
 import '../../domain/entities/student_info_entity.dart';
 import '../../domain/usecases/delete_student_usecase.dart';
-
+import '../../domain/usecases/get_plan_for_the_day.dart';
 import '../../domain/usecases/get_student_by_id.dart';
 import '../../domain/usecases/set_student_status_params.dart';
 import '../../domain/usecases/upsert_student_usecase.dart';
+import '../../domain/usecases/usecase.dart';
 
 part 'student_event.dart';
 part 'student_state.dart';
@@ -24,31 +26,55 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
   final UpsertStudent _upsertStudentUC;
   final DeleteStudentUseCase _deleteStudentUC;
   final SetStudentStatusUseCase _setStudentStatusUC;
-  
+  final GetPlanForTheDay _getPlanForTheDayUC;
 
   StudentBloc({
     required GetStudentById getStudentById,
     required UpsertStudent upsertStudent,
     required DeleteStudentUseCase deleteStudent,
     required SetStudentStatusUseCase setStudentStatus,
-    
-  }) : 
-       _upsertStudentUC = upsertStudent,
-       _deleteStudentUC = deleteStudent,
-       _getStudentByIdUC = getStudentById,
-       _setStudentStatusUC = setStudentStatus,
-       
-
-       super(const StudentState()) {
-
+    required GetPlanForTheDay getPlanForTheDay,
+  })  : _upsertStudentUC = upsertStudent,
+        _deleteStudentUC = deleteStudent,
+        _getStudentByIdUC = getStudentById,
+        _setStudentStatusUC = setStudentStatus,
+        _getPlanForTheDayUC = getPlanForTheDay,
+        super(const StudentState()) {
     on<StudentUpserted>(_onUpsert, transformer: droppable());
     on<StudentDeleted>(_onDelete, transformer: droppable());
     on<StudentDetailsFetched>(_onFetchDetails, transformer: restartable());
     on<StudentStatusChanged>(_onStatusChange, transformer: droppable());
-    
-
+    on<PlanForTheDayRequested>(_onPlanForTheDayRequested, transformer: droppable());
   }
 
+  Future<void> _onPlanForTheDayRequested(
+    PlanForTheDayRequested event,
+    Emitter<StudentState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        planForTheDayStatus: PlanForTheDayStatus.loading,
+        clearPlanForTheDayFailure: true,
+      ),
+    );
+
+    final result = await _getPlanForTheDayUC(NoParams());
+
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          planForTheDayStatus: PlanForTheDayStatus.failure,
+          planForTheDayFailure: failure,
+        ),
+      ),
+      (planForTheDay) => emit(
+        state.copyWith(
+          planForTheDayStatus: PlanForTheDayStatus.success,
+          planForTheDay: planForTheDay,
+        ),
+      ),
+    );
+  }
 
   /// Handles the fetching of a single student's detailed profile.
   Future<void> _onFetchDetails(
@@ -65,7 +91,7 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
     );
 
     // 2. Call the use case to fetch the data.
-    final result = await _getStudentByIdUC();
+    final result = await _getStudentByIdUC(NoParams());
 
     // 3. Fold the result and emit either a success or failure state.
     result.fold(
@@ -121,7 +147,7 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
   ) async {
     emit(state.copyWith(submissionStatus: StudentSubmissionStatus.submitting));
 
-    final result = await _deleteStudentUC();
+    final result = await _deleteStudentUC(NoParams());
 
     result.fold(
       (failure) => emit(

@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/tracking_type.dart';
-import '../entities/tracking_detail_entity.dart';
+import '../../../home/domain/entities/tracking_detail_entity.dart';
 import '../repositories/tracking_repository.dart';
 import 'package:injectable/injectable.dart';
 

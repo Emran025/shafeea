@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +15,8 @@ import '../../../../daily_tracking/presentation/bloc/quran_reader_bloc.dart';
 import '../../../../daily_tracking/presentation/bloc/tracking_session_bloc.dart';
 import '../../../../daily_tracking/presentation/pages/quran_reader_screen.dart';
 import '../../../../settings/presentation/screens/settings_screen.dart';
+import '../../../domain/entities/plan_for_the_day_entity.dart';
+import '../../bloc/student_bloc.dart';
 
 // import '../../../../../core/constants/app_colors.dart';
 
@@ -25,9 +29,16 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   @override
+  void initState() {
+    super.initState();
+    context.read<StudentBloc>().add(const PlanForTheDayRequested());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.ltr,
+
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: AppColors.darkBackground,
@@ -99,10 +110,162 @@ class _DashboardState extends State<Dashboard> {
             ),
           ],
         ),
-
         body: Directionality(
           textDirection: TextDirection.rtl,
-          child: SafeArea(child: Center()),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12,
+              ),
+              child: Column(
+                children: [
+                  // Latest Alerts - Frosted Glass Effect
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.mediumDark87,
+                            AppColors.mediumDark70,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'آخر التنبيهات',
+                            style: Theme.of(context).textTheme.titleLarge!
+                                .copyWith(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'لا توجد تنبيهات جديدة في الوقت الحالي.',
+                            style: Theme.of(context).textTheme.bodyMedium!
+                                .copyWith(
+                                  color: Colors.white70,
+                                  height: 1.5, // لزيادة أناقة النص
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Plan for the Day Card - Modern Style
+                  Expanded(
+                    child: BlocBuilder<StudentBloc, StudentState>(
+                      builder: (context, state) {
+                        if (state.planForTheDayStatus ==
+                            PlanForTheDayStatus.loading) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.accent,
+                            ),
+                          );
+                        } else if (state.planForTheDayStatus ==
+                            PlanForTheDayStatus.failure) {
+                          return Center(
+                            child: Text(
+                              state.planForTheDayFailure?.message ?? 'حدث خطأ',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          );
+                        } else if (state.planForTheDayStatus ==
+                            PlanForTheDayStatus.success) {
+                          return ListView(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppColors.mediumDark87,
+                                      AppColors.mediumDark70,
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(24),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 12,
+                                      offset: Offset(0, 6),
+                                    ),
+                                  ],
+                                ),
+                                padding: const EdgeInsets.all(24),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'مــهــام الــيــوم',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium!
+                                          .copyWith(
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    state.planForTheDay != null
+                                        ? Column(
+                                            children: state
+                                                .planForTheDay!
+                                                .section
+                                                .map(
+                                                  (section) =>
+                                                      _buildModernTaskCard(
+                                                        section,
+                                                      ),
+                                                )
+                                                .toList(),
+                                          )
+                                        : Center(
+                                            child: Text(
+                                              'لا توجد مهام لهذا اليوم',
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.bodyMedium,
+                                            ),
+                                          ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -114,6 +277,106 @@ class _DashboardState extends State<Dashboard> {
       builder: (context) => BlocProvider.value(
         value: context.read<AuthBloc>(),
         child: const LogoutConfirmationDialog(),
+      ),
+    );
+  }
+
+  // Modern Task Card Helper
+  Widget _buildModernTaskCard(PlanForTheDaySection section) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.mediumDark70,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4)),
+        ],
+        border: Border.all(color: AppColors.accent38),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: AppColors.accent,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                section.type.labelAr,
+                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const Divider(color: Colors.white24, height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: _buildDetailColumnModern(
+                  "مـــن :",
+                  section.fromTrackingUnitId.fromSurah,
+                  section.fromTrackingUnitId.fromPage.toString(),
+                  section.fromTrackingUnitId.fromAyah.toString(),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildDetailColumnModern(
+                  "حـتـى :",
+                  section.toTrackingUnitId.toSurah,
+                  section.toTrackingUnitId.toPage.toString(),
+                  section.toTrackingUnitId.toAyah.toString(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailColumnModern(
+    String header,
+    String surah,
+    String page,
+    String ayah,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          header,
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+            color: Colors.white70,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 4),
+        _buildDetailRowModern("سورة:", surah),
+        _buildDetailRowModern("صفحة:", page),
+        _buildDetailRowModern("آية:", ayah),
+      ],
+    );
+  }
+
+  Widget _buildDetailRowModern(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4.0, right: 8),
+      child: Text(
+        "$label $value",
+        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+          color: Colors.white60,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }
