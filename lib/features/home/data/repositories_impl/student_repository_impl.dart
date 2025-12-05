@@ -1,19 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shafeea/features/home/domain/entities/plan_detail_entity.dart';
-import '../../../daily_tracking/data/datasources/quran_local_data_source.dart';
 import 'package:shafeea/features/home/domain/entities/plan_for_the_day_entity.dart';
 import 'package:shafeea/features/home/domain/entities/student_info_entity.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/models/active_status.dart';
+import '../../../daily_tracking/data/datasources/tracking_local_data_source.dart';
 import '../../../settings/domain/entities/export_config.dart';
 import '../../../settings/domain/entities/import_config.dart';
 import '../../../settings/domain/entities/import_export.dart';
@@ -30,18 +28,18 @@ import '../services/student_sync_service.dart';
 @LazySingleton(as: StudentRepository)
 final class StudentRepositoryImpl implements StudentRepository {
   final StudentLocalDataSource _localDataSource;
+  final TrackingLocalDataSource _trackingLocalDataSource;
   final StudentSyncService _syncService;
-  final QuranLocalDataSource _quranLocalDataSource;
 
   // NetworkInfo is not needed here anymore as SyncService handles it.
 
   StudentRepositoryImpl({
     required StudentLocalDataSource localDataSource,
+    required TrackingLocalDataSource trackingLocalDataSource,
     required StudentRemoteDataSource remoteDataSource,
-    required QuranLocalDataSource quranLocalDataSource,
     required StudentSyncService syncService,
   }) : _localDataSource = localDataSource,
-       _quranLocalDataSource = quranLocalDataSource,
+       _trackingLocalDataSource = trackingLocalDataSource,
        _syncService = syncService;
 
   @override
@@ -111,6 +109,8 @@ final class StudentRepositoryImpl implements StudentRepository {
   @override
   Future<Either<Failure, PlanForTheDayEntity>> getPlanForTheDay() async {
     try {
+      final nextTracking = await _trackingLocalDataSource
+          .getOrCreateTodayDraftTrackingDetails();
       final followUpPlan = await _localDataSource.getFollowUpPlan();
       final trackings = await _localDataSource.getFollowUpTrackings();
 
@@ -118,92 +118,45 @@ final class StudentRepositoryImpl implements StudentRepository {
         return Left(CacheFailure(message: 'You have no plan details.'));
       }
 
-      if (trackings.isEmpty) {
-        return Right(_getFirstPlan(followUpPlan.details.first.toEntity()));
-      }
-      for (final lastTracking in trackings) {
-        log(
-          "----------------------------${lastTracking.createdAt}------------------------------",
-        );
-      }
+      final DateTime lastTrackingDate = (trackings.isNotEmpty)
+          ? DateTime.parse(trackings.last.createdAt)
+          : DateTime.now();
 
-      final lastTracking = trackings.last;
-      final lastTrackingDate = DateTime.parse(lastTracking.createdAt);
-      final frequency = followUpPlan.frequency;
-      final daysCount = frequency.daysCount;
-      final nextTrackingDate = lastTrackingDate.add(Duration(days: daysCount));
-      final now = DateTime.now();
-
-      if (now.isBefore(nextTrackingDate)) {
-        return Left(
-          CacheFailure(
-            message:
-                'You have already completed your plan for today. Please come back tomorrow.',
-          ),
-        );
-      }
-
+      final daysCount = followUpPlan.frequency.daysCount;
+      final nextTrackingDate =
+          (DateTime.now()).isBefore(
+            lastTrackingDate.add(Duration(days: daysCount)),
+          )
+          ? DateTime.now()
+          : lastTrackingDate.add(Duration(days: daysCount));
+      List<PlanForTheDaySection> sections = [];
       final planDetails = followUpPlan.details;
-
-      if (lastTracking.details.isEmpty) {
-        return Right(_getFirstPlan(planDetails.first.toEntity()));
+      for (final ditail in planDetails) {
+        final trackingDitail = nextTracking[ditail.type];
+        trackingDitail != null
+            ? sections.add(
+                PlanForTheDaySection(
+                  type: ditail.type,
+                  unit: ditail.unit,
+                  fromTrackingUnitId: trackingDitail.fromTrackingUnitId
+                      .toEntity(),
+                  toTrackingUnitId: trackingDitail.fromTrackingUnitId
+                      .getNext(trackingUnitDetailId: ditail.amount)
+                      .toEntity(),
+                  gap: trackingDitail.gap,
+                ),
+              )
+            : null;
       }
-
-      final lastTrackingDetail = lastTracking.details.first;
-      final toTrackingUnitId = lastTrackingDetail.toTrackingUnitId;
-
-      // if (toTrackingUnitId.fromAyah == null) {
-      //   return Right(_getFirstPlan(planDetails.first.toEntity()));
-      // }
-
-      final fromAyah = await _quranLocalDataSource.getAyahById(
-        toTrackingUnitId.fromAyah + 1,
-      );
-
-      final lastCompletedPlanDetailIndex = trackings.length - 1;
-
-      if (lastCompletedPlanDetailIndex + 1 >= planDetails.length) {
-        return Left(
-          CacheFailure(message: 'You have completed all your plan details.'),
-        );
-      }
-
-      final nextPlanDetail = planDetails[lastCompletedPlanDetailIndex + 1]
-          .toEntity();
-      final getSurahsList = await _quranLocalDataSource.getSurahsList();
-      final toAyah = (await _quranLocalDataSource.getAyahById(
-        toTrackingUnitId.fromAyah + nextPlanDetail.amount,
-      )).toEntity();
 
       return Right(
-        PlanForTheDayEntity(
-          planDetail: nextPlanDetail,
-          fromSurah: getSurahsList[fromAyah.surahNumber].name,
-          fromPage: fromAyah.page,
-          fromAyah: fromAyah.number,
-          toSurah: getSurahsList[toAyah.surahNumber].name,
-          toPage: toAyah.page,
-          toAyah: toAyah.number,
-        ),
+        PlanForTheDayEntity(section: sections, endDate: nextTrackingDate),
       );
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
     }
   }
 
-  PlanForTheDayEntity _getFirstPlan(PlanDetailEntity planDetail) {
-    return PlanForTheDayEntity(
-      planDetail: planDetail,
-      fromSurah: 'Al-Fatihah',
-      fromPage: 1,
-      fromAyah: 1,
-      toSurah: 'Al-Fatihah',
-      toPage: 1,
-      toAyah: planDetail.amount,
-    );
-  }
-
-  
   // --- NEW FOLLOW-UP REPORTS OPERATIONS ---
 
   @override
@@ -218,7 +171,9 @@ final class StudentRepositoryImpl implements StudentRepository {
       final directory = await getApplicationDocumentsDirectory();
       final timestamp = DateTime.now().toIso8601String();
       final fileExtension = config.fileFormat;
-      final file = File('${directory.path}/followup_export_$timestamp.$fileExtension');
+      final file = File(
+        '${directory.path}/followup_export_$timestamp.$fileExtension',
+      );
 
       String content = '';
       if (config.fileFormat == DataExportFormat.csv) {
@@ -229,7 +184,6 @@ final class StudentRepositoryImpl implements StudentRepository {
 
       await file.writeAsString(content);
       return Right(file.path);
-
     } catch (e) {
       return Left(CacheFailure(message: e.toString()));
     }
@@ -262,39 +216,105 @@ final class StudentRepositoryImpl implements StudentRepository {
   String _formatTrackingAsCsv(Map<String, List<TrackingModel>> reports) {
     final List<List<dynamic>> rows = [];
     rows.add([
-      'studentId', 'trackingId', 'date', 'note', 'attendance', 'behaviorNote',
-      'createdAt', 'updatedAt', 'detailType', 'actualAmount', 'gap',
-      'performanceScore', 'comment', 'status', 'from_unitId', 'from_fromSurah',
-      'from_fromPage', 'from_fromAyah', 'from_toSurah', 'from_toPage',
-      'from_toAyah', 'to_unitId', 'to_fromSurah', 'to_fromPage', 'to_fromAyah',
-      'to_toSurah', 'to_toPage', 'to_toAyah', 'mistakesJson',
+      'studentId',
+      'trackingId',
+      'date',
+      'note',
+      'attendance',
+      'behaviorNote',
+      'createdAt',
+      'updatedAt',
+      'detailType',
+      'actualAmount',
+      'gap',
+      'performanceScore',
+      'comment',
+      'status',
+      'from_unitId',
+      'from_fromSurah',
+      'from_fromPage',
+      'from_fromAyah',
+      'from_toSurah',
+      'from_toPage',
+      'from_toAyah',
+      'to_unitId',
+      'to_fromSurah',
+      'to_fromPage',
+      'to_fromAyah',
+      'to_toSurah',
+      'to_toPage',
+      'to_toAyah',
+      'mistakesJson',
     ]);
 
     reports.forEach((studentId, trackings) {
       for (final tracking in trackings) {
         if (tracking.details.isEmpty) {
           rows.add([
-            studentId, tracking.id, tracking.date, tracking.note,
-            tracking.attendanceTypeId, tracking.behaviorNote,
-            tracking.createdAt, tracking.updatedAt,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            studentId,
+            tracking.id,
+            tracking.date,
+            tracking.note,
+            tracking.attendanceTypeId,
+            tracking.behaviorNote,
+            tracking.createdAt,
+            tracking.updatedAt,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
           ]);
         } else {
           for (final detail in tracking.details) {
-            final mistakesJson = jsonEncode(detail.mistakes.map((m) => m.toJson()).toList());
+            final mistakesJson = jsonEncode(
+              detail.mistakes.map((m) => m.toJson()).toList(),
+            );
             rows.add([
-              studentId, tracking.id, tracking.date, tracking.note,
-              tracking.attendanceTypeId, tracking.behaviorNote,
-              tracking.createdAt, tracking.updatedAt,
-              detail.trackingTypeId, detail.actualAmount, detail.gap,
-              detail.score, detail.comment, detail.status,
-              detail.fromTrackingUnitId.unitId, detail.fromTrackingUnitId.fromSurah,
-              detail.fromTrackingUnitId.fromPage, detail.fromTrackingUnitId.fromAyah,
-              detail.fromTrackingUnitId.toSurah, detail.fromTrackingUnitId.toPage,
-              detail.fromTrackingUnitId.toAyah, detail.toTrackingUnitId.unitId,
-              detail.toTrackingUnitId.fromSurah, detail.toTrackingUnitId.fromPage,
-              detail.toTrackingUnitId.fromAyah, detail.toTrackingUnitId.toSurah,
-              detail.toTrackingUnitId.toPage, detail.toTrackingUnitId.toAyah,
+              studentId,
+              tracking.id,
+              tracking.date,
+              tracking.note,
+              tracking.attendanceTypeId,
+              tracking.behaviorNote,
+              tracking.createdAt,
+              tracking.updatedAt,
+              detail.trackingTypeId,
+              detail.actualAmount,
+              detail.gap,
+              detail.score,
+              detail.comment,
+              detail.status,
+              detail.fromTrackingUnitId.unitId,
+              detail.fromTrackingUnitId.fromSurah,
+              detail.fromTrackingUnitId.fromPage,
+              detail.fromTrackingUnitId.fromAyah,
+              detail.fromTrackingUnitId.toSurah,
+              detail.fromTrackingUnitId.toPage,
+              detail.fromTrackingUnitId.toAyah,
+              detail.toTrackingUnitId.unitId,
+              detail.toTrackingUnitId.fromSurah,
+              detail.toTrackingUnitId.fromPage,
+              detail.toTrackingUnitId.fromAyah,
+              detail.toTrackingUnitId.toSurah,
+              detail.toTrackingUnitId.toPage,
+              detail.toTrackingUnitId.toAyah,
               mistakesJson,
             ]);
           }
@@ -315,14 +335,21 @@ final class StudentRepositoryImpl implements StudentRepository {
     String csvData,
     ConflictResolution conflictResolution,
   ) async {
-    final List<List<dynamic>> rows = const CsvToListConverter().convert(csvData);
+    final List<List<dynamic>> rows = const CsvToListConverter().convert(
+      csvData,
+    );
     if (rows.length < 2) {
-      return Left(CacheFailure(message: 'CSV file must have a header and at least one data row.'));
+      return Left(
+        CacheFailure(
+          message: 'CSV file must have a header and at least one data row.',
+        ),
+      );
     }
 
     final header = rows.first.map((e) => e.toString()).toList();
     final dataRows = rows.skip(1);
-    final trackingsByStudent = <String, Map<String, List<Map<String, dynamic>>>>{};
+    final trackingsByStudent =
+        <String, Map<String, List<Map<String, dynamic>>>>{};
     final errorMessages = <String>[];
     int successfulRows = 0;
 
@@ -344,7 +371,9 @@ final class StudentRepositoryImpl implements StudentRepository {
     final result = <String, List<TrackingModel>>{};
     trackingsByStudent.forEach((studentId, trackingsData) {
       result[studentId] = trackingsData.entries.map((entry) {
-        final details = entry.value.map((rowData) => TrackingDetailModel.fromCsvRow(rowData)).toList();
+        final details = entry.value
+            .map((rowData) => TrackingDetailModel.fromCsvRow(rowData))
+            .toList();
         return TrackingModel.fromCsvRow(entry.value.first, details);
       }).toList();
     });
@@ -355,12 +384,14 @@ final class StudentRepositoryImpl implements StudentRepository {
       conflictResolution: conflictResolution,
     );
 
-    return Right(ImportSummary(
-      totalRows: dataRows.length,
-      successfulRows: successfulRows,
-      failedRows: errorMessages.length,
-      errorMessages: errorMessages,
-    ));
+    return Right(
+      ImportSummary(
+        totalRows: dataRows.length,
+        successfulRows: successfulRows,
+        failedRows: errorMessages.length,
+        errorMessages: errorMessages,
+      ),
+    );
   }
 
   Future<Either<Failure, ImportSummary>> _importTrackingJson(
@@ -384,10 +415,12 @@ final class StudentRepositoryImpl implements StudentRepository {
       conflictResolution: conflictResolution,
     );
 
-    return Right(ImportSummary(
-      totalRows: totalRows,
-      successfulRows: totalRows,
-      failedRows: 0,
-    ));
+    return Right(
+      ImportSummary(
+        totalRows: totalRows,
+        successfulRows: totalRows,
+        failedRows: 0,
+      ),
+    );
   }
 }

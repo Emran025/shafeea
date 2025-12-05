@@ -392,8 +392,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i634.StudentRepository>(
       () => _i408.StudentRepositoryImpl(
         localDataSource: gh<_i155.StudentLocalDataSource>(),
+        trackingLocalDataSource: gh<_i1022.TrackingLocalDataSource>(),
         remoteDataSource: gh<_i183.StudentRemoteDataSource>(),
-        quranLocalDataSource: gh<_i750.QuranLocalDataSource>(),
         syncService: gh<_i331.StudentSyncService>(),
       ),
     );

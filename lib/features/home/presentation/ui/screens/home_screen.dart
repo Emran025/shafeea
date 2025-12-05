@@ -163,7 +163,24 @@ class _DashboardState extends State<Dashboard> {
                                   style: Theme.of(context).textTheme.titleLarge,
                                 ),
                                 const SizedBox(height: 8.0),
-                                _buildDetailItem(state.planForTheDay!),
+                                state.planForTheDay != null
+                                    ? ListView.separated(
+                                        padding: const EdgeInsets.only(
+                                          left: 10,
+                                          top: 8,
+                                        ),
+                                        itemCount:
+                                            state.planForTheDay!.section.length,
+                                        separatorBuilder: (_, __) =>
+                                            const SizedBox(height: 16),
+                                        itemBuilder: (_, index) {
+                                          final section = state
+                                              .planForTheDay!
+                                              .section[index];
+                                          return _buildDetailItem(section);
+                                        },
+                                      )
+                                    : Center(),
                               ],
                             ),
                           ),
@@ -192,12 +209,12 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _buildDetailItem(PlanForTheDayEntity planForTheDay) {
+  Widget _buildDetailItem(PlanForTheDaySection planSectionForTheDay) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          planForTheDay.planDetail.type.toString().split('.').last,
+          planSectionForTheDay.type.toString().split('.').last,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 8),
@@ -207,18 +224,18 @@ class _DashboardState extends State<Dashboard> {
             Expanded(
               child: _buildDetailColumn(
                 "مـــن :",
-                planForTheDay.fromSurah,
-                planForTheDay.fromPage.toString(),
-                planForTheDay.fromAyah.toString(),
+                planSectionForTheDay.fromTrackingUnitId.fromSurah,
+                planSectionForTheDay.fromTrackingUnitId.fromPage.toString(),
+                planSectionForTheDay.fromTrackingUnitId.fromAyah.toString(),
               ),
             ),
             const VerticalDivider(color: AppColors.accent70),
             Expanded(
               child: _buildDetailColumn(
                 "حـتـى :",
-                planForTheDay.toSurah,
-                planForTheDay.toPage.toString(),
-                planForTheDay.toAyah.toString(),
+                planSectionForTheDay.toTrackingUnitId.toSurah,
+                planSectionForTheDay.toTrackingUnitId.toPage.toString(),
+                planSectionForTheDay.toTrackingUnitId.toAyah.toString(),
               ),
             ),
           ],

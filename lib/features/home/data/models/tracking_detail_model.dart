@@ -98,9 +98,9 @@ final class TrackingDetailModel {
       trackingTypeId: TrackingType.fromId(map['typeId'] as int? ?? 0),
       actualAmount: map['actualAmount'] as int? ?? 0,
       fromTrackingUnitId:
-          trackingUnitDetail[(map['fromTrackingUnitId'] as int? ?? 1) - 1],
+          TrackingUnitDetailModel.fromId((map['fromTrackingUnitId'] as int? ?? 1) - 1),
       toTrackingUnitId:
-          trackingUnitDetail[(map['toTrackingUnitId'] as int? ?? 1) - 1],
+          TrackingUnitDetailModel.fromId((map['toTrackingUnitId'] as int? ?? 1) - 1),
       comment: map['comment'] as String? ?? '',
       score: map['score'] as int? ?? 0,
       status: map['status'] as String? ?? 'draft',

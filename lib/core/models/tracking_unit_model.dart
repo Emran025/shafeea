@@ -1,3 +1,4 @@
+import '../constants/tracking_unit_detail.dart';
 import '../entities/tracking_unit.dart';
 
 class TrackingUnitDetailModel {
@@ -48,10 +49,24 @@ class TrackingUnitDetailModel {
       trackingUnitDetail.toAyah,
     );
   }
+  factory TrackingUnitDetailModel.fromId(int trackingUnitDetailId) {
+    return trackingUnitDetail[trackingUnitDetailId];
+  }
+  TrackingUnitDetailModel getNext({int trackingUnitDetailId = 1}) {
+    return trackingUnitDetail[trackingUnitDetailId + id];
+  }
 
-   TrackingUnitDetail toEntity(
-  ) {
-    return TrackingUnitDetail(id, unitId, fromSurah, fromPage, fromAyah, toSurah, toPage, toAyah);
+  TrackingUnitDetail toEntity() {
+    return TrackingUnitDetail(
+      id,
+      unitId,
+      fromSurah,
+      fromPage,
+      fromAyah,
+      toSurah,
+      toPage,
+      toAyah,
+    );
   }
 
   factory TrackingUnitDetailModel.fromJson(Map<String, dynamic> json) {

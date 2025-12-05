@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:shafeea/features/home/domain/entities/plan_detail_entity.dart';
+import 'package:shafeea/core/entities/tracking_unit.dart';
+
+import '../../../../core/models/tracking_type.dart';
+import '../../../../core/models/tracking_units.dart';
+
 
 @immutable
 class PlanForTheDayEntity {
-  final PlanDetailEntity planDetail;
-  final String fromSurah;
-  final int fromPage;
-  final int fromAyah;
-  final String toSurah;
-  final int toPage;
-  final int toAyah;
+  final DateTime endDate;
+  final List<PlanForTheDaySection> section;
 
   const PlanForTheDayEntity({
-    required this.planDetail,
-    required this.fromSurah,
-    required this.fromPage,
-    required this.fromAyah,
-    required this.toSurah,
-    required this.toPage,
-    required this.toAyah,
+    required this.endDate,
+    required this.section
+    });
+}
+
+class PlanForTheDaySection {
+  final TrackingType type;
+  final TrackingUnitTyps unit;
+  final TrackingUnitDetail fromTrackingUnitId;
+  final TrackingUnitDetail toTrackingUnitId;
+  final double gap;
+
+  const PlanForTheDaySection({
+    required this.type,
+    required this.unit,
+    required this.fromTrackingUnitId,
+    required this.toTrackingUnitId,
+    required this.gap,
   });
 }
