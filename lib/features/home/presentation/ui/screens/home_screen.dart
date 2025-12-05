@@ -165,6 +165,9 @@ class _DashboardState extends State<Dashboard> {
                                 const SizedBox(height: 8.0),
                                 state.planForTheDay != null
                                     ? ListView.separated(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
                                         padding: const EdgeInsets.only(
                                           left: 10,
                                           top: 8,
