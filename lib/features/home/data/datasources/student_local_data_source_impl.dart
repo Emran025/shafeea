@@ -216,6 +216,7 @@ final class StudentLocalDataSourceImpl implements StudentLocalDataSource {
       additionalWhere: additionalWhere,
       additionalArgs: additionalArgs,
     );
+    
     final List<int> orderedIds = [];
     for (final uuid in studentIds) {
       final id = uuidToStudentIdMap[uuid];
@@ -809,33 +810,38 @@ final class StudentLocalDataSourceImpl implements StudentLocalDataSource {
     }
   }
 
-  
   @override
   Future<Map<String, List<TrackingModel>>> getAllFollowUpTrackings() async {
     final user = await _authLocalDataSource.getUser();
     final tenantId = "${user!.id}";
     try {
       // 1. Fetch all student enrollments along with their UUIDs.
-      final enrollmentMaps = await _db.rawQuery('''
+      final enrollmentMaps = await _db.rawQuery(
+        '''
         SELECT HS.id, U.uuid
         FROM $_kHalqaStudentsTable HS
         JOIN $_kUsersTable U ON HS.studentId = U.id
         WHERE U.isDeleted = ? AND U.tenant_id = ?
-      ''', [ 0, tenantId]);
+      ''',
+        [0, tenantId],
+      );
 
       if (enrollmentMaps.isEmpty) {
         return {};
       }
 
-      final enrollmentIds = enrollmentMaps.map((map) => map['id'] as int).toList();
+      final enrollmentIds = enrollmentMaps
+          .map((map) => map['id'] as int)
+          .toList();
       final studentUuidByEnrollmentId = {
-        for (var map in enrollmentMaps) map['id'] as int: map['uuid'] as String
+        for (var map in enrollmentMaps) map['id'] as int: map['uuid'] as String,
       };
 
       // 2. Fetch all tracking records for these enrollments.
       final trackingMaps = await _db.query(
         _kDailyTrackingTable,
-        where: 'enrollmentId IN (${List.filled(enrollmentIds.length, '?').join(',')}) AND tenant_id = ?',
+        where:
+            'enrollmentId IN (${List.filled(enrollmentIds.length, '?').join(',')}) AND tenant_id = ?',
         whereArgs: [...enrollmentIds, tenantId],
       );
 
@@ -845,10 +851,11 @@ final class StudentLocalDataSourceImpl implements StudentLocalDataSource {
 
       // 3. Efficiently fetch all child details and group them by trackingId.
       final trackingIds = trackingMaps.map((map) => map['id'] as int).toList();
-      final detailsByTrackingId = await _fetchAllTrackingDetailsGroupedByParentId(
-        dbExecutor: _db,
-        trackingIds: trackingIds,
-      );
+      final detailsByTrackingId =
+          await _fetchAllTrackingDetailsGroupedByParentId(
+            dbExecutor: _db,
+            trackingIds: trackingIds,
+          );
 
       // 4. Assemble the final models.
       final allTrackings = trackingMaps.map((trackingMap) {
@@ -904,7 +911,8 @@ final class StudentLocalDataSourceImpl implements StudentLocalDataSource {
             final newParentTrackingId = await txn.insert(
               _kDailyTrackingTable,
               trackingMap,
-              conflictAlgorithm: conflictResolution == ConflictResolution.overwrite
+              conflictAlgorithm:
+                  conflictResolution == ConflictResolution.overwrite
                   ? ConflictAlgorithm.replace
                   : ConflictAlgorithm.ignore,
             );
