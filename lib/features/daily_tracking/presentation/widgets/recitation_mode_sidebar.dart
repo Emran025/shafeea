@@ -69,6 +69,18 @@ class RecitationSideBar extends StatelessWidget {
             ),
 
             CustomModeIconButton(
+              icon: Icons.video_call,
+              label: 'تسميع أونلاين',
+              isSelected: false,
+              onTap: () {
+                Navigator.of(context).pop();
+                // TODO: Trigger WebSocket Call Request here
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('تم إرسال طلب تسميع للمعلم.')),
+                );
+              },
+            ),
+            CustomModeIconButton(
               icon: Icons.assessment,
               label: 'تقرير',
               isSelected: false,
