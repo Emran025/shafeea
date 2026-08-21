@@ -50,9 +50,9 @@ class QuranReaderState extends Equatable {
       pageDataStatus: pageDataStatus ?? this.pageDataStatus,
       pages: pages ?? this.pages,
       pageDataFailure: pageDataFailure, // Allow setting failure to null
-      mistakesAyahs:
-          mistakesAyahs ?? this.mistakesAyahs, // Allow setting failure to null
-      mistakeAyahsFailure: mistakeAyahsFailure, // Allow setting failure to null
+      mistakesAyahs: mistakesAyahs ?? this.mistakesAyahs,
+      mistakesAyahsStatus: mistakesAyahsStatus ?? this.mistakesAyahsStatus,
+      mistakeAyahsFailure: mistakeAyahsFailure,
       currentPage: currentPage ?? this.currentPage,
     );
   }

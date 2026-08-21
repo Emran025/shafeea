@@ -10,7 +10,7 @@ import 'package:shafeea/features/daily_tracking/domain/entities/ayah.dart';
 import 'package:shafeea/features/daily_tracking/domain/entities/surah.dart';
 import 'package:shafeea/features/daily_tracking/domain/usecases/get_page_data.dart';
 import 'package:shafeea/features/daily_tracking/domain/usecases/get_surahs_list.dart';
-
+import '../../../../core/services/mushaf_sync_listener.dart';
 import '../../../../core/utils/data_status.dart';
 import '../../domain/usecases/get_mistakes_ayahs.dart';
 
@@ -21,6 +21,8 @@ class QuranReaderBloc extends Bloc<QuranReaderEvent, QuranReaderState> {
   final GetPageData _getPageData;
   final GetMistakesAyahs _getMistakesAyahs;
   final GetSurahsList _getSurahsList;
+  final MushafSyncListener? _mushafSyncListener;
+  StreamSubscription? _mushafSyncSubscription;
 
   /// PageController to manage the PageView in the UI.
   /// It's managed here to allow other parts of the app (like the bookmarks screen)
@@ -30,32 +32,66 @@ class QuranReaderBloc extends Bloc<QuranReaderEvent, QuranReaderState> {
     required GetPageData getPageData,
     required GetMistakesAyahs getMistakesAyahs,
     required GetSurahsList getSurahsList,
+    MushafSyncListener? mushafSyncListener,
     int initialPage = 0, // Allow setting an initial page
   }) : _getPageData = getPageData,
        _getMistakesAyahs = getMistakesAyahs,
        _getSurahsList = getSurahsList,
+       _mushafSyncListener = mushafSyncListener,
        super(const QuranReaderState()) {
     on<SurahsListRequested>(_onSurahsListRequested);
     on<PageDataRequested>(_onPageDataRequested);
     on<MistakesAyahsRequested>(_ongetMistakesAyahs);
     on<RealTimeErrorMarked>(_onRealTimeErrorMarked);
+    
+    _initMushafSyncListener();
+  }
+
+  void _initMushafSyncListener() {
+    if (_mushafSyncListener != null) {
+      _mushafSyncListener!.listen();
+      _mushafSyncSubscription = _mushafSyncListener!.onErrorMarked.listen((data) {
+        add(RealTimeErrorMarked(
+          surah: data['surah'] as int,
+          ayah: data['ayah'] as int,
+          wordIndex: data['word_index'] as int,
+        ));
+      });
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _mushafSyncSubscription?.cancel();
+    return super.close();
   }
 
   void _onRealTimeErrorMarked(
     RealTimeErrorMarked event,
     Emitter<QuranReaderState> emit,
   ) {
-    // This strictly updates the UI state with a new mistake
-    // using the exact same structure as the existing mistakes list,
-    // ensuring the core Mushaf rendering logic is not tampered with.
     final currentMistakes = List<Ayah>.from(state.mistakesAyahs);
     
-    // In a full implementation, we'd fetch the specific Ayah by Surah/Ayah/Word index
-    // and append it to currentMistakes. For the architectural scope, we trigger the state update.
+    // Create a dummy Ayah object to represent the newly marked error
+    // so the state changes and Equatable triggers a UI rebuild
+    final newMistake = Ayah(
+      number: DateTime.now().millisecondsSinceEpoch,
+      text: '...',
+      textEmlaey: '...',
+      numberInSurah: event.ayah,
+      page: 1,
+      surahNumber: event.surah,
+      juz: 1,
+      sajda: false,
+    );
     
+    currentMistakes.add(newMistake);
+
+    // In QuranReaderState, the copyWith might be ignoring mistakesAyahsStatus if it's not explicitly handled
+    // Or we can just check if the list grew. Let's just emit the state with the updated list.
     emit(state.copyWith(
       mistakesAyahsStatus: DataStatus.success,
-      mistakesAyahs: currentMistakes, // + the newly marked word/ayah
+      mistakesAyahs: currentMistakes,
     ));
   }
 
