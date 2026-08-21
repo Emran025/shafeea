@@ -15,10 +15,12 @@ class WebSocketService {
 
   WebSocketService(this._storage, {required String baseUrl}) : _baseUrl = baseUrl;
 
-  Future<void> connect() async {
+  Future<void> connect({String? userId}) async {
     final token = await _storage.read(key: 'auth_token');
-    if (token == null) {
-      debugPrint('WebSocket: No auth token found, cannot connect.');
+    final actualUserId = userId ?? await _storage.read(key: 'user_id');
+    
+    if (token == null || actualUserId == null) {
+      debugPrint('WebSocket: No auth token or user id found, cannot connect.');
       return;
     }
 
@@ -44,7 +46,7 @@ class WebSocketService {
 
       // Authenticate the connection if needed by your specific Reverb setup
       // Subscribe to private user channel
-      _subscribeToPrivateChannel(token);
+      _subscribeToPrivateChannel(token, actualUserId);
       
     } catch (e) {
       debugPrint('WebSocket Connection Exception: $e');
@@ -52,14 +54,11 @@ class WebSocketService {
     }
   }
 
-  Future<void> _subscribeToPrivateChannel(String token) async {
+  Future<void> _subscribeToPrivateChannel(String token, String userId) async {
     // In Laravel Reverb/Pusher, you must hit the /broadcasting/auth endpoint
     // to get an auth signature for private channels.
     
-    // NOTE: In production, the user ID should be fetched from the local user profile.
-    // We assume a generic 'user' channel structure based on our Laravel configuration.
-    // You will need to replace 'MOCK_USER_ID' with the actual authenticated user ID.
-    final channelName = 'private-user.MOCK_USER_ID'; 
+    final channelName = 'private-user.$userId'; 
     
     try {
       final authUrl = Uri.parse('$_baseUrl/broadcasting/auth');
