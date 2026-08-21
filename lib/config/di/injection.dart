@@ -131,11 +131,13 @@ abstract class BlocModule {
     GetSurahsList getSurahsList,
     GetMistakesAyahs getMistakesAyahs,
     GetPageData getPageData,
+    @factoryParam MushafSyncListener? mushafSyncListener,
   ) {
     return QuranReaderBloc(
       getPageData: getPageData,
       getMistakesAyahs: getMistakesAyahs,
       getSurahsList: getSurahsList,
+      mushafSyncListener: mushafSyncListener,
     )..add(SurahsListRequested());
   }
 
