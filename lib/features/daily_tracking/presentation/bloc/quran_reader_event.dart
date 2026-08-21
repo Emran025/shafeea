@@ -29,3 +29,19 @@ class MistakesAyahsRequested extends QuranReaderEvent {
   @override
   List<Object> get props => [mistakes];
 }
+
+/// Event dispatched when a real-time error mark is received from the teacher via WebSocket.
+class RealTimeErrorMarked extends QuranReaderEvent {
+  final int surah;
+  final int ayah;
+  final int wordIndex;
+
+  const RealTimeErrorMarked({
+    required this.surah,
+    required this.ayah,
+    required this.wordIndex,
+  });
+
+  @override
+  List<Object> get props => [surah, ayah, wordIndex];
+}
