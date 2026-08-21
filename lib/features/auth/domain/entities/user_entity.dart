@@ -6,6 +6,8 @@ class UserEntity {
   final String phone;
   final String? avatar;
   final bool isEmailVerified;
+  final String genderScope;
+  final List<String> roles;
 
   const UserEntity({
     required this.id,
@@ -14,5 +16,7 @@ class UserEntity {
     required this.phone,
     this.avatar,
     this.isEmailVerified = false,
+    this.genderScope = 'all',
+    this.roles = const [],
   });
 }
