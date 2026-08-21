@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:http/http.dart' as http;
 
 class WebSocketService {
   final FlutterSecureStorage _storage;
@@ -51,17 +52,48 @@ class WebSocketService {
     }
   }
 
-  void _subscribeToPrivateChannel(String token) {
-    // Note: In Laravel Reverb/Pusher, you must hit an auth endpoint first
-    // to get an auth signature for private channels. This is a simplified skeleton.
-    final authMessage = {
-      "event": "pusher:subscribe",
-      "data": {
-        "auth": "auth_signature_here",
-        "channel": "private-App.Models.Auth.User.CURRENT_USER_ID"
+  Future<void> _subscribeToPrivateChannel(String token) async {
+    // In Laravel Reverb/Pusher, you must hit the /broadcasting/auth endpoint
+    // to get an auth signature for private channels.
+    
+    // NOTE: In production, the user ID should be fetched from the local user profile.
+    // We assume a generic 'user' channel structure based on our Laravel configuration.
+    // You will need to replace 'MOCK_USER_ID' with the actual authenticated user ID.
+    final channelName = 'private-user.MOCK_USER_ID'; 
+    
+    try {
+      final authUrl = Uri.parse('$_baseUrl/broadcasting/auth');
+      final response = await http.post(
+        authUrl,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: {
+          'socket_id': '12345.67890', // In production, parse this from the Pusher connection established event
+          'channel_name': channelName,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final authData = jsonDecode(response.body);
+        final authSignature = authData['auth'];
+        
+        final authMessage = {
+          "event": "pusher:subscribe",
+          "data": {
+            "auth": authSignature,
+            "channel": channelName
+          }
+        };
+        send(authMessage);
+      } else {
+        debugPrint('WebSocket Auth Failed: ${response.statusCode} - ${response.body}');
       }
-    };
-    send(authMessage);
+    } catch (e) {
+      debugPrint('WebSocket Auth Exception: $e');
+    }
   }
 
   void send(Map<String, dynamic> data) {
