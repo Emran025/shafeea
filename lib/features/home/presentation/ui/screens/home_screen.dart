@@ -1,3 +1,4 @@
+import 'package:shafeea/core/l10n/app_strings.dart' as L10nStrings;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ import 'add_student_plan.dart';
 // import '../../../../../core/constants/app_colors.dart';
 
 class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+  Dashboard({super.key});
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -40,8 +41,8 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-    context.read<StudentBloc>().add(const StudentDetailsFetched());
-    context.read<StudentBloc>().add(const PlanForTheDayRequested());
+    context.read<StudentBloc>().add(StudentDetailsFetched());
+    context.read<StudentBloc>().add(PlanForTheDayRequested());
   }
 
   @override
@@ -62,12 +63,12 @@ class _DashboardState extends State<Dashboard> {
         ),
 
         drawer: RecitationModeSideBar(
-          title: "مرحباً، عمران",
+          title: L10nStrings.AppStrings.helloImranGreeting,
           avatar: Avatar(size: Size(100, 100)),
           items: [
             CustomModeIconButton(
               icon: Icons.person,
-              label: "ملفي الشخصي",
+              label: L10nStrings.AppStrings.myProfileLabel,
               isSelected: false,
               onTap: () {
                 context.push('/profile/1');
@@ -75,7 +76,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             CustomModeIconButton(
               icon: Icons.menu_book_sharp,
-              label: "وردي",
+              label: L10nStrings.AppStrings.myDailyPortionLabel,
               isSelected: false,
               onTap: () {
                 Navigator.of(context).push(
@@ -97,13 +98,13 @@ class _DashboardState extends State<Dashboard> {
             ),
             CustomModeIconButton(
               icon: Icons.settings,
-              label: "الإعدادات",
+              label: L10nStrings.AppStrings.settingsLabel,
               isSelected: false,
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) {
-                      return const SettingsScreen();
+                      return SettingsScreen();
                     },
                   ),
                 );
@@ -111,7 +112,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             CustomModeIconButton(
               icon: Icons.logout,
-              label: "تسجيل الخروج",
+              label: L10nStrings.AppStrings.logOut,
               isSelected: false,
               onTap: () {
                 Navigator.pop(context);
@@ -149,14 +150,14 @@ class _DashboardState extends State<Dashboard> {
                           ),
                           child: Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.info_outline,
                                 color: Colors.amber,
                               ),
-                              const SizedBox(width: 12),
+                              SizedBox(width: 12),
                               Expanded(
                                 child: Text(
-                                  'الوضع التجريبي: حسابك قيد المراجعة والقبول من الإدارة. يمكنك ضبط خطتك وقراءة وردك محلياً.',
+                                  L10nStrings.AppStrings.trialModeUnderReviewMessage,
                                   style: TextStyle(
                                     fontFamily: 'Cairo',
                                     fontSize: 13,
@@ -196,7 +197,7 @@ class _DashboardState extends State<Dashboard> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'آخر التنبيهات',
+                                L10nStrings.AppStrings.latestAlertsTitle,
                                 style: Theme.of(context).textTheme.titleLarge!
                                     .copyWith(
                                       fontSize: 22,
@@ -204,9 +205,9 @@ class _DashboardState extends State<Dashboard> {
                                       color: Colors.white,
                                     ),
                               ),
-                              const SizedBox(height: 10),
+                              SizedBox(height: 10),
                               Text(
-                                'لا توجد تنبيهات جديدة في الوقت الحالي.',
+                                L10nStrings.AppStrings.noNewAlertsMessage,
                                 style: Theme.of(context).textTheme.bodyMedium!
                                     .copyWith(
                                       color: Colors.white70,
@@ -218,14 +219,14 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ),
 
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24),
 
                       // Plan for the Day Card - Modern Style
                       Expanded(
                         child:
                             state.planForTheDayStatus ==
                                 PlanForTheDayStatus.loading
-                            ? const Center(
+                            ? Center(
                                 child: CircularProgressIndicator(
                                   color: AppColors.accent,
                                 ),
@@ -266,7 +267,7 @@ class _DashboardState extends State<Dashboard> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              'مــهــام الــيــوم',
+                                              L10nStrings.AppStrings.todaysTasksTitle,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .headlineMedium!
@@ -277,20 +278,20 @@ class _DashboardState extends State<Dashboard> {
                                                   ),
                                             ),
                                             IconButton(
-                                              tooltip: 'ضبط الخطة',
+                                              tooltip: L10nStrings.AppStrings.configurePlanTooltip,
                                               onPressed: () => _showPlanDialog(
                                                 state
                                                     .selectedStudent
                                                     ?.followUpPlan,
                                               ),
-                                              icon: const Icon(
+                                              icon: Icon(
                                                 Icons.edit_calendar_outlined,
                                                 color: AppColors.accent,
                                               ),
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 16),
+                                        SizedBox(height: 16),
                                         state.planForTheDay != null &&
                                                 state
                                                     .planForTheDay!
@@ -349,16 +350,16 @@ class _DashboardState extends State<Dashboard> {
                   color: Colors.orange.withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.info_outline,
                   color: Colors.orange,
                   size: 24,
                 ),
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: 14),
               Expanded(
                 child: Text(
-                  'حسابك قيد المراجعة. يمكنك في هذه الأثناء ضبط خطة الحفظ الخاصة بك.',
+                  L10nStrings.AppStrings.accountUnderReviewSetPlanMessage,
                   style: GoogleFonts.cairo(
                     fontSize: 13,
                     color: Colors.white70,
@@ -369,7 +370,7 @@ class _DashboardState extends State<Dashboard> {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         GestureDetector(
           onTap: () => _showPlanDialog(null),
           child: Container(
@@ -387,28 +388,28 @@ class _DashboardState extends State<Dashboard> {
                     color: AppColors.accent38,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.menu_book_rounded,
                     color: AppColors.accent,
                     size: 28,
                   ),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'ابدأ بضبط خطة حفظك',
+                        L10nStrings.AppStrings.startSetUpMemorizationPlanButton,
                         style: GoogleFonts.cairo(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
-                        'اضغط هنا لإنشاء خطة المراجعة والحفظ اليومية',
+                        L10nStrings.AppStrings.tapHereCreateDailyReviewPlan,
                         style: GoogleFonts.cairo(
                           fontSize: 12,
                           color: Colors.white60,
@@ -417,7 +418,7 @@ class _DashboardState extends State<Dashboard> {
                     ],
                   ),
                 ),
-                const Icon(
+                Icon(
                   Icons.arrow_back_ios,
                   color: Colors.white38,
                   size: 16,
@@ -449,28 +450,28 @@ class _DashboardState extends State<Dashboard> {
                 color: AppColors.accent38,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.menu_book_rounded,
                 color: AppColors.accent,
                 size: 28,
               ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ابدأ بضبط خطة حفظك',
+                    L10nStrings.AppStrings.startSetUpMemorizationPlanButton,
                     style: GoogleFonts.cairo(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
-                    'اضغط هنا لتخصيص خطة المراجعة والحفظ اليومية',
+                    L10nStrings.AppStrings.tapHereCustomizeDailyReviewPlan,
                     style: GoogleFonts.cairo(
                       fontSize: 12,
                       color: Colors.white60,
@@ -479,7 +480,7 @@ class _DashboardState extends State<Dashboard> {
                 ],
               ),
             ),
-            const Icon(Icons.arrow_back_ios, color: Colors.white38, size: 16),
+            Icon(Icons.arrow_back_ios, color: Colors.white38, size: 16),
           ],
         ),
       ),
@@ -516,13 +517,13 @@ class _DashboardState extends State<Dashboard> {
                       children: [
                         Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.edit_calendar_outlined,
                               color: AppColors.lightCream,
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Text(
-                              "ضبط خطة المتابعة",
+                              L10nStrings.AppStrings.configureFollowUpPlan,
                               style: GoogleFonts.cairo(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -531,11 +532,11 @@ class _DashboardState extends State<Dashboard> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
-                        const Divider(height: 2, color: AppColors.accent70),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
+                        Divider(height: 2, color: AppColors.accent70),
+                        SizedBox(height: 16),
                         planForm,
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24),
                         Row(
                           children: [
                             Expanded(
@@ -545,14 +546,14 @@ class _DashboardState extends State<Dashboard> {
                                   side: BorderSide(color: AppColors.accent70),
                                 ),
                                 child: Text(
-                                  "إلغاء",
+                                  L10nStrings.AppStrings.cancel,
                                   style: GoogleFonts.cairo(
                                     color: AppColors.lightCream,
                                   ),
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12),
                             Expanded(
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -578,7 +579,7 @@ class _DashboardState extends State<Dashboard> {
                                           planForm
                                               .unitTypeControllers[type]
                                               ?.text ??
-                                          'صفحة';
+                                          L10nStrings.AppStrings.unitPage;
                                       final qtyText =
                                           planForm
                                               .quantityControllers[type]
@@ -603,7 +604,7 @@ class _DashboardState extends State<Dashboard> {
                                       planId:
                                           existingId.isEmpty ||
                                               existingId == '0'
-                                          ? const Uuid().v4()
+                                          ? Uuid().v4()
                                           : existingId,
                                       serverPlanId:
                                           existingId.isEmpty ||
@@ -625,7 +626,7 @@ class _DashboardState extends State<Dashboard> {
                                   }
                                 },
                                 child: Text(
-                                  "حفظ",
+                                  L10nStrings.AppStrings.trackingMemorization,
                                   style: GoogleFonts.cairo(
                                     color: AppColors.lightCream,
                                   ),
@@ -651,7 +652,7 @@ class _DashboardState extends State<Dashboard> {
       context: context,
       builder: (context) => BlocProvider.value(
         value: context.read<AuthBloc>(),
-        child: const LogoutConfirmationDialog(),
+        child: LogoutConfirmationDialog(),
       ),
     );
   }
@@ -682,7 +683,7 @@ class _DashboardState extends State<Dashboard> {
                   shape: BoxShape.circle,
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 section.type.labelAr,
                 style: Theme.of(context).textTheme.headlineSmall!.copyWith(
@@ -692,21 +693,21 @@ class _DashboardState extends State<Dashboard> {
               ),
             ],
           ),
-          const Divider(color: Colors.white24, height: 20),
+          Divider(color: Colors.white24, height: 20),
           Row(
             children: [
               Expanded(
                 child: _buildDetailColumnModern(
-                  "مـــن :",
+                  L10nStrings.AppStrings.fromLabel2,
                   section.fromTrackingUnitId.fromSurahName,
                   section.fromTrackingUnitId.fromPage.toString(),
                   section.fromTrackingUnitId.fromAyah.toString(),
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               Expanded(
                 child: _buildDetailColumnModern(
-                  "حـتـى :",
+                  L10nStrings.AppStrings.untilLabel,
                   section.toTrackingUnitId.toSurahName,
                   section.toTrackingUnitId.toPage.toString(),
                   section.toTrackingUnitId.toAyah.toString(),
@@ -735,10 +736,10 @@ class _DashboardState extends State<Dashboard> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 4),
-        _buildDetailRowModern("سورة:", surah),
-        _buildDetailRowModern("صفحة:", page),
-        _buildDetailRowModern("آية:", ayah),
+        SizedBox(height: 4),
+        _buildDetailRowModern(L10nStrings.AppStrings.surahLabel2, surah),
+        _buildDetailRowModern(L10nStrings.AppStrings.pageLabel2, page),
+        _buildDetailRowModern(L10nStrings.AppStrings.ayahLabel2, ayah),
       ],
     );
   }
