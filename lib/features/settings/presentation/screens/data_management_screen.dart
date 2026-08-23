@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:file_picker/file_picker.dart';
@@ -81,7 +80,7 @@ class DataManagementScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(AppStrings.str_student_rem_220_cf41),
+          title: const Text('إدارة البيانات'),
           centerTitle: true,
           elevation: 0,
           backgroundColor: theme.appBarTheme.backgroundColor,
@@ -111,8 +110,8 @@ class DataManagementScreen extends StatelessWidget {
 
                 dividerColor: Colors.transparent,
                 tabs: const [
-                  Tab(text: AppStrings.str_student_rem_221_1614, icon: Icon(Icons.file_download_outlined)),
-                  Tab(text: AppStrings.str_student_rem_222_808b, icon: Icon(Icons.file_upload_outlined)),
+                  Tab(text: 'تصدير', icon: Icon(Icons.file_download_outlined)),
+                  Tab(text: 'استيراد', icon: Icon(Icons.file_upload_outlined)),
                 ],
               ),
             ),
@@ -147,7 +146,7 @@ class _ExportDataViewState extends State<ExportDataView> {
       listener: (context, state) {
         if (state is SettingsLoadSuccess) {
           if (state.exportStatus == DataExportStatus.success) {
-            _showSnackBar(context, AppStrings.str_student_rem_223_fe9f, Colors.green);
+            _showSnackBar(context, 'تم تصدير البيانات بنجاح', Colors.green);
             context.read<SettingsBloc>().add(SettingsImportExportResetStatus());
           } else if (state.exportStatus == DataExportStatus.failure) {
             _showSnackBar(
@@ -171,7 +170,7 @@ class _ExportDataViewState extends State<ExportDataView> {
             children: [
               // قسم اختيار البيانات
               const _SectionHeader(
-                title: AppStrings.str_student_rem_224_31be,
+                title: 'البيانات المراد تصديرها',
                 icon: Icons.checklist_rtl,
               ),
               _SettingsCard(
@@ -215,7 +214,7 @@ class _ExportDataViewState extends State<ExportDataView> {
 
               // قسم تنسيق الملف
               const _SectionHeader(
-                title: AppStrings.str_student_rem_225_6d6f,
+                title: 'تنسيق الملف',
                 icon: Icons.format_shapes,
               ),
               Row(
@@ -305,7 +304,7 @@ class _ExportDataViewState extends State<ExportDataView> {
                               ),
                             ),
                             const SizedBox(width: 12),
-                            const Text(AppStrings.str_student_rem_226_e740),
+                            const Text('جاري التصدير...'),
                           ],
                         )
                       : const Row(
@@ -314,7 +313,7 @@ class _ExportDataViewState extends State<ExportDataView> {
                             Icon(Icons.file_download_outlined),
                             SizedBox(width: 8),
                             Text(
-                              AppStrings.str_student_rem_227_b85f,
+                              'تصدير البيانات',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -403,7 +402,7 @@ class _ImportDataViewState extends State<ImportDataView> {
             children: [
               // منطقة اختيار الملف
               const _SectionHeader(
-                title: AppStrings.str_student_rem_228_a50a,
+                title: 'ملف البيانات',
                 icon: Icons.attach_file,
               ),
               InkWell(
@@ -442,7 +441,7 @@ class _ImportDataViewState extends State<ImportDataView> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        _fileName ?? AppStrings.str_student_rem_229_13ae,
+                        _fileName ?? 'اضغط لاختيار ملف (CSV, JSON)',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: _filePath != null
                               ? colorScheme.primary
@@ -452,7 +451,7 @@ class _ImportDataViewState extends State<ImportDataView> {
                       ),
                       if (_filePath != null)
                         Text(
-                          AppStrings.str_student_rem_230_ed1e,
+                          'تم تحديد الملف جاهز للاستيراد',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: colorScheme.primary.withOpacity(0.7),
                           ),
@@ -465,7 +464,7 @@ class _ImportDataViewState extends State<ImportDataView> {
               const SizedBox(height: 24),
 
               const _SectionHeader(
-                title: AppStrings.str_student_rem_231_b7ab,
+                title: 'عند وجود تضارب (تشابه بيانات)',
                 icon: Icons.merge_type,
               ),
               _SettingsCard(
@@ -536,7 +535,7 @@ class _ImportDataViewState extends State<ImportDataView> {
                               ),
                             ),
                             const SizedBox(width: 12),
-                            const Text(AppStrings.str_student_rem_232_f55f),
+                            const Text('جاري الاستيراد...'),
                           ],
                         )
                       : const Row(
@@ -545,7 +544,7 @@ class _ImportDataViewState extends State<ImportDataView> {
                             Icon(Icons.file_upload_outlined),
                             SizedBox(width: 8),
                             Text(
-                              AppStrings.str_student_rem_233_6fa3,
+                              'بدء الاستيراد',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'plan_detail_model.dart';
 import '../../domain/entities/follow_up_plan_entity.dart';
@@ -145,8 +144,8 @@ final class FollowUpPlanModel {
     }
 
     return {
-      'name': AppStrings.str_student_rem_167_65e9,
-      'description': AppStrings.str_student_rem_168_3304,
+      'name': 'خطة المتابعة الافتراضية',
+      'description': 'خطة التقدم الشخصية للطالب',
       'start_date': DateTime.now().toIso8601String().substring(0, 10),
       'end_date': DateTime.now().add(const Duration(days: 365)).toIso8601String().substring(0, 10),
       'has_memorization': hasMemorization,

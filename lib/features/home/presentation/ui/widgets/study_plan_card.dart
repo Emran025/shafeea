@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -77,9 +76,9 @@ class _StudyPlanCardState extends State<StudyPlanCard> {
                         : AppColors.mediumDark,
                   ),
                   children: [
-                    _buildTableHeader(AppStrings.str_student_rem_217_602d),
-                    _buildTableHeader(AppStrings.str_student_rem_218_509d),
-                    _buildTableHeader(AppStrings.str_student_rem_219_00ec),
+                    _buildTableHeader("نوع الورد"),
+                    _buildTableHeader("الوحدة"),
+                    _buildTableHeader("الكمية"),
                   ],
                 ),
                 ...[...widget.planDetailList].map(

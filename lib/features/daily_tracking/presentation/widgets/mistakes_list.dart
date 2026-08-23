@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shafeea/core/utils/data_status.dart';
@@ -81,7 +80,7 @@ class _MistakesListState extends State<MistakesList> {
         // Condition 3: Fallback for any other state (e.g., error, inconsistency).
         return const Center(
           heightFactor: 3,
-          child: Text(AppStrings.str_student_rem_151_7a33),
+          child: Text("خطأ في تحميل بيانات الآيات."),
         );
       },
     );
@@ -98,7 +97,7 @@ class _MistakesListState extends State<MistakesList> {
           ? const Center(
               child: Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Text(AppStrings.str_student_rem_152_d640),
+                child: Text("لا توجد أخطاء مسجلة لهذه المهمة."),
               ),
             )
           : ListView.builder(

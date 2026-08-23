@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -278,7 +277,7 @@ class _QuranPickerDialogState extends State<_QuranPickerDialog> {
           CircularProgressIndicator(color: AppColors.lightCream),
           const SizedBox(height: 16),
           Text(
-            AppStrings.str_student_rem_111_71dc,
+            'جارٍ تحميل بيانات المصحف…',
             style: TextStyle(color: AppColors.lightCream.withOpacity(0.7)),
           ),
           const SizedBox(height: 16),
@@ -296,7 +295,7 @@ class _QuranPickerDialogState extends State<_QuranPickerDialog> {
           Icon(Icons.error_outline, color: Colors.redAccent, size: 36),
           const SizedBox(height: 12),
           Text(
-            AppStrings.str_student_rem_112_ef67,
+            'تعذّر تحميل بيانات المصحف',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -321,7 +320,7 @@ class _QuranPickerDialogState extends State<_QuranPickerDialog> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text(AppStrings.str_student_rem_105_7a7b),
+            child: const Text('إغلاق'),
           ),
         ],
       ),
@@ -380,11 +379,11 @@ class _QuranPickerDialogState extends State<_QuranPickerDialog> {
                       onPressed: _anchorPage != null ? _resetSelection : null,
                       icon: const Icon(Icons.refresh),
                       color: AppColors.lightCream,
-                      tooltip: AppStrings.str_student_rem_113_7872,
+                      tooltip: 'إعادة التحديد',
                     ),
                     const Expanded(
                       child: Text(
-                        AppStrings.str_student_rem_114_2558,
+                        'اختر نطاق الحفظ',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 18,
@@ -398,7 +397,7 @@ class _QuranPickerDialogState extends State<_QuranPickerDialog> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  AppStrings.str_student_rem_115_0040,
+                  'اضغط لتحديد نقطة البداية، ثم نقطة النهاية — يمكنك السحب لضبط أي صفحة بدقة',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 12,
@@ -558,7 +557,7 @@ class _QuranPickerDialogState extends State<_QuranPickerDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _SummaryLine(
-                          label: AppStrings.str_student_rem_106_97d7,
+                          label: 'من',
                           surah: fromInfo.fromSurah,
                           page: lowPage!,
                           ayah: fromInfo.fromAyah,
@@ -567,7 +566,7 @@ class _QuranPickerDialogState extends State<_QuranPickerDialog> {
                         if (toInfo != null) ...[
                           const SizedBox(height: 6),
                           _SummaryLine(
-                            label: AppStrings.str_student_rem_107_7f7c,
+                            label: 'إلى',
                             surah: toInfo.toSurah,
                             page: highPage!,
                             ayah: toInfo.toAyah,
@@ -604,7 +603,7 @@ class _QuranPickerDialogState extends State<_QuranPickerDialog> {
                   )
                 else
                   Text(
-                    AppStrings.str_student_rem_117_76b3,
+                    'لم يتم تحديد أي نطاق بعد',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.lightCream.withOpacity(0.6),
@@ -626,7 +625,7 @@ class _QuranPickerDialogState extends State<_QuranPickerDialog> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(AppStrings.str_student_rem_84_e2a4),
+                        child: const Text('إلغاء'),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -653,7 +652,7 @@ class _QuranPickerDialogState extends State<_QuranPickerDialog> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(AppStrings.str_student_rem_118_a181),
+                        child: const Text('تأكيد'),
                       ),
                     ),
                   ],

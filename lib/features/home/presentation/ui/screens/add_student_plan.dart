@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shafeea/shared/themes/app_theme.dart';
@@ -12,12 +11,12 @@ class StudentsPlanForm extends StatefulWidget {
   final formKey = GlobalKey<FormState>();
   final FollowUpPlanEntity? initialPlan;
 
-  final TextEditingController studyPlanType = TextEditingController(text: AppStrings.str_student_6_c2da);
+  final TextEditingController studyPlanType = TextEditingController(text: "يوميًا");
 
   final Map<TrackingType, TextEditingController> unitTypeControllers = {
-    TrackingType.memorization: TextEditingController(text: AppStrings.str_student_49_b23e),
-    TrackingType.review: TextEditingController(text: AppStrings.str_student_49_b23e),
-    TrackingType.recitation: TextEditingController(text: AppStrings.str_student_49_b23e),
+    TrackingType.memorization: TextEditingController(text: "صفحة"),
+    TrackingType.review: TextEditingController(text: "صفحة"),
+    TrackingType.recitation: TextEditingController(text: "صفحة"),
   };
   final Map<TrackingType, TextEditingController> quantityControllers = {
     TrackingType.memorization: TextEditingController(),
@@ -50,7 +49,7 @@ class _StudentsPlanFormState extends State<StudentsPlanForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppStrings.str_student_rem_169_5a42,
+            "خطة المتابعة",
             style: GoogleFonts.cairo(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -60,7 +59,7 @@ class _StudentsPlanFormState extends State<StudentsPlanForm> {
           const SizedBox(height: 10),
           _buildDropdown(
             widget.studyPlanType,
-            AppStrings.str_student_rem_170_2434,
+            "نوع خطة المتابعة",
             Frequency.values.map((element) => element.labelAr).toList(),
           ),
           ...TrackingType.values.toList().map(
@@ -97,7 +96,7 @@ class _StudentsPlanFormState extends State<StudentsPlanForm> {
                       child: CustomTextField(
                         controller: widget.quantityControllers[type]!,
                         prefixIcon: Icons.format_list_numbered,
-                        label: AppStrings.str_student_rem_102_6f0d,
+                        label: "العدد",
                         keyboardType: TextInputType.number,
                         padding: EdgeInsets.only(bottom: 12),
                       ),
@@ -141,8 +140,8 @@ class _StudentsPlanFormState extends State<StudentsPlanForm> {
               ),
             )
             .toList(),
-        onChanged: (val) => setState(() => controller.text = val ?? AppStrings.str_student_49_b23e),
-        onSaved: (val) => controller.text = val ?? AppStrings.str_student_49_b23e,
+        onChanged: (val) => setState(() => controller.text = val ?? "صفحة"),
+        onSaved: (val) => controller.text = val ?? "صفحة",
         padding: EdgeInsets.all(0),
         decoration: InputDecoration(
           fillColor: AppColors.lightCream12,

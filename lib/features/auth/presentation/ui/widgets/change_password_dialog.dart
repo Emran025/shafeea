@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -41,10 +40,10 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return AppStrings.str_student_rem_70_09c3;
+      return 'يرجى تأكيد كلمة المرور الجديدة';
     }
     if (value != _newPasswordController.text) {
-      return AppStrings.str_student_rem_71_4dee;
+      return 'كلمة المرور غير متطابقة';
     }
     return null;
   }
@@ -58,7 +57,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                state.successEntity?.message ?? AppStrings.str_student_rem_72_a9cb,
+                state.successEntity?.message ?? 'تم تغيير كلمة المرور بنجاح',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
@@ -70,7 +69,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                state.changePasswordFailure?.message ?? AppStrings.str_student_rem_73_c25d,
+                state.changePasswordFailure?.message ?? 'فشل تغيير كلمة المرور',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onError,
                 ),
@@ -98,7 +97,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                   // العنوان
                   Center(
                     child: Text(
-                      AppStrings.str_student_rem_74_220d,
+                      'تغيير كلمة المرور',
                       style: Theme.of(context).textTheme.headlineLarge
                           ?.copyWith(
                             color: Theme.of(context).colorScheme.onBackground,
@@ -109,7 +108,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
 
                   // حقل كلمة المرور الحالية
                   Text(
-                    AppStrings.str_student_rem_75_b667,
+                    'كلمة المرور الحالية',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(
                         context,
@@ -122,7 +121,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                     obscureText: _obscureCurrentPassword,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
-                      hintText: AppStrings.str_student_rem_76_58c8,
+                      hintText: 'أدخل كلمة المرور الحالية',
                       hintStyle: Theme.of(context).textTheme.bodyMedium
                           ?.copyWith(
                             color: Theme.of(
@@ -161,7 +160,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppStrings.str_student_rem_77_c283;
+                        return 'يرجى إدخال كلمة المرور الحالية';
                       }
                       return null;
                     },
@@ -170,7 +169,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
 
                   // حقل كلمة المرور الجديدة
                   Text(
-                    AppStrings.str_student_rem_78_68a2,
+                    'كلمة المرور الجديدة',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(
                         context,
@@ -183,7 +182,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                     obscureText: _obscureNewPassword,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
-                      hintText: AppStrings.str_student_rem_79_c25f,
+                      hintText: 'أدخل كلمة المرور الجديدة',
                       hintStyle: Theme.of(context).textTheme.bodyMedium
                           ?.copyWith(
                             color: Theme.of(
@@ -222,10 +221,10 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppStrings.str_student_rem_80_16da;
+                        return 'يرجى إدخال كلمة المرور الجديدة';
                       }
                       if (value.length < 6) {
-                        return AppStrings.str_student_rem_81_d499;
+                        return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
                       }
                       return null;
                     },
@@ -234,7 +233,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
 
                   // حقل تأكيد كلمة المرور الجديدة
                   Text(
-                    AppStrings.str_student_rem_82_ca2e,
+                    'تأكيد كلمة المرور الجديدة',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(
                         context,
@@ -247,7 +246,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                     obscureText: _obscureConfirmPassword,
                     textInputAction: TextInputAction.done,
                     decoration: InputDecoration(
-                      hintText: AppStrings.str_student_rem_83_8b7a,
+                      hintText: 'أعد إدخال كلمة المرور الجديدة',
                       hintStyle: Theme.of(context).textTheme.bodyMedium
                           ?.copyWith(
                             color: Theme.of(
@@ -325,7 +324,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                                   ),
                                 )
                               : Text(
-                                  AppStrings.str_student_rem_74_220d,
+                                  'تغيير كلمة المرور',
                                   style: Theme.of(context).textTheme.titleLarge
                                       ?.copyWith(
                                         color: Theme.of(
@@ -360,7 +359,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                         ),
                       ),
                       child: Text(
-                        AppStrings.str_student_rem_84_e2a4,
+                        'إلغاء',
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               color: Theme.of(context).colorScheme.onBackground,

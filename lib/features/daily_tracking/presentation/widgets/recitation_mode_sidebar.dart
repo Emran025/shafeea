@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 // lib/features/daily_tracking/presentation/widgets/recitation_mode_sidebar.dart
 
 import 'package:flutter/material.dart';
@@ -32,7 +31,7 @@ class RecitationSideBar extends StatelessWidget {
       builder: (context, state) {
         final selectedType = state.currentTaskType;
         return RecitationModeSideBar(
-          title: AppStrings.str_student_rem_154_2441,
+          title: "مرحباً، عمران",
           avatar: Avatar(size: Size(100, 100)),
           items: [
             CustomModeIconButton(
@@ -71,19 +70,19 @@ class RecitationSideBar extends StatelessWidget {
 
             CustomModeIconButton(
               icon: Icons.video_call,
-              label: AppStrings.str_student_rem_155_4215,
+              label: 'تسميع أونلاين',
               isSelected: false,
               onTap: () {
                 Navigator.of(context).pop();
                 // TODO: Trigger WebSocket Call Request here
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text(AppStrings.str_student_rem_156_e9f0)),
+                  const SnackBar(content: Text('تم إرسال طلب تسميع للمعلم.')),
                 );
               },
             ),
             CustomModeIconButton(
               icon: Icons.assessment,
-              label: AppStrings.str_student_rem_157_cee0,
+              label: 'تقرير',
               isSelected: false,
               onTap: () {
                 // Action to show the final report dialog
@@ -106,7 +105,7 @@ class RecitationSideBar extends StatelessWidget {
             ),
             CustomModeIconButton(
               icon: Icons.arrow_back,
-              label: AppStrings.str_student_rem_158_0940,
+              label: 'عودة',
               isSelected: false,
               onTap: () {
                 Navigator.of(context).pop();

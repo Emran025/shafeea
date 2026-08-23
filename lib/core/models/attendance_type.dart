@@ -1,9 +1,8 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 
 enum AttendanceType {
 
-  present(1 , AppStrings.str_student_13_19d1, 'present'),
-  absent(2 , AppStrings.str_student_22_123c, 'absent'),
+  present(1 , 'حاضر', 'present'),
+  absent(2 , 'غائب', 'absent'),
   other( 3, 'UN', 'UN');
 
   final int id;
@@ -14,10 +13,10 @@ enum AttendanceType {
     return AttendanceType.values.firstWhere((e) => e.id == id, orElse: () => absent);
   }  static AttendanceType fromLabel(String label) {
     switch (label.toLowerCase()) {
-      case AppStrings.str_student_13_19d1:
+      case 'حاضر':
       case 'present':
         return AttendanceType.present;
-      case AppStrings.str_student_22_123c:
+      case 'غائب':
       case 'absent':
         return AttendanceType.absent;
       default:

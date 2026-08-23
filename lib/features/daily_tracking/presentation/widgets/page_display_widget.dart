@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 // lib/features/quran_reader/presentation/widgets/page_display_widget.dart
 
 import 'package:flutter/material.dart';
@@ -302,7 +301,7 @@ class _PageDisplayWidgetState extends State<PageDisplayWidget> {
                   PageDataRequested(widget.pageNumber),
                 );
               },
-              child: const Text(AppStrings.str_student_rem_153_4a2b),
+              child: const Text('إعادة المحاولة'),
             ),
           ],
         ),

@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -188,7 +187,7 @@ class _FollowUpReportDialogState extends State<FollowUpReportDialog> {
               InkWell(
                 onTap: () => _showDailyDetails(report),
 
-                child: StatusTag(lable: AppStrings.str_student_rem_143_5459, fontSize: 10, radius: 8),
+                child: StatusTag(lable: "تفاصـــيل", fontSize: 10, radius: 8),
               ),
               // Text(
               //   "تقييم السلوك: ${report.behaviourAssessment.toStringAsFixed(1)} / 5",
@@ -246,12 +245,12 @@ class _FollowUpReportDialogState extends State<FollowUpReportDialog> {
               Container(
                 color: AppColors.accent26,
                 child: buildRow([
-                  _buildTableHeader(AppStrings.str_student_rem_144_7bbc),
-                  _buildTableHeader(AppStrings.str_student_rem_145_c628),
-                  _buildTableHeader(AppStrings.str_student_rem_146_923a),
-                  _buildRotatedHeader(AppStrings.str_student_rem_147_2b59),
-                  _buildRotatedHeader(AppStrings.str_student_rem_148_6e1c),
-                  _buildRotatedHeader(AppStrings.str_student_rem_149_6d53),
+                  _buildTableHeader("النوع"),
+                  _buildTableHeader("المخطط"),
+                  _buildTableHeader("الفعلي"),
+                  _buildRotatedHeader("التقدم"),
+                  _buildRotatedHeader("الفجوة"),
+                  _buildRotatedHeader("الجودة"),
                 ]),
               ),
               const Divider(height: 0.5, color: AppColors.accent70),
@@ -300,7 +299,7 @@ class _FollowUpReportDialogState extends State<FollowUpReportDialog> {
               side: const BorderSide(color: AppColors.accent70),
             ),
             child: Text(
-              AppStrings.str_student_rem_105_7a7b,
+              "إغلاق",
               style: GoogleFonts.cairo(color: AppColors.lightCream),
             ),
           ),

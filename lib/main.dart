@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -68,7 +67,7 @@ class ShafeeaApp extends StatelessWidget {
         final themeData = AppThemes.getTheme(themeType);
         return MaterialApp.router(
           scrollBehavior: ScrollBehavior(),
-          title: AppStrings.str_student_0_0c52,
+          title: 'أكاديمية شفيع',
           debugShowCheckedModeBanner: false,
           // --- Localization Setup (Cleaned Up) ---
           // Use the centralized configuration from L10nConfig.

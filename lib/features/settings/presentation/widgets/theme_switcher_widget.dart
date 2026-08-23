@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 // path: lib/features/settings/presentation/widgets/theme_switcher_widget.dart
 import 'package:flutter/material.dart';
 // تأكد من استيراد ملف الثيمات الذي يحتوي على AppThemeType
@@ -59,17 +58,17 @@ class ThemeSwitcherWidget extends StatelessWidget {
       segments: const [
         ButtonSegment<AppThemeType>(
           value: AppThemeType.light,
-          label: Text(AppStrings.str_student_rem_272_9d71),
+          label: Text('فاتح'),
           icon: Icon(Icons.wb_sunny_outlined),
         ),
         ButtonSegment<AppThemeType>(
           value: AppThemeType.dark,
-          label: Text(AppStrings.str_student_rem_273_b337),
+          label: Text('داكن'),
           icon: Icon(Icons.nightlight_round_outlined),
         ),
         ButtonSegment<AppThemeType>(
           value: AppThemeType.reading,
-          label: Text(AppStrings.str_student_rem_274_f964),
+          label: Text('قراءة'),
           icon: Icon(
             Icons.chrome_reader_mode_outlined,
           ), // أيقونة أنسب لوضع القراءة

@@ -1,4 +1,3 @@
-import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -54,7 +53,7 @@ final class AssignedHalaqasModel {
       id: map['uuid'] as String,
       enrollmentId: (map['id'] as int).toString(),
       // 'name' and 'avatar' for the halqa should be JOINed in the query
-      name: playloudData['name'] as String? ?? AppStrings.str_student_rem_166_bc38,
+      name: playloudData['name'] as String? ?? 'النور',
       avatar: playloudData['avatar'] as String? ?? 'assets/images/logo2.png',
       enrolledAt: map['assignedAt'] as String,
       halaqaId: (map['halqaId'] as int).toString(),
