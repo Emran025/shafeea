@@ -1,3 +1,4 @@
+import 'package:shafeea_student/core/l10n/app_strings.dart';
 // path: lib/features/settings/presentation/screens/profile_screen.dart (New File)
 
 import 'package:flutter/material.dart';
@@ -49,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return CustomScrollView(
       slivers: [
         SliverAppBar(
-          title: const Text('الملف الشخصي'),
+          title: const Text(AppStrings.str_student_rem_189_cb80),
           // Makes the AppBar float and snap back into view, a modern UX pattern.
           floating: true,
           pinned: true,
@@ -89,12 +90,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // --- Account Actions Group ---
           SliverToBoxAdapter(
             child: SettingsGroup(
-              title: 'إدارة الحساب',
+              title: AppStrings.str_student_rem_240_f5c6,
               children: [
                 ModernSettingTile(
                   icon: Icons.edit_outlined,
                   iconBackgroundColor: Colors.blueAccent,
-                  title: 'تعديل معلومات التواصل',
+                  title: AppStrings.str_student_rem_241_5f7e,
                   onTap: () {
                     /* TODO: Navigate to Edit Profile Form */
                   },
@@ -102,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ModernSettingTile(
                   icon: Icons.lock_outline,
                   iconBackgroundColor: Colors.deepPurpleAccent,
-                  title: 'تغيير كلمة المرور',
+                  title: AppStrings.str_student_rem_74_220d,
                   onTap: () {
                     /* TODO: Navigate to Change Password Screen */
                     _showLogoutDialog();
@@ -115,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // --- Active Sessions Group ---
           SliverToBoxAdapter(
             child: SettingsGroup(
-              title: 'الجلسات النشطة',
+              title: AppStrings.str_student_rem_242_117b,
               children: state.userProfile!.activeSessions.isNotEmpty
                   ? state.userProfile!.activeSessions
                         .map((session) => _SessionCard(session: session))
@@ -123,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   : [
                       const Padding(
                         padding: EdgeInsets.all(16.0),
-                        child: Center(child: Text('لا توجد جلسات أخرى نشطة.')),
+                        child: Center(child: Text(AppStrings.str_student_rem_243_f31d)),
                       ),
                     ],
             ),
@@ -236,7 +237,7 @@ class _SessionCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 4.0),
                     child: Text(
-                      '• هذا الجهاز',
+                      AppStrings.str_student_rem_244_18e2,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: Colors.green.shade700,
                         fontWeight: FontWeight.bold,
@@ -252,7 +253,7 @@ class _SessionCard extends StatelessWidget {
                 // TODO: Dispatch a "RemoveSession" event to the BLoC
                 // context.read<SettingsBloc>().add(RemoveSession(session.id));
               },
-              child: const Text('تسجيل الخروج'),
+              child: const Text(AppStrings.str_student_rem_69_c7c0),
             ),
         ],
       ),

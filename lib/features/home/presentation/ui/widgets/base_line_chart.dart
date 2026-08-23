@@ -1,3 +1,4 @@
+import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -81,9 +82,9 @@ class _BaseLineChartState extends State<BaseLineChart> {
       children: [
         if (widget.plannedLineColor != null &&
             widget.chartData.plannedData != null)
-          _buildLegendItem('المخطط', widget.plannedLineColor!),
+          _buildLegendItem(AppStrings.str_student_rem_145_c628, widget.plannedLineColor!),
         const SizedBox(width: 24),
-        _buildLegendItem('المنفذ الفعلي', widget.actualLineColor),
+        _buildLegendItem(AppStrings.str_student_rem_210_8c90, widget.actualLineColor),
       ],
     );
   }
@@ -132,7 +133,7 @@ class _BaseLineChartState extends State<BaseLineChart> {
     if (!hasActualData && !hasPlannedData) {
       return Center(
         child: Text(
-          'لا توجد بيانات متاحة',
+          AppStrings.str_student_rem_211_2500,
           style: TextStyle(color: AppColors.lightCream),
         ),
       );
@@ -310,9 +311,9 @@ class _BaseLineChartState extends State<BaseLineChart> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildMiniStat('متوسط المخطط', '${plannedAverage.toStringAsFixed(1)}'),
-        _buildMiniStat('متوسط المنفذ', '${actualAverage.toStringAsFixed(1)}'),
-        _buildMiniStat('معدل الانحراف', '${variance.toStringAsFixed(1)}'),
+        _buildMiniStat(AppStrings.str_student_rem_212_3416, '${plannedAverage.toStringAsFixed(1)}'),
+        _buildMiniStat(AppStrings.str_student_rem_213_51cc, '${actualAverage.toStringAsFixed(1)}'),
+        _buildMiniStat(AppStrings.str_student_rem_214_85d3, '${variance.toStringAsFixed(1)}'),
       ],
     );
   }

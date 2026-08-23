@@ -1,3 +1,4 @@
+import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'dart:async';
 import 'dart:ui';
 
@@ -85,7 +86,7 @@ class _CountryPickerDialogState extends State<CountryPickerDialog> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'قم بتحديد الدولة...',
+                      AppStrings.str_student_rem_305_508f,
                       style: GoogleFonts.cairo(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -99,7 +100,7 @@ class _CountryPickerDialogState extends State<CountryPickerDialog> {
                       style: GoogleFonts.cairo(color: AppColors.lightCream),
                       onChanged: _onSearchChanged,
                       decoration: InputDecoration(
-                        hintText: "ابحث عن الدولة",
+                        hintText: AppStrings.str_student_rem_306_195c,
                         hintStyle: GoogleFonts.cairo(
                           color: AppColors.lightCream70,
                         ),
@@ -188,7 +189,7 @@ class _CountryPickerDialogState extends State<CountryPickerDialog> {
                               side: BorderSide(color: AppColors.accent70),
                             ),
                             child: Text(
-                              "إلغاء",
+                              AppStrings.str_student_rem_84_e2a4,
                               style: GoogleFonts.cairo(
                                 color: AppColors.lightCream,
                               ),
@@ -208,7 +209,7 @@ class _CountryPickerDialogState extends State<CountryPickerDialog> {
                               Navigator.pop(context);
                             },
                             child: Text(
-                              "تأكيد",
+                              AppStrings.str_student_rem_118_a181,
                               style: GoogleFonts.cairo(
                                 color: AppColors.lightCream,
                               ),

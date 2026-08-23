@@ -1,3 +1,4 @@
+import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'dart:async';
 import 'dart:ui';
 
@@ -12,14 +13,14 @@ import 'package:shafeea/shared/themes/app_theme.dart';
 /// glass-morphism container, debounced search field, radio-list, and
 /// Cancel / Confirm footer buttons.
 ///
-/// A synthetic "مستقل / بدون مدرسة" entry (value `null`) is always shown
+/// A synthetic AppStrings.str_student_rem_46_cb1c entry (value `null`) is always shown
 /// at the top of the list so the user can explicitly opt out of a school.
 class SchoolPickerDialog extends StatefulWidget {
   final List<SchoolEntity> schools;
   final SchoolEntity? initialSchool;
 
   /// Called once when the user taps Confirm with the selected school,
-  /// or `null` if the user chose "مستقل / بدون مدرسة".
+  /// or `null` if the user chose AppStrings.str_student_rem_46_cb1c.
   final ValueChanged<SchoolEntity?> onSchoolSelected;
 
   const SchoolPickerDialog({
@@ -37,7 +38,7 @@ class _SchoolPickerDialogState extends State<SchoolPickerDialog> {
   late List<SchoolEntity> _filtered;
   late FocusNode _focusNode;
 
-  /// `null` represents "مستقل / بدون مدرسة".
+  /// `null` represents AppStrings.str_student_rem_46_cb1c.
   SchoolEntity? _tempSelected;
 
   final _searchCtrl = TextEditingController();
@@ -99,7 +100,7 @@ class _SchoolPickerDialogState extends State<SchoolPickerDialog> {
                   children: [
                     // ── Title ───────────────────────────────────────────
                     Text(
-                      'قم بتحديد المدرسة...',
+                      AppStrings.str_student_rem_307_b292,
                       style: GoogleFonts.cairo(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -115,7 +116,7 @@ class _SchoolPickerDialogState extends State<SchoolPickerDialog> {
                       style: GoogleFonts.cairo(color: AppColors.lightCream),
                       onChanged: _onSearchChanged,
                       decoration: InputDecoration(
-                        hintText: 'ابحث عن المدرسة',
+                        hintText: AppStrings.str_student_rem_308_9d85,
                         hintStyle: GoogleFonts.cairo(
                           color: AppColors.lightCream70,
                         ),
@@ -158,7 +159,7 @@ class _SchoolPickerDialogState extends State<SchoolPickerDialog> {
                                   value: null,
                                   groupValue: _tempSelected,
                                   title: Text(
-                                    'مستقل / بدون مدرسة',
+                                    AppStrings.str_student_rem_46_cb1c,
                                     style: GoogleFonts.cairo(
                                       color: AppColors.lightCream,
                                       fontWeight: FontWeight.bold,
@@ -241,7 +242,7 @@ class _SchoolPickerDialogState extends State<SchoolPickerDialog> {
                               side: BorderSide(color: AppColors.accent70),
                             ),
                             child: Text(
-                              'إلغاء',
+                              AppStrings.str_student_rem_84_e2a4,
                               style: GoogleFonts.cairo(
                                 color: AppColors.lightCream,
                               ),
@@ -259,7 +260,7 @@ class _SchoolPickerDialogState extends State<SchoolPickerDialog> {
                               Navigator.pop(context);
                             },
                             child: Text(
-                              'تأكيد',
+                              AppStrings.str_student_rem_118_a181,
                               style: GoogleFonts.cairo(
                                 color: AppColors.lightCream,
                               ),

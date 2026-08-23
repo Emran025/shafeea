@@ -1,7 +1,8 @@
+import 'package:shafeea_student/core/l10n/app_strings.dart';
 enum TrackingType {
-  memorization(1, 'حفظ', "Memorization"),
-  review(2, 'مراجعة', "Review"),
-  recitation(3, 'سرد', "Recitation");
+  memorization(1, AppStrings.str_student_42_75f3, "Memorization"),
+  review(2, AppStrings.str_student_43_34da, "Review"),
+  recitation(3, AppStrings.str_student_44_010c, "Recitation");
 
   final int id;
   final String labelAr;
@@ -17,10 +18,10 @@ enum TrackingType {
   static TrackingType fromLabel(String label) {
     switch (label.toLowerCase()) {
       case 'memorization':
-      case 'حفظ':
+      case AppStrings.str_student_42_75f3:
         return TrackingType.memorization;
       case 'review':
-      case 'مراجعة':
+      case AppStrings.str_student_43_34da:
         return TrackingType.review;
       default:
         return TrackingType.recitation;

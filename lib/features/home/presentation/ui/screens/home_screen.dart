@@ -1,3 +1,4 @@
+import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -62,12 +63,12 @@ class _DashboardState extends State<Dashboard> {
         ),
 
         drawer: RecitationModeSideBar(
-          title: "مرحباً، عمران",
+          title: AppStrings.str_student_rem_154_2441,
           avatar: Avatar(size: Size(100, 100)),
           items: [
             CustomModeIconButton(
               icon: Icons.person,
-              label: "ملفي الشخصي",
+              label: AppStrings.str_student_rem_171_b66a,
               isSelected: false,
               onTap: () {
                 context.push('/profile/1');
@@ -75,7 +76,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             CustomModeIconButton(
               icon: Icons.menu_book_sharp,
-              label: "وردي",
+              label: AppStrings.str_student_rem_172_b3f3,
               isSelected: false,
               onTap: () {
                 Navigator.of(context).push(
@@ -97,7 +98,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             CustomModeIconButton(
               icon: Icons.settings,
-              label: "الإعدادات",
+              label: AppStrings.str_student_rem_173_48f1,
               isSelected: false,
               onTap: () {
                 Navigator.of(context).push(
@@ -111,7 +112,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             CustomModeIconButton(
               icon: Icons.logout,
-              label: "تسجيل الخروج",
+              label: AppStrings.str_student_rem_69_c7c0,
               isSelected: false,
               onTap: () {
                 Navigator.pop(context);
@@ -156,7 +157,7 @@ class _DashboardState extends State<Dashboard> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
-                                  'الوضع التجريبي: حسابك قيد المراجعة والقبول من الإدارة. يمكنك ضبط خطتك وقراءة وردك محلياً.',
+                                  AppStrings.str_student_rem_174_a4a1,
                                   style: TextStyle(
                                     fontFamily: 'Cairo',
                                     fontSize: 13,
@@ -196,7 +197,7 @@ class _DashboardState extends State<Dashboard> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'آخر التنبيهات',
+                                AppStrings.str_student_rem_175_6d86,
                                 style: Theme.of(context).textTheme.titleLarge!
                                     .copyWith(
                                       fontSize: 22,
@@ -206,7 +207,7 @@ class _DashboardState extends State<Dashboard> {
                               ),
                               const SizedBox(height: 10),
                               Text(
-                                'لا توجد تنبيهات جديدة في الوقت الحالي.',
+                                AppStrings.str_student_rem_176_b19d,
                                 style: Theme.of(context).textTheme.bodyMedium!
                                     .copyWith(
                                       color: Colors.white70,
@@ -266,7 +267,7 @@ class _DashboardState extends State<Dashboard> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              'مــهــام الــيــوم',
+                                              AppStrings.str_student_rem_177_ed70,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .headlineMedium!
@@ -277,7 +278,7 @@ class _DashboardState extends State<Dashboard> {
                                                   ),
                                             ),
                                             IconButton(
-                                              tooltip: 'ضبط الخطة',
+                                              tooltip: AppStrings.str_student_rem_178_392e,
                                               onPressed: () => _showPlanDialog(
                                                 state
                                                     .selectedStudent
@@ -358,7 +359,7 @@ class _DashboardState extends State<Dashboard> {
               const SizedBox(width: 14),
               Expanded(
                 child: Text(
-                  'حسابك قيد المراجعة. يمكنك في هذه الأثناء ضبط خطة الحفظ الخاصة بك.',
+                  AppStrings.str_student_rem_179_1fdb,
                   style: GoogleFonts.cairo(
                     fontSize: 13,
                     color: Colors.white70,
@@ -399,7 +400,7 @@ class _DashboardState extends State<Dashboard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'ابدأ بضبط خطة حفظك',
+                        AppStrings.str_student_rem_180_01c0,
                         style: GoogleFonts.cairo(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -408,7 +409,7 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'اضغط هنا لإنشاء خطة المراجعة والحفظ اليومية',
+                        AppStrings.str_student_rem_181_b072,
                         style: GoogleFonts.cairo(
                           fontSize: 12,
                           color: Colors.white60,
@@ -461,7 +462,7 @@ class _DashboardState extends State<Dashboard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ابدأ بضبط خطة حفظك',
+                    AppStrings.str_student_rem_180_01c0,
                     style: GoogleFonts.cairo(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -470,7 +471,7 @@ class _DashboardState extends State<Dashboard> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'اضغط هنا لتخصيص خطة المراجعة والحفظ اليومية',
+                    AppStrings.str_student_rem_182_02b4,
                     style: GoogleFonts.cairo(
                       fontSize: 12,
                       color: Colors.white60,
@@ -522,7 +523,7 @@ class _DashboardState extends State<Dashboard> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              "ضبط خطة المتابعة",
+                              AppStrings.str_student_rem_183_dc69,
                               style: GoogleFonts.cairo(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -545,7 +546,7 @@ class _DashboardState extends State<Dashboard> {
                                   side: BorderSide(color: AppColors.accent70),
                                 ),
                                 child: Text(
-                                  "إلغاء",
+                                  AppStrings.str_student_rem_84_e2a4,
                                   style: GoogleFonts.cairo(
                                     color: AppColors.lightCream,
                                   ),
@@ -578,7 +579,7 @@ class _DashboardState extends State<Dashboard> {
                                           planForm
                                               .unitTypeControllers[type]
                                               ?.text ??
-                                          'صفحة';
+                                          AppStrings.str_student_49_b23e;
                                       final qtyText =
                                           planForm
                                               .quantityControllers[type]
@@ -625,7 +626,7 @@ class _DashboardState extends State<Dashboard> {
                                   }
                                 },
                                 child: Text(
-                                  "حفظ",
+                                  AppStrings.str_student_42_75f3,
                                   style: GoogleFonts.cairo(
                                     color: AppColors.lightCream,
                                   ),
@@ -697,7 +698,7 @@ class _DashboardState extends State<Dashboard> {
             children: [
               Expanded(
                 child: _buildDetailColumnModern(
-                  "مـــن :",
+                  AppStrings.str_student_rem_184_b470,
                   section.fromTrackingUnitId.fromSurahName,
                   section.fromTrackingUnitId.fromPage.toString(),
                   section.fromTrackingUnitId.fromAyah.toString(),
@@ -706,7 +707,7 @@ class _DashboardState extends State<Dashboard> {
               const SizedBox(width: 16),
               Expanded(
                 child: _buildDetailColumnModern(
-                  "حـتـى :",
+                  AppStrings.str_student_rem_185_51fb,
                   section.toTrackingUnitId.toSurahName,
                   section.toTrackingUnitId.toPage.toString(),
                   section.toTrackingUnitId.toAyah.toString(),
@@ -736,9 +737,9 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
         const SizedBox(height: 4),
-        _buildDetailRowModern("سورة:", surah),
-        _buildDetailRowModern("صفحة:", page),
-        _buildDetailRowModern("آية:", ayah),
+        _buildDetailRowModern(AppStrings.str_student_rem_186_a8a8, surah),
+        _buildDetailRowModern(AppStrings.str_student_rem_187_5684, page),
+        _buildDetailRowModern(AppStrings.str_student_rem_188_5ef6, ayah),
       ],
     );
   }

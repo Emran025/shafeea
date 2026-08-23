@@ -1,3 +1,4 @@
+import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shafeea/features/home/domain/entities/chart_filter.dart';
@@ -133,7 +134,7 @@ class _StudentQualityAssessmentChartState
     );
   }
 
-  String tempSelected = 'فترة زمنية';
+  String tempSelected = AppStrings.str_student_rem_121_401f;
 
   Widget _buildFiltersSection() {
     return Container(
@@ -147,7 +148,7 @@ class _StudentQualityAssessmentChartState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'المعايير',
+            AppStrings.str_student_rem_119_3a10,
             style: Theme.of(
               context,
             ).textTheme.titleLarge?.copyWith(color: AppColors.lightCream),
@@ -158,10 +159,10 @@ class _StudentQualityAssessmentChartState
             children: [
               Expanded(
                 child: _buildFilterDropdown(
-                  label: 'الفترة الزمنية',
+                  label: AppStrings.str_student_rem_122_c6cc,
                   value: _currentFilter.timePeriod,
                   items: const ['week', 'month', 'quarter', 'year'],
-                  labels: const ['أسبوع', 'شهر', 'ربع سنة', 'سنة'],
+                  labels: const [AppStrings.str_student_rem_123_b2ab, AppStrings.str_student_rem_124_f605, AppStrings.str_student_rem_125_39f4, AppStrings.str_student_rem_126_6b5f],
                   onChanged: (value) {
                     setState(() {
                       _currentFilter = _currentFilter.copyWith(
@@ -177,10 +178,10 @@ class _StudentQualityAssessmentChartState
               SizedBox(
                 width: MediaQuery.of(context).size.width / 4,
                 child: _buildFilterDropdown(
-                  label: 'نوع المسار',
+                  label: AppStrings.str_student_rem_129_d317,
                   value: _currentFilter.trackingType,
                   items: const ['memorization', 'review', 'recitation'],
-                  labels: const ['حفظ', 'مراجعة', 'سرد'],
+                  labels: const [AppStrings.str_student_42_75f3, AppStrings.str_student_43_34da, AppStrings.str_student_44_010c],
                   onChanged: (value) {
                     setState(() {
                       _currentFilter = _currentFilter.copyWith(

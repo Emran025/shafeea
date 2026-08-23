@@ -1,3 +1,4 @@
+import 'package:shafeea_student/core/l10n/app_strings.dart';
 // lib/features/daily_tracking/presentation/widgets/session_bottom_toolbar.dart
 
 import 'dart:ui';
@@ -71,8 +72,8 @@ class SessionTopToolbar extends StatelessWidget {
                     builder: (context, scrollController) {
                       return StudentErrorAnalysisChart(
                         tile: const ChartTile(
-                          title: 'تحليل أداء الطالب',
-                          subTitle: 'عرض إحصائيات الأخطاء',
+                          title: AppStrings.str_student_rem_162_3c1c,
+                          subTitle: AppStrings.str_student_rem_163_2ddc,
                           icon: Icons.bar_chart,
                         ),
                       );

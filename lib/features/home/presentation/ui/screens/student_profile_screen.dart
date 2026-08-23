@@ -1,3 +1,4 @@
+import 'package:shafeea_student/core/l10n/app_strings.dart';
 import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -45,7 +46,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
       );
 
       final details = TrackingType.values.map((type) {
-        final unitText = planForm.unitTypeControllers[type]?.text ?? 'صفحة';
+        final unitText = planForm.unitTypeControllers[type]?.text ?? AppStrings.str_student_49_b23e;
         final qtyText = planForm.quantityControllers[type]?.text ?? '0';
         final qty = int.tryParse(qtyText) ?? 0;
         final unit = TrackingUnitTyps.values.firstWhere(
@@ -82,7 +83,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
       child: Scaffold(
         // backgroundColor: AppColors.darkBackground,
         appBar: AppBar(
-          title: Text("الملف الشخصي"),
+          title: Text(AppStrings.str_student_rem_189_cb80),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
@@ -93,7 +94,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
             } else if (state.detailsStatus == StudentInfoStatus.success) {
               return _buildSuccessfulUI(context, state);
             } else {
-              return const Center(child: Text("فشل تحميل التفاصيل"));
+              return const Center(child: Text(AppStrings.str_student_rem_190_e128));
             }
           },
         ),
@@ -131,7 +132,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'حسابك قيد المراجعة. تم تفعيل الوضع التجريبي لتتمكن من ضبط خطة حفظك وقراءة الورد اليومي.',
+                        AppStrings.str_student_rem_191_3f0a,
                         style: GoogleFonts.cairo(
                           fontSize: 12,
                           color: AppColors.lightCream87,
@@ -144,10 +145,10 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
               ),
             _buildHeader(context, student),
             SizedBox(height: 24),
-            _buildInfoRow("البريد", student.email),
+            _buildInfoRow(AppStrings.str_student_rem_192_cf27, student.email),
             Row(
               children: [
-                Expanded(child: _buildInfoRow("رقم الهاتف", student.phone)),
+                Expanded(child: _buildInfoRow(AppStrings.str_student_rem_29_4634, student.phone)),
                 SizedBox(width: 8),
                 Directionality(
                   textDirection: TextDirection.ltr,
@@ -162,7 +163,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
               children: [
                 Expanded(
                   child: _buildInfoRow(
-                    "رقم الواتس",
+                    AppStrings.str_student_rem_193_4d76,
                     status.selectedStudent!.studentDetailEntity.whatsAppPhone,
                   ),
                 ),
@@ -180,14 +181,14 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
               children: [
                 Expanded(
                   child: _buildInfoRow(
-                    "الجنس",
+                    AppStrings.str_student_rem_37_da31,
                     status.selectedStudent!.studentDetailEntity.gender.labelAr,
                   ),
                 ),
                 SizedBox(width: 8),
                 Expanded(
                   child: _buildInfoRow(
-                    "الجنسية",
+                    AppStrings.str_student_rem_194_9ca1,
                     status.selectedStudent!.studentDetailEntity.country,
                   ),
                 ),
@@ -197,21 +198,21 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
               children: [
                 Expanded(
                   child: _buildInfoRow(
-                    "بلد الإقامة",
+                    AppStrings.str_student_rem_27_1f90,
                     status.selectedStudent!.studentDetailEntity.country,
                   ),
                 ),
                 SizedBox(width: 8),
                 Expanded(
                   child: _buildInfoRow(
-                    "المدينة",
+                    AppStrings.str_student_rem_195_ab51,
                     status.selectedStudent!.studentDetailEntity.city,
                   ),
                 ),
               ],
             ),
             _buildInfoRow(
-              "المرحلة التعليمية",
+              AppStrings.str_student_rem_196_ffd4,
               status.selectedStudent!.studentDetailEntity.qualification,
             ),
             Row(
@@ -235,7 +236,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                         ),
                         SizedBox(width: 10),
                         Text(
-                          "تعديل البيانات",
+                          AppStrings.str_student_rem_197_bf76,
                           style: GoogleFonts.cairo(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -250,14 +251,14 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
               ],
             ),
 
-            titles("حلقة الطالب"),
+            titles(AppStrings.str_student_rem_198_98e8),
             SizedBox(height: 12),
             StudyHalaqaCard(
               onPress: () => _showAddStudentPlan(plan),
               assignedHalaqasEntity: halaqa,
             ),
 
-            titles("خطة التقدم"),
+            titles(AppStrings.str_student_rem_199_91b3),
             SizedBox(height: 12),
             StudyPlanCard(
               onPress: () => _showAddStudentPlan(plan),
@@ -265,10 +266,10 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
               planDetailList: plan.details,
             ),
 
-            titles("مؤشرات الأداء"),
+            titles(AppStrings.str_student_rem_200_1a3c),
             SingleChildScrollView(
               child: SegmentedButton<String>(
-                segments: ["التقدم", "الجودة", "الأداء"]
+                segments: [AppStrings.str_student_rem_147_2b59, AppStrings.str_student_rem_149_6d53, AppStrings.str_student_rem_201_7cb8]
                     .map(
                       (item) => ButtonSegment<String>(
                         value: item,
@@ -354,7 +355,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                             const Icon(Icons.add, color: AppColors.lightCream),
                             const SizedBox(width: 8),
                             Text(
-                              "اضافة خطة دراسية",
+                              AppStrings.str_student_rem_202_addb,
                               style: GoogleFonts.cairo(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -379,7 +380,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                                   side: BorderSide(color: AppColors.accent70),
                                 ),
                                 child: Text(
-                                  "الغاء",
+                                  AppStrings.str_student_rem_203_af3e,
                                   style: GoogleFonts.cairo(
                                     color: AppColors.lightCream,
                                   ),
@@ -396,7 +397,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                                   _submitForms(planForm, plan.planId);
                                 },
                                 child: Text(
-                                  "حفظ",
+                                  AppStrings.str_student_42_75f3,
                                   style: GoogleFonts.cairo(
                                     color: AppColors.lightCream,
                                   ),

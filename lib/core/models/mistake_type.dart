@@ -1,13 +1,14 @@
+import 'package:shafeea_student/core/l10n/app_strings.dart';
 /// Enhanced enum representing the different types of recitation mistakes.
 ///
 /// Each member has an `id` for database storage and a `labelAr` for display in the UI.
 enum MistakeType {
   // id, Arabic Label
-  none(0, 'غير مصنف'),
-  memory(1, 'نسيان'),
-  grammar(2, 'نحوي'),
-  pronunciation(3, 'مخارج حروف'),
-  timing(4, 'وقف وابتداء');
+  none(0, AppStrings.str_student_36_c6e1),
+  memory(1, AppStrings.str_student_37_506b),
+  grammar(2, AppStrings.str_student_38_4438),
+  pronunciation(3, AppStrings.str_student_39_8478),
+  timing(4, AppStrings.str_student_40_76e7);
   // You can easily add more types here in the future.
   
   final int id;
