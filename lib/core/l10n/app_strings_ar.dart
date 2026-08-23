@@ -2,6 +2,10 @@ import 'app_strings_base.dart';
 
 class AppStringsAr implements AppStringsBase {
   @override String get appName => 'أكاديمية شفيع';
+  @override String get welcomeToShafeea => 'مرحبًا بك في \nأكاديمية شفيع';
+  @override String get platformDescription => 'منصة تعليمية متكاملة لتعليم ومتابعة طلاب القرآن الكريم، للمعلمين والمشرفين عن بُعد.';
+  @override String get login => 'تسجيل الدخول';
+  @override String get createAccount => 'انشاء حساب';
   @override String get requestSession => 'طلب جلسة تسميع';
   @override String get accept => 'قبول';
   @override String get reject => 'رفض';

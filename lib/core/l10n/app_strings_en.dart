@@ -2,6 +2,10 @@ import 'app_strings_base.dart';
 
 class AppStringsEn implements AppStringsBase {
   @override String get appName => 'Shafeea Academy';
+  @override String get welcomeToShafeea => 'Welcome to \nShafeea Academy';
+  @override String get platformDescription => 'An integrated educational platform for teaching and tracking Quran students.';
+  @override String get login => 'Login';
+  @override String get createAccount => 'Create Account';
   @override String get requestSession => 'Request Session';
   @override String get accept => 'Accept';
   @override String get reject => 'Reject';

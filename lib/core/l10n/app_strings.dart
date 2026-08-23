@@ -16,6 +16,10 @@ class AppStrings {
   }
 
   static String get appName => i.appName;
+  static String get welcomeToShafeea => i.welcomeToShafeea;
+  static String get platformDescription => i.platformDescription;
+  static String get login => i.login;
+  static String get createAccount => i.createAccount;
   static String get requestSession => i.requestSession;
   static String get accept => i.accept;
   static String get reject => i.reject;
