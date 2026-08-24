@@ -1,3 +1,4 @@
+import 'package:shafeea/core/l10n/app_strings.dart' as L10nStrings;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +17,7 @@ import '../cubit/app_setup_cubit.dart';
 /// making this widget purely presentational.
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -53,11 +54,11 @@ class _SplashScreenState extends State<SplashScreen> {
           current.authStatus == AuthStatus.authenticated),
       listener: (context, authState) {
         if (authState.authStatus == AuthStatus.authenticated) {
-          print("المستخدم مسجل الدخول - التوجيه إلى الصفحة الرئيسية");
+          print(L10nStrings.AppStrings.userSignedInNavigateToHome);
 
           context.go('/home');
         } else if (authState.authStatus == AuthStatus.unauthenticated) {
-          print("المستخدم غير مسجل الدخول - التوجيه إلى صفحة الترحيب");
+          print(L10nStrings.AppStrings.userNotSignedInNavigateToWelcome);
           context.go('/welcome');
         }
       },
@@ -65,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
         body: Container(
           width: size.width,
           height: size.height,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 AppColors.accent,
@@ -83,7 +84,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Hero(
                 tag: 'logo',
                 child: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppColors.accent70,
                     shape: BoxShape.circle,
                   ),
@@ -93,9 +94,9 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
-              const Text(
-                'أكاديمية شفيع',
+              SizedBox(height: 32),
+              Text(
+                L10nStrings.AppStrings.shafiAcademy,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 26,

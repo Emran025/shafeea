@@ -1,3 +1,4 @@
+import 'package:shafeea/core/l10n/app_strings.dart' as L10nStrings;
 // lib/features/daily_tracking/presentation/widgets/session_bottom_toolbar.dart
 
 import 'dart:ui';
@@ -18,7 +19,7 @@ import 'package:shafeea/features/daily_tracking/presentation/pages/student_error
 /// such as saving progress, viewing the task report, and other session-related tools.
 class SessionTopToolbar extends StatelessWidget {
   final VoidCallback onTap;
-  const SessionTopToolbar({
+  SessionTopToolbar({
     super.key,
     required this.onTap,
   });
@@ -70,9 +71,9 @@ class SessionTopToolbar extends StatelessWidget {
                     maxChildSize: 0.75,
                     builder: (context, scrollController) {
                       return StudentErrorAnalysisChart(
-                        tile: const ChartTile(
-                          title: 'تحليل أداء الطالب',
-                          subTitle: 'عرض إحصائيات الأخطاء',
+                        tile: ChartTile(
+                          title: L10nStrings.AppStrings.studentPerformanceAnalysisTitle,
+                          subTitle: L10nStrings.AppStrings.viewErrorStatisticsSubtitle,
                           icon: Icons.bar_chart,
                         ),
                       );

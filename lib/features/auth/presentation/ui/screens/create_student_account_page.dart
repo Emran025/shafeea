@@ -1,3 +1,4 @@
+import 'package:shafeea/core/l10n/app_strings.dart' as L10nStrings;
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ import '../../../../../core/models/countery_model.dart';
 import '../../../../daily_tracking/presentation/pages/quran_memorization_picker.dart';
 
 class CreateStudentAccountPage extends StatefulWidget {
-  const CreateStudentAccountPage({super.key});
+  CreateStudentAccountPage({super.key});
 
   @override
   State<CreateStudentAccountPage> createState() =>
@@ -75,11 +76,11 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
 
     _animCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 550),
+      duration: Duration(milliseconds: 550),
     );
     _fadeAnim = CurvedAnimation(parent: _animCtrl, curve: Curves.easeOut);
     _slideAnim = Tween<Offset>(
-      begin: const Offset(0, 0.06),
+      begin: Offset(0, 0.06),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _animCtrl, curve: Curves.easeOut));
 
@@ -168,7 +169,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
     return Scaffold(
       backgroundColor: isDark
           ? AppColors.darkBackground
-          : const Color(0xFFF2F1EC),
+          : Color(0xFFF2F1EC),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (ctx, state) => _handleBlocListener(ctx, state),
         builder: (ctx, state) {
@@ -187,9 +188,9 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                 backgroundColor: isDark
                     ? AppColors.mediumDark
                     : AppColors.accent,
-                iconTheme: const IconThemeData(color: Colors.white),
-                title: const Text(
-                  'إنشاء حساب طالب جديد',
+                iconTheme: IconThemeData(color: Colors.white),
+                title: Text(
+                  L10nStrings.AppStrings.createNewStudentAccount,
                   style: TextStyle(
                     color: Colors.white,
                     fontFamily: 'Cairo',
@@ -217,18 +218,18 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                         _buildSection(
                           context,
                           icon: Icons.person_rounded,
-                          title: 'المعلومات الأساسية',
+                          title: L10nStrings.AppStrings.basicInformation,
                           children: [
                             CustomTextField(
                               controller: _nameCtrl,
                               prefixIcon: Icons.badge_outlined,
-                              label: 'الاسم الثلاثي',
+                              label: L10nStrings.AppStrings.threePartName,
                               keyboardType: TextInputType.name,
                             ),
                             CustomTextField(
                               controller: _bioCtrl,
                               prefixIcon: Icons.info_outline_rounded,
-                              label: 'نبذة تعريفية',
+                              label: L10nStrings.AppStrings.briefBio,
                               keyboardType: TextInputType.multiline,
                             ),
                           ],
@@ -236,18 +237,18 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                         _buildSection(
                           context,
                           icon: Icons.lock_person_rounded,
-                          title: 'بيانات الدخول',
+                          title: L10nStrings.AppStrings.loginDetails,
                           children: [
                             CustomTextField(
                               controller: _emailCtrl,
                               prefixIcon: Icons.alternate_email_rounded,
-                              label: 'البريد الإلكتروني',
+                              label: L10nStrings.AppStrings.email,
                               keyboardType: TextInputType.emailAddress,
                             ),
                             CustomTextField(
                               controller: _usernameCtrl,
                               prefixIcon: Icons.person_outline_rounded,
-                              label: 'اسم المستخدم',
+                              label: L10nStrings.AppStrings.username,
                               keyboardType: TextInputType.text,
                               suffixIcon: _buildUsernameStatusIcon(
                                 isChecking,
@@ -256,11 +257,11 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                               validator: (val) {
                                 final value = val?.trim() ?? '';
                                 if (value.isEmpty) {
-                                  return 'اسم المستخدم مطلوب';
+                                  return L10nStrings.AppStrings.usernameRequired;
                                 }
                                 if (checkStatus == UsernameCheckStatus.loaded &&
                                     !isAvailable) {
-                                  return 'اسم المستخدم مستخدم بالفعل';
+                                  return L10nStrings.AppStrings.usernameAlreadyTaken;
                                 }
                                 return null;
                               },
@@ -291,20 +292,20 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                             CustomTextField(
                               controller: _passCtrl,
                               prefixIcon: Icons.lock_outline_rounded,
-                              label: 'كلمة المرور',
+                              label: L10nStrings.AppStrings.password,
                               isPassword: true,
                             ),
                             CustomTextField(
                               controller: _confirmPassCtrl,
                               prefixIcon: Icons.lock_reset_rounded,
-                              label: 'تأكيد كلمة المرور',
+                              label: L10nStrings.AppStrings.confirmPassword,
                               isPassword: true,
                               validator: (val) {
                                 if (val == null || val.isEmpty) {
-                                  return 'حقل تأكيد كلمة المرور مطلوب';
+                                  return L10nStrings.AppStrings.confirmPasswordRequired;
                                 }
                                 if (val != _passCtrl.text) {
-                                  return 'كلمات المرور غير متطابقة';
+                                  return L10nStrings.AppStrings.passwordsDoNotMatch;
                                 }
                                 return null;
                               },
@@ -315,17 +316,17 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                         _buildSection(
                           context,
                           icon: Icons.face_rounded,
-                          title: 'البيانات الشخصية',
+                          title: L10nStrings.AppStrings.personalInformation,
                           children: [
                             Row(
                               children: [
                                 Expanded(child: _buildGenderDropdown(context)),
-                                const SizedBox(width: 12),
+                                SizedBox(width: 12),
                                 Expanded(
                                   child: CustomDatePicker(
                                     controller: _birthDateCtrl,
                                     icon: Icons.cake_outlined,
-                                    label: 'تاريخ الميلاد',
+                                    label: L10nStrings.AppStrings.dateOfBirth,
                                     onDateSelected: (d) {
                                       _selectedBirthDate = d;
                                       _birthDateCtrl.text = formatDate(d);
@@ -337,14 +338,14 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                             CustomTextField(
                               controller: _countryCtrl,
                               prefixIcon: Icons.flag_outlined,
-                              label: 'محل الميلاد',
+                              label: L10nStrings.AppStrings.placeOfBirth,
                               readOnly: true,
                               onTap: (ctrl, _) => _showCountryDialog(ctrl),
                             ),
                             CustomTextField(
                               controller: _residenceCtrl,
                               prefixIcon: Icons.location_city_rounded,
-                              label: 'بلد الإقامة',
+                              label: L10nStrings.AppStrings.countryOfResidence,
                               readOnly: true,
                               onTap: (ctrl, _) => _showCountryDialog(ctrl),
                             ),
@@ -353,13 +354,13 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                         _buildSection(
                           context,
                           icon: Icons.contact_phone_rounded,
-                          title: 'التواصل',
+                          title: L10nStrings.AppStrings.contactTitle,
                           children: [
                             PhoneZoneForm(
                               phoneController: _phoneCtrl,
                               zoneController: _phoneZoneCtrl,
                               initialCountry: selectedPhoneZone,
-                              label: 'رقم الهاتف',
+                              label: L10nStrings.AppStrings.phoneNumber,
                               onCountryChanged: () => _updatePhoneZone(
                                 _phoneZoneCtrl,
                                 (c) => selectedPhoneZone = c,
@@ -369,7 +370,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                               phoneController: _whatsAppPhoneCtrl,
                               zoneController: _whatsAppZoneCtrl,
                               initialCountry: selectedWhatsAppZone,
-                              label: 'واتسآب',
+                              label: L10nStrings.AppStrings.whatsapp,
                               onCountryChanged: () => _updatePhoneZone(
                                 _whatsAppZoneCtrl,
                                 (c) => selectedWhatsAppZone = c,
@@ -378,7 +379,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                             CustomTimePicker(
                               controller: _timeCtrl,
                               icon: Icons.access_time_filled_rounded,
-                              label: 'أفضل وقت للتواصل',
+                              label: L10nStrings.AppStrings.preferredContactTime,
                               onTimeSelected: (t) =>
                                   _timeCtrl.text = t.format(context),
                             ),
@@ -387,11 +388,11 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                         _buildSection(
                           context,
                           icon: Icons.menu_book_rounded,
-                          title: 'معلومات التعليم',
+                          title: L10nStrings.AppStrings.educationInfo,
                           children: [
                             _buildDropdown(
                               _qualificationCtrl,
-                              "نوع التعليم(المهؤهل)",
+                              L10nStrings.AppStrings.educationTypeQualification,
                               [
                                 ...(EducationLevel.values
                                     .map((e) => e.labelAr)
@@ -402,13 +403,13 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                               controller: _memorizationCtrl,
                               prefixIcon: Icons.calendar_month,
                               keyboardType: TextInputType.number,
-                              label: 'الحفظ السابق (بالصفحات)',
+                              label: L10nStrings.AppStrings.previousMemorizationPages,
                               onTap: _openMemorizationPicker,
                               readOnly: true,
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8),
                         if (state.status == LogInStatus.loading)
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -458,7 +459,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 36),
+                SizedBox(height: 36),
                 Container(
                   width: 68,
                   height: 68,
@@ -470,15 +471,15 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                       width: 1.5,
                     ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.person_add_alt_1_rounded,
                     color: Colors.white,
                     size: 34,
                   ),
                 ),
-                const SizedBox(height: 10),
-                const Text(
-                  'انضم إلى منصة شافعة',
+                SizedBox(height: 10),
+                Text(
+                  L10nStrings.AppStrings.joinShafaaPlatform,
                   style: TextStyle(
                     color: Colors.white,
                     fontFamily: 'Cairo',
@@ -487,9 +488,9 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                     letterSpacing: 0.3,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
-                  'أدخل بياناتك لإنشاء حسابك',
+                  L10nStrings.AppStrings.enterDetailsToCreateAccount,
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.65),
                     fontFamily: 'Cairo',
@@ -554,7 +555,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
             color: Colors.black.withOpacity(isDark ? 0.18 : 0.05),
             blurRadius: 18,
             spreadRadius: 0,
-            offset: const Offset(0, 5),
+            offset: Offset(0, 5),
           ),
         ],
       ),
@@ -564,7 +565,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSectionHeader(colorScheme, icon, title),
-            const SizedBox(height: 18),
+            SizedBox(height: 18),
             ...children,
           ],
         ),
@@ -588,7 +589,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
             borderRadius: BorderRadius.circular(4),
           ),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: 10),
         // icon badge
         Container(
           padding: const EdgeInsets.all(6),
@@ -598,7 +599,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
           ),
           child: Icon(icon, size: 16, color: cs.primary),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: 10),
         Text(
           title,
           style: TextStyle(
@@ -634,7 +635,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
           color: colorScheme.onSurface,
         ),
         decoration: InputDecoration(
-          labelText: 'الجنس',
+          labelText: L10nStrings.AppStrings.genderLabel,
           labelStyle: TextStyle(
             color: colorScheme.onSurface.withOpacity(0.55),
             fontFamily: 'Cairo',
@@ -673,7 +674,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
           DropdownMenuItem(
             value: 'Male',
             child: Text(
-              'ذكر',
+              L10nStrings.AppStrings.genderMale,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 color: colorScheme.onSurface,
@@ -683,7 +684,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
           DropdownMenuItem(
             value: 'Female',
             child: Text(
-              'أنثى',
+              L10nStrings.AppStrings.genderFemale,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 color: colorScheme.onSurface,
@@ -702,7 +703,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
     return Container(
       height: 56,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [AppColors.accent, AppColors.mediumDark],
           begin: Alignment.centerRight,
           end: Alignment.centerLeft,
@@ -712,7 +713,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
           BoxShadow(
             color: AppColors.accent.withOpacity(0.38),
             blurRadius: 18,
-            offset: const Offset(0, 7),
+            offset: Offset(0, 7),
           ),
         ],
       ),
@@ -723,14 +724,14 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
           onTap: _submitForm,
           borderRadius: BorderRadius.circular(16),
           splashColor: Colors.white.withOpacity(0.1),
-          child: const Center(
+          child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.how_to_reg_rounded, color: Colors.white, size: 22),
                 SizedBox(width: 10),
                 Text(
-                  'تسجيل الحساب',
+                  L10nStrings.AppStrings.registerAccount,
                   style: TextStyle(
                     color: Colors.white,
                     fontFamily: 'Cairo',
@@ -760,7 +761,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
   void _onUsernameChanged() {
     _usernameManuallyEdited = true;
     _usernameDebounce?.cancel();
-    _usernameDebounce = Timer(const Duration(milliseconds: 500), () {
+    _usernameDebounce = Timer(Duration(milliseconds: 500), () {
       final username = _usernameCtrl.text.trim();
       context.read<AuthBloc>().add(UsernameCheckRequested(username));
     });
@@ -768,7 +769,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
 
   Widget? _buildUsernameStatusIcon(bool isChecking, bool isAvailable) {
     if (isChecking) {
-      return const Padding(
+      return Padding(
         padding: EdgeInsets.all(12),
         child: SizedBox(
           width: 18,
@@ -779,11 +780,11 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
     }
 
     if (isAvailable == true) {
-      return const Icon(Icons.check_circle, color: AppColors.success);
+      return Icon(Icons.check_circle, color: AppColors.success);
     }
 
     if (isAvailable == false) {
-      return const Icon(Icons.cancel, color: AppColors.error);
+      return Icon(Icons.cancel, color: AppColors.error);
     }
 
     return null;
@@ -794,9 +795,9 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
     bool isAvailable,
     UsernameCheckStatus status,
   ) {
-    if (isChecking) return 'جارٍ التحقق من التوفر...';
+    if (isChecking) return L10nStrings.AppStrings.checkingAvailability;
     if (status == UsernameCheckStatus.loaded) {
-      return isAvailable ? 'اسم المستخدم متاح' : 'اسم المستخدم مستخدم بالفعل';
+      return isAvailable ? L10nStrings.AppStrings.usernameAvailable : L10nStrings.AppStrings.usernameAlreadyTaken;
     }
     return '';
   }
@@ -818,8 +819,8 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
         SnackBar(
           content: Text(
             state.successEntity?.message ??
-                'تم إنشاء الحساب بنجاح، يرجى تسجيل الدخول',
-            style: const TextStyle(fontFamily: 'Cairo'),
+                L10nStrings.AppStrings.accountCreatedPleaseLogin,
+            style: TextStyle(fontFamily: 'Cairo'),
           ),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
@@ -834,8 +835,8 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            state.failure?.message ?? 'حدث خطأ أثناء التسجيل',
-            style: const TextStyle(fontFamily: 'Cairo'),
+            state.failure?.message ?? L10nStrings.AppStrings.registrationError,
+            style: TextStyle(fontFamily: 'Cairo'),
           ),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
@@ -903,7 +904,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
         email: _emailCtrl.text.trim(),
         username: _usernameCtrl.text.trim().toLowerCase(),
         password: _passCtrl.text,
-        bio: _bioCtrl.text.isNotEmpty ? _bioCtrl.text : 'طالب جديد',
+        bio: _bioCtrl.text.isNotEmpty ? _bioCtrl.text : L10nStrings.AppStrings.newStudent,
         qualifications: _qualificationCtrl.text,
         memorizationLevel: int.tryParse(_memorizationCtrl.text),
         gender: Gender.fromLabel(_genderCtrl.text),
@@ -963,22 +964,22 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
           ),
           child: Row(
             children: [
-              const SizedBox(width: 14),
+              SizedBox(width: 14),
               Icon(
                 Icons.school_outlined,
                 color: colorScheme.primary.withOpacity(0.5),
                 size: 20,
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Text(
-                'جارٍ تحميل المدارس...',
+                L10nStrings.AppStrings.loadingSchools,
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 13,
                   color: colorScheme.onSurface.withOpacity(0.45),
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: SizedBox(
@@ -1000,7 +1001,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
     return CustomTextField(
       controller: _schoolCtrl,
       prefixIcon: Icons.school_outlined,
-      label: 'المدرسة',
+      label: L10nStrings.AppStrings.schoolLabel,
       readOnly: true,
       onTap: (_, __) => _showSchoolDialog(state),
     );
@@ -1018,7 +1019,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
           context.read<AuthBloc>().add(SchoolSelected(school));
           setState(() {
             _schoolCtrl.text =
-                school != null ? school.name : 'مستقل / بدون مدرسة';
+                school != null ? school.name : L10nStrings.AppStrings.independentNoSchool;
           });
         },
       ),
@@ -1035,7 +1036,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
       margin: const EdgeInsets.only(bottom: 12, left: 14),
       child: DropdownButtonFormField<String>(
         itemHeight: 50,
-        style: const TextStyle(fontFamily: 'Cairo'),
+        style: TextStyle(fontFamily: 'Cairo'),
         borderRadius: BorderRadius.circular(14),
         value: controller.text.trim(),
         dropdownColor: AppColors.mediumDark,
@@ -1045,11 +1046,11 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
                 value: e,
                 child: Text(
                   e == "Male"
-                      ? "ذكر"
+                      ? L10nStrings.AppStrings.genderMale
                       : e == "Female" || e == "female"
-                      ? "أنثى"
+                      ? L10nStrings.AppStrings.genderFemale
                       : e,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Cairo',
 
                     color: AppColors.lightCream70,
@@ -1066,7 +1067,7 @@ class _CreateStudentAccountPageState extends State<CreateStudentAccountPage>
         decoration: InputDecoration(
           fillColor: AppColors.lightCream12,
           labelText: label,
-          labelStyle: const TextStyle(fontFamily: 'Cairo'),
+          labelStyle: TextStyle(fontFamily: 'Cairo'),
         ),
       ),
     );

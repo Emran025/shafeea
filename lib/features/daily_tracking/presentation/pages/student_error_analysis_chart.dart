@@ -1,3 +1,4 @@
+import 'package:shafeea/core/l10n/app_strings.dart' as L10nStrings;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,7 +13,7 @@ import '../../../home/presentation/ui/widgets/base_bar_chart.dart';
 class StudentErrorAnalysisChart extends StatelessWidget {
   final ChartTile tile;
 
-  const StudentErrorAnalysisChart({
+  StudentErrorAnalysisChart({
     super.key,
     required this.tile,
   });
@@ -23,7 +24,7 @@ class StudentErrorAnalysisChart extends StatelessWidget {
       create: (context) => sl<ErrorAnalysisChartBloc>()
         ..add(
           LoadErrorAnalysisChartData(
-            filter: const ChartFilter(),
+            filter: ChartFilter(),
           ),
         ),
       child: BlocBuilder<ErrorAnalysisChartBloc, ErrorAnalysisChartState>(
@@ -41,13 +42,13 @@ class StudentErrorAnalysisChart extends StatelessWidget {
             child: Column(
               children: [
                 _buildTitelIndicator(tile),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 if (state is ErrorAnalysisChartLoaded) ...[
                   _buildFiltersSection(context, state.filter),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   _ChartContent(chartData: state.chartData),
                 ] else if (state is ErrorAnalysisChartLoading)
-                  const CircularProgressIndicator()
+                  CircularProgressIndicator()
                 else if (state is ErrorAnalysisChartError)
                   Text(state.message)
                 else
@@ -71,7 +72,7 @@ class StudentErrorAnalysisChart extends StatelessWidget {
           // ),
           child: Icon(tile.icon, size: 26, color: AppColors.lightCream),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -113,7 +114,7 @@ class StudentErrorAnalysisChart extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'المعايير',
+                  L10nStrings.AppStrings.criteria,
                   style: Theme.of(
                     context,
                   ).textTheme.titleLarge?.copyWith(color: AppColors.lightCream),
@@ -124,7 +125,7 @@ class StudentErrorAnalysisChart extends StatelessWidget {
                     groupValue: currentFilter.dimension,
                     activeColor: AppColors.accent,
                     title: Text(
-                      "مقدار ورد",
+                      L10nStrings.AppStrings.amountMemorized,
                       style: GoogleFonts.cairo(
                         color: AppColors.lightCream,
                         fontSize: 10,
@@ -147,7 +148,7 @@ class StudentErrorAnalysisChart extends StatelessWidget {
                     groupValue: currentFilter.dimension,
                     activeColor: AppColors.accent,
                     title: Text(
-                      'فترة زمنية',
+                      L10nStrings.AppStrings.timePeriod,
                       style: GoogleFonts.cairo(
                         color: AppColors.lightCream,
                         fontSize: 10,
@@ -167,17 +168,17 @@ class StudentErrorAnalysisChart extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Row(
             children: [
               if (currentFilter.dimension == FilterDimension.time)
                 Expanded(
                   child: _buildFilterDropdown(
                     context: context,
-                    label: 'الفترة الزمنية',
+                    label: L10nStrings.AppStrings.timePeriodLabel,
                     value: currentFilter.timePeriod,
-                    items: const ['week', 'month', 'quarter', 'year'],
-                    labels: const ['أسبوع', 'شهر', 'ربع سنة', 'سنة'],
+                    items: ['week', 'month', 'quarter', 'year'],
+                    labels: [L10nStrings.AppStrings.weekLabel, L10nStrings.AppStrings.timeRangeMonth, L10nStrings.AppStrings.timeRangeQuarter, L10nStrings.AppStrings.timeRangeYear],
                     onChanged: (value) {
                       context.read<ErrorAnalysisChartBloc>().add(
                         UpdateErrorAnalysisChartFilter(
@@ -191,10 +192,10 @@ class StudentErrorAnalysisChart extends StatelessWidget {
                 Expanded(
                   child: _buildFilterDropdown(
                     context: context,
-                    label: 'مدى الحفظ',
+                    label: L10nStrings.AppStrings.memorizationRange,
                     value: currentFilter.quantityUnit,
-                    items: const ['page', 'hizb', 'juz', 'full_quran'],
-                    labels: const ['صفحة', 'حزب', 'جزء', 'مصحف كامل'],
+                    items: ['page', 'hizb', 'juz', 'full_quran'],
+                    labels: [L10nStrings.AppStrings.unitPage, L10nStrings.AppStrings.unitHizb, L10nStrings.AppStrings.unitJuz, L10nStrings.AppStrings.unitEntireMushaf],
                     onChanged: (value) {
                       context.read<ErrorAnalysisChartBloc>().add(
                         UpdateErrorAnalysisChartFilter(
@@ -204,15 +205,15 @@ class StudentErrorAnalysisChart extends StatelessWidget {
                     },
                   ),
                 ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               SizedBox(
                 width: MediaQuery.of(context).size.width / 4,
                 child: _buildFilterDropdown(
                   context: context,
-                  label: 'نوع المسار',
+                  label: L10nStrings.AppStrings.trackingTypeLabel,
                   value: currentFilter.trackingType,
-                  items: const ['memorization', 'review', 'recitation'],
-                  labels: const ['حفظ', 'مراجعة', 'سرد'],
+                  items: ['memorization', 'review', 'recitation'],
+                  labels: [L10nStrings.AppStrings.trackingMemorization, L10nStrings.AppStrings.trackingReview, L10nStrings.AppStrings.trackingRecitation],
                   onChanged: (value) {
                     context.read<ErrorAnalysisChartBloc>().add(
                       UpdateErrorAnalysisChartFilter(
@@ -246,7 +247,7 @@ class StudentErrorAnalysisChart extends StatelessWidget {
             context,
           ).textTheme.labelSmall?.copyWith(color: AppColors.lightCream70),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4),
         DropdownButton<String>(
           value: value,
           isExpanded: true,
@@ -321,18 +322,18 @@ class _ChartContentState extends State<_ChartContent> {
 
   String _formatPeriodDate(DateTime date) {
     final months = [
-      'يناير',
-      'فبراير',
-      'مارس',
-      'أبريل',
-      'مايو',
-      'يونيو',
-      'يوليو',
-      'أغسطس',
-      'سبتمبر',
-      'أكتوبر',
-      'نوفمبر',
-      'ديسمبر',
+      L10nStrings.AppStrings.monthJanuary,
+      L10nStrings.AppStrings.monthFebruary,
+      L10nStrings.AppStrings.monthMarch,
+      L10nStrings.AppStrings.monthApril,
+      L10nStrings.AppStrings.monthMay,
+      L10nStrings.AppStrings.monthJune,
+      L10nStrings.AppStrings.monthJuly,
+      L10nStrings.AppStrings.monthAugust,
+      L10nStrings.AppStrings.monthSeptember,
+      L10nStrings.AppStrings.monthOctober,
+      L10nStrings.AppStrings.monthNovember,
+      L10nStrings.AppStrings.monthDecember,
     ];
     return '${months[date.month - 1]} ${date.year}';
   }
@@ -340,7 +341,7 @@ class _ChartContentState extends State<_ChartContent> {
   @override
   Widget build(BuildContext context) {
     if (widget.chartData.isEmpty) {
-      return const Text('لا توجد بيانات لعرضها');
+      return Text(L10nStrings.AppStrings.noDataToDisplay);
     }
     return Column(
       children: [

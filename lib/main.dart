@@ -14,6 +14,8 @@ import 'shared/themes/app_theme.dart';
 import 'routes/app_router.dart';
 import 'package:flutter/services.dart';
 
+import 'core/services/shorebird_update_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Disable network fetching — Cairo is already bundled in assets/fonts/Cairo/.
@@ -33,8 +35,9 @@ void main() async {
   // Pre-load all Tracking_Unit rows from the Quran database into the
   // in-memory cache so that synchronous lookups work throughout the app.
   await TrackingUnitCache.instance.initialize(sl<QuranLocalDataSource>());
-  runApp(
-    MultiBlocProvider(
+    runApp(
+    _ShorebirdLifecycleWrapper(
+      child: MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => sl<AppSetupCubit>()),
         // Provides the SettingsBloc globally, making it accessible application-wide.
@@ -48,7 +51,8 @@ void main() async {
         BlocProvider<AuthBloc>(create: (context) => sl<AuthBloc>()),
         BlocProvider<StudentBloc>(create: (context) => sl<StudentBloc>()),
       ],
-      child: const ShafeeaApp(),
+        child: const ShafeeaApp(),
+      ),
     ),
   );
 }
@@ -86,3 +90,43 @@ class ShafeeaApp extends StatelessWidget {
 }
 
 //  {login: amran@naser.com, password: amran$$$025, device_info: {device_id: AE3A.240806.043, model: sdk_gphone64_x86_64, manufacturer: Google, os_version: Android 15 (SDK 35), app_version: 1.0.0+1, timezone: Asia/Riyadh, locale: en_US, fcm_token: dummy_push_token_for_development_env}}
+
+
+class _ShorebirdLifecycleWrapper extends StatefulWidget {
+  final Widget child;
+  const _ShorebirdLifecycleWrapper({required this.child});
+
+  @override
+  State<_ShorebirdLifecycleWrapper> createState() => _ShorebirdLifecycleWrapperState();
+}
+
+class _ShorebirdLifecycleWrapperState extends State<_ShorebirdLifecycleWrapper> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // Check for updates on initial launch after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ShorebirdUpdateService().checkForUpdates(context);
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Check for updates when app comes back to foreground
+      ShorebirdUpdateService().checkForUpdates(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}
