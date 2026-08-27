@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../shared/themes/app_theme.dart';
+
 
 class MyCertificatesScreen extends StatefulWidget {
   const MyCertificatesScreen({super.key});
@@ -77,7 +77,7 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('شهاداتي', style: GoogleFonts.cairo()),
-        backgroundColor: AppColors.primary,
+        backgroundColor: Colors.blue,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
